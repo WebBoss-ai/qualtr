@@ -8,4 +8,3 @@ export const ANALYTICS_API_END_POINT="http://65.0.11.204:8000/api/v1/analytics";
 export const JOB_ANALYTICS_API_END_POINT="http://65.0.11.204:8000/api/v1/job-analytics";
 export const PORTFOLIO_API_END_POINT="http://65.0.11.204:8000/api/v1/portfolio";
 export const MESSAGE_API_END_POINT="http://65.0.11.204:8000/api/v1/message";
-
