@@ -2,13 +2,13 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
-
 import { createServer } from "http";
 import { Server } from "socket.io";
 import path from "path";
 import { createProxyMiddleware } from "http-proxy-middleware"; // Import proxy middleware
 import connectDB from "./utils/db.js";
 
+// Import routes
 import userRoute from "./routes/user.route.js";
 import companyRoute from "./routes/company.route.js";
 import jobRoute from "./routes/job.route.js";
@@ -25,6 +25,7 @@ dotenv.config();
 const app = express();
 const server = createServer(app);
 
+// CORS configuration
 const corsOptions = {
   origin: process.env.NODE_ENV === 'production' ? process.env.CLIENT_URL : 'http://localhost:5173',
   credentials: true,
@@ -37,6 +38,7 @@ app.use(cookieParser());
 
 const PORT = process.env.PORT || 8000;
 
+// Serve static files from the frontend build directory
 const __dirname = path.resolve();
 app.use(express.static(path.join(__dirname, "../frontend/build")));
 
