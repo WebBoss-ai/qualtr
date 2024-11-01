@@ -11,8 +11,14 @@ const jobSchema = new mongoose.Schema({
     },
     category: [{
         type: String,
-        enum: ['SEO', 'Content Marketing', 'Social Media Marketing', 'PPC', 'Email Marketing', 'Affiliate Marketing', 'Video Marketing', 'Influencer Marketing', 'Mobile Marketing', 'Analytics'],
-        required: true
+        enum: [
+    'SEO', 'Content Marketing', 'Social Media Marketing', 'PPC', 'Email Marketing',
+    'Influencer Marketing', 'Affiliate Marketing', 'Video Marketing', 'Conversion Rate Optimization',
+    'Web Design & Development', 'App Marketing', 'E-commerce Marketing', 'Analytics & Data',
+    'Marketing Automation', 'Local SEO', 'Reputation Management', 'Mobile Marketing', 'Voice Search Optimization',
+    'Content Strategy', 'Branding', 'Performance Marketing', 'Lead Generation', 'Community Management'
+],
+required: true
     }],
     salary: {
         type: Number,
