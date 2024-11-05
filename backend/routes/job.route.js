@@ -7,9 +7,9 @@ import { saveJobForLater, removeSavedJob, getSavedJobs } from '../controllers/jo
 const router = express.Router();
 
 // Routes
-router.route("/get").get(isAuthenticated, getAllJobs);
+router.route("/get").get(getAllJobs);
 router.route("/getadminjobs").get(isAuthenticated, getAdminJobs);
-router.route("/get/:id").get(isAuthenticated, getJobById);
+router.route("/get/:id").get(getJobById);
 router.post('/post', upload.single('requirement_doc'), isAuthenticated, postJob); 
 
 router.get('/jobs-by-category', isAuthenticated, getJobsByCategory);
