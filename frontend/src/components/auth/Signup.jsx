@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
-import { RadioGroup } from '../ui/radio-group'
+import { RadioGroup, RadioGroupItem } from '../ui/radio-group'
 import { Button } from '../ui/button'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
@@ -9,11 +9,10 @@ import { USER_API_END_POINT } from '@/utils/constant'
 import { toast } from 'sonner'
 import { useDispatch, useSelector } from 'react-redux'
 import { setLoading } from '@/redux/authSlice'
-import { Loader2 } from 'lucide-react'
-import { Helmet } from 'react-helmet';
+import { Loader2, User, Mail, Phone, Lock, Upload, Building, Briefcase } from 'lucide-react'
+import { Helmet } from 'react-helmet'
 
 const Signup = () => {
-
     const [input, setInput] = useState({
         fullname: "",
         email: "",
@@ -22,7 +21,7 @@ const Signup = () => {
         role: "",
         file: ""
     });
-    const {loading,user} = useSelector(store=>store.auth);
+    const { loading, user } = useSelector(store => store.auth);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -34,7 +33,7 @@ const Signup = () => {
     }
     const submitHandler = async (e) => {
         e.preventDefault();
-        const formData = new FormData();    //formdata object
+        const formData = new FormData();
         formData.append("fullname", input.fullname);
         formData.append("email", input.email);
         formData.append("phoneNumber", input.phoneNumber);
@@ -57,116 +56,163 @@ const Signup = () => {
         } catch (error) {
             console.log(error);
             toast.error(error.response.data.message);
-        } finally{
+        } finally {
             dispatch(setLoading(false));
         }
     }
 
-    useEffect(()=>{
-        if(user){
+    useEffect(() => {
+        if (user) {
             navigate("/");
         }
-    },[])
+    }, [user, navigate])
 
     return (
-        
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
-             <Helmet>
-        <title>Join Qualtr | Sign Up to Connect with Brands & Agencies</title>
-      </Helmet>
-            <div className="flex flex-col items-center w-full px-4 max-w-xl mx-auto">
-                <form onSubmit={submitHandler} className="w-full bg-white border border-black-300 rounded-lg p-6">
-                    <h1 className="font-bold text-2xl text-green-600 mb-5 text-center">Sign Up</h1>
-                    <div className="my-4">
-                        <Label>Full Name</Label>
-                        <Input
-                            type="text"
-                            value={input.fullname}
-                            name="fullname"
-                            onChange={changeEventHandler}
-                            placeholder="Qualtr"
-                            className="border-black-300"
-                        />
+        <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
+            <Helmet>
+                <title>Join Qualtr | Sign Up to Connect with Brands & Agencies</title>
+            </Helmet>
+            <div className="w-full mt-16 mb-16 max-w-xl px-6 py-8 bg-white l rounded-xl">
+                <h1 className="text-xl font-bold text-green-600 mb-6 text-center">Sign Up to Qualtr</h1>
+                <form onSubmit={submitHandler} className="space-y-6">
+                    <div className="space-y-2">
+                        <Label htmlFor="fullname" className="text-sm font-medium text-gray-700">Full Name</Label>
+                        <div className="relative">
+                            <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                            <Input
+                                id="fullname"
+                                type="text"
+                                name="fullname"
+                                value={input.fullname}
+                                onChange={changeEventHandler}
+                                placeholder="John Doe"
+                                className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            />
+                        </div>
                     </div>
-                    <div className="my-4">
-                        <Label>Email</Label>
-                        <Input
-                            type="email"
-                            value={input.email}
-                            name="email"
-                            onChange={changeEventHandler}
-                            placeholder="qualtr@gmail.com"
-                            className="border-black-300"
-                        />
+                    <div className="space-y-2">
+                        <Label htmlFor="email" className="text-sm font-medium text-gray-700">Email</Label>
+                        <div className="relative">
+                            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                            <Input
+                                id="email"
+                                type="email"
+                                name="email"
+                                value={input.email}
+                                onChange={changeEventHandler}
+                                placeholder="you@example.com"
+                                className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            />
+                        </div>
                     </div>
-                    <div className="my-4">
-                        <Label>Phone Number</Label>
-                        <Input
-                            type="text"
-                            value={input.phoneNumber}
-                            name="phoneNumber"
-                            onChange={changeEventHandler}
-                            placeholder="+91-8167080111"
-                            className="border-black-300"
-                        />
+                    <div className="space-y-2">
+                        <Label htmlFor="phoneNumber" className="text-sm font-medium text-gray-700">Phone Number</Label>
+                        <div className="relative">
+                            <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                            <Input
+                                id="phoneNumber"
+                                type="text"
+                                name="phoneNumber"
+                                value={input.phoneNumber}
+                                onChange={changeEventHandler}
+                                placeholder="+91-8167080111"
+                                className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            />
+                        </div>
                     </div>
-                    <div className="my-4">
-                        <Label>Password</Label>
-                        <Input
-                            type="password"
-                            value={input.password}
-                            name="password"
-                            onChange={changeEventHandler}
-                            placeholder="********"
-                            className="border-black-300"
-                        />
+                    <div className="space-y-2">
+                        <Label htmlFor="password" className="text-sm font-medium text-gray-700">Password</Label>
+                        <div className="relative">
+                            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                            <Input
+                                id="password"
+                                type="password"
+                                name="password"
+                                value={input.password}
+                                onChange={changeEventHandler}
+                                placeholder="********"
+                                className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            />
+                        </div>
                     </div>
-                    <div className="flex items-center justify-between">
-                        <RadioGroup className="flex items-center gap-4 my-4">
-                            <div className="flex items-center space-x-2">
+
+                    <div className="p-4 border rounded bg-[#f8f9fa]">
+                        <RadioGroup className="space-y-1">
+
+                            <div className="flex items-center">
                                 <Input
                                     type="radio"
                                     name="role"
                                     value="student"
                                     checked={input.role === 'student'}
                                     onChange={changeEventHandler}
-                                    className="cursor-pointer border-black-300"
+                                    className="cursor-pointer mr-2"
+                                    style={{ width: '16px', height: '16px' }} // Inline style for size
                                 />
-                                <Label htmlFor="r1">Agency</Label>
+                                <Label htmlFor="r1" className="text-gray-800 text-sm font-medium">
+                                    Agency - <span className="font-normal text-[#495057]">Offer services and take on projects</span>
+                                </Label>
                             </div>
-                            <div className="flex items-center space-x-2">
+
+                            <div className="flex items-center">
                                 <Input
                                     type="radio"
                                     name="role"
                                     value="recruiter"
                                     checked={input.role === 'recruiter'}
                                     onChange={changeEventHandler}
-                                    className="cursor-pointer border-black-300"
+                                    className="cursor-pointer mr-2"
+                                    style={{ width: '16px', height: '16px' }} // Inline style for size
                                 />
-                                <Label htmlFor="r2">Brand</Label>
+                                <Label htmlFor="r2" className="text-gray-800 text-sm font-medium">
+                                    Brand - <span className="font-normal text-[#495057]">Outsource projects and connect with agencies</span>
+                                </Label>
                             </div>
+
                         </RadioGroup>
-                        <div className="flex items-center gap-2">
-                            <Label>Profile</Label>
+                    </div>
+
+
+                    <div className="space-y-2">
+                        <Label htmlFor="file" className="text-sm font-medium text-gray-700">Upload Logo</Label>
+                        <div className="flex items-center space-x-2">
                             <Input
-                                accept="image/*"
+                                id="file"
                                 type="file"
+                                accept="image/*"
                                 onChange={changeFileHandler}
-                                className="cursor-pointer border-black-300"
+                                className="hidden"
                             />
+                            <Label htmlFor="file" className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md  text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 cursor-pointer">
+                                <Upload className="mr-2" size={18} />
+                                Choose file
+                            </Label>
+                            <span className="text-sm text-gray-500">
+                                {input.file ? input.file.name : "No file chosen"}
+                            </span>
                         </div>
                     </div>
-                    {
-                        loading ? (
-                            <Button className="w-full bg-green-500 text-white my-4">
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait 
-                            </Button>
+                    <Button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full py-2 px-4 border border-transparent rounded-md  text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                    >
+                        {loading ? (
+                            <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Please wait
+                            </>
                         ) : (
-                            <Button type="submit" className="w-full bg-green-500 text-white my-4">Signup</Button>
-                        )
-                    }
-                    <span className="text-sm">Already have an account? <Link to="/login" className="text-green-600">Login</Link></span>
+                            "Sign Up"
+                        )}
+                    </Button>
                 </form>
+                <div className="text-center text-sm mt-6">
+                    <span className="text-gray-600">Already have an account?</span>{' '}
+                    <Link to="/login" className="font-medium text-green-600 hover:text-green-500">
+                        Login
+                    </Link>
+                </div>
             </div>
         </div>
     )
