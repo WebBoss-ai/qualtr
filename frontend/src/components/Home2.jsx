@@ -20,9 +20,9 @@ import techdev_white from '../images/logos/techdev_white.png'
 const ResponsiveHome = () => {
     return (
         <div className="font-sans text-gray-900 bg-white">
-             <Helmet>
-        <title>Qualtr | Discover Top Marketing Agencies & Brand Partnerships</title>
-      </Helmet>
+            <Helmet>
+                <title>Qualtr | Discover Top Marketing Agencies & Brand Partnerships</title>
+            </Helmet>
             <Navbar />
             <main>
                 {/* Hero Section */}
@@ -42,12 +42,12 @@ const ResponsiveHome = () => {
 
                             <p className="mt-8 text-sm font-semibold text-gray-500">OUR TRUSTED CUSTOMERS</p>
                             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-4">
-  {/* Add customer logos here */}
-  <img src={dev} alt="Customer 1" className="h-10 w-auto mx-auto" />
-  <img src={deeptrue} alt="Customer 2" className="h-10 w-auto mx-auto" />
-  <img src={dawdle} alt="Customer 3" className="h-10 w-auto mx-auto" />
-  <img src={InsightAssess} alt="Customer 4" className="h-10 w-auto mx-auto" />
-</div>
+                                {/* Add customer logos here */}
+                                <img src={dev} alt="Customer 1" className="h-10 w-auto mx-auto" />
+                                <img src={deeptrue} alt="Customer 2" className="h-10 w-auto mx-auto" />
+                                <img src={dawdle} alt="Customer 3" className="h-10 w-auto mx-auto" />
+                                <img src={InsightAssess} alt="Customer 4" className="h-10 w-auto mx-auto" />
+                            </div>
 
 
                         </div>
@@ -110,7 +110,7 @@ const ResponsiveHome = () => {
                                 src={imgHome}
                                 alt="Agency working on projects"
                                 className="w-400 h-300 rounded-lg object-cover"
-                            style={{ width: '500px', height: '350px', float:"right" }}
+                                style={{ width: '500px', height: '350px', float: "right" }}
                             />
                         </div>
                     </div>
@@ -125,7 +125,7 @@ const ResponsiveHome = () => {
                                 src={img2}
                                 alt="Steps Illustration"
                                 className="w-400 h-300 rounded-lg object-cover"
-                            style={{ width: '500px', height: '350px', float:"left" }}
+                                style={{ width: '500px', height: '350px', float: "left" }}
                             />
                         </div>
                         <div className="md:w-1/2 md:pl-20">
@@ -200,19 +200,19 @@ const ResponsiveHome = () => {
 
                 {/* Testimonial Section */}
                 <section className="py-20 px-4 md:px-8 lg:px-16 bg-gray-50">
-    <div className="max-w-3xl mx-auto text-center">
-        <h2 className="text-3xl md:text-4xl font-bold mb-8">
-            Our Clients <span className="text-[#17B169]">Love Us.</span>
-        </h2>
+                    <div className="max-w-3xl mx-auto text-center">
+                        <h2 className="text-3xl md:text-4xl font-bold mb-8">
+                            Our Clients <span className="text-[#17B169]">Love Us.</span>
+                        </h2>
 
-        {/* Testimonial 1 */}
-        <blockquote className="text-2xl italic text-gray-600 mb-8">
-            "Qualtr transformed our marketing strategy by connecting us with the best agency in the industry. Their platform is seamless and easy to use!"
-        </blockquote>
-        <p className="font-semibold">DeepTrue</p>
-        <p className="text-gray-500">~Consumer Surveys in Minutes</p>
-    </div>
-</section>
+                        {/* Testimonial 1 */}
+                        <blockquote className="text-2xl italic text-gray-600 mb-8">
+                            "Qualtr transformed our marketing strategy by connecting us with the best agency in the industry. Their platform is seamless and easy to use!"
+                        </blockquote>
+                        <p className="font-semibold">DeepTrue</p>
+                        <p className="text-gray-500">~Consumer Surveys in Minutes</p>
+                    </div>
+                </section>
 
 
                 {/* Enterprise Section */}
@@ -243,8 +243,8 @@ const ResponsiveHome = () => {
                                     </li>
                                 </ul>
                                 <button
-                                onClick={() => window.location.href = '/impact'}
-                                 className="bg-white text-[#006241] px-6 py-2 rounded-[10px] font-semibold hover:bg-[#17B169] hover:text-white transition duration-300">
+                                    onClick={() => window.location.href = '/impact'}
+                                    className="bg-white text-[#006241] px-6 py-2 rounded-[10px] font-semibold hover:bg-[#17B169] hover:text-white transition duration-300">
                                     Learn More
                                 </button>
                             </div>
