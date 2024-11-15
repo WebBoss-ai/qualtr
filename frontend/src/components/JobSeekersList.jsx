@@ -17,7 +17,7 @@ const JobSeekersList = () => {
     const [searchQuery, setSearchQuery] = useState("");
 
     const [currentPage, setCurrentPage] = useState(1);
-    const jobSeekersPerPage = 6;
+    const jobSeekersPerPage = 8;
 
     const metroCities = ['Delhi', 'Mumbai', 'Bangalore', 'Kolkata', 'Chennai', 'Hyderabad', 'Pune', 'Ahmedabad'];
     const servicesList = [
@@ -28,7 +28,7 @@ const JobSeekersList = () => {
         'Content Strategy', 'Branding', 'Performance Marketing', 'Lead Generation', 'Community Management'
     ];
 
-    const generateRandomRating = () => (Math.random() * 0.5 + 4).toFixed(1);
+    const generateRandomRating = () => (Math.random() * 0.5 + 4.5).toFixed(1);
 
     useEffect(() => {
         fetch(`${JOB_SEEKER_API_END_POINT}`)
@@ -69,20 +69,23 @@ const JobSeekersList = () => {
         let filtered = jobSeekers;
     
         if (service) {
-            filtered = filtered.filter(js => js.profile.servicesOffered.includes(service));
+            filtered = filtered.filter(js => js.profile?.servicesOffered?.includes(service));
         }
         if (city) {
-            filtered = filtered.filter(js => js.profile.location === city);
+            filtered = filtered.filter(js => js.profile?.location === city);
         }
         if (query) {
-            filtered = filtered.filter(js => 
-                js.profile.agencyName.toLowerCase().includes(query.toLowerCase()) ||
-                js.profile.slogan.toLowerCase().includes(query.toLowerCase())
-            );
+            filtered = filtered.filter(js => {
+                const agencyName = js.profile?.agencyName?.toLowerCase() || "";
+                const slogan = js.profile?.slogan?.toLowerCase() || "";
+                return agencyName.includes(query.toLowerCase()) || slogan.includes(query.toLowerCase());
+            });
         }
+    
         setFilteredJobSeekers(filtered);
         setCurrentPage(1); // Reset to first page after filtering
     };
+    
     
 
     // Pagination logic
@@ -184,7 +187,7 @@ const JobSeekersList = () => {
                                 />
                             </div>
                             {filteredJobSeekers.length > 0 ? (
-                                filteredJobSeekers.map(jobSeeker => (
+                                currentJobSeekers.map(jobSeeker => (
                                     <div key={jobSeeker._id} className="bg-white rounded-lg overflow-hidden transition-all duration-300 border-b border-gray-400"> {/* Removed shadow */}
                                         <div className="p-6">
                                             <div className="flex items-center justify-between mb-4">
