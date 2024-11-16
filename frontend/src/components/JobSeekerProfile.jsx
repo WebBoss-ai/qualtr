@@ -9,6 +9,8 @@ import Footer from './shared/Footer';
 import MessageModal from './MessageModal';
 import { Helmet } from 'react-helmet';
 import { JOB_SEEKER_API_END_POINT } from '@/utils/constant';
+import { Calendar, Star, Shield, Clock } from 'lucide-react'
+import img1 from '../images/img_cta_dm.png'
 
 const JobSeekerProfile = () => {
     const { id } = useParams();
@@ -54,60 +56,60 @@ const JobSeekerProfile = () => {
     return (
         <div>
             <Helmet>
-  {/* Title */}
-  <title>Agency Profile | Partner with the Best on Qualtr</title>
+                {/* Title */}
+                <title>Agency Profile | Partner with the Best on Qualtr</title>
 
-  {/* Meta Tags */}
-  <meta name="description" content="Learn more about agencies on Qualtr. Explore their expertise, past projects, and client reviews to find the perfect partner for your brand's growth." />
-  <meta name="keywords" content="agency profile, digital marketing agencies, find agencies, partner with agencies, agency reviews, Qualtr platform" />
-  <meta name="robots" content="index, follow" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="language" content="en" />
-  <meta name="rating" content="general" />
+                {/* Meta Tags */}
+                <meta name="description" content="Learn more about agencies on Qualtr. Explore their expertise, past projects, and client reviews to find the perfect partner for your brand's growth." />
+                <meta name="keywords" content="agency profile, digital marketing agencies, find agencies, partner with agencies, agency reviews, Qualtr platform" />
+                <meta name="robots" content="index, follow" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                <meta name="language" content="en" />
+                <meta name="rating" content="general" />
 
-  {/* Canonical URL */}
-  <link rel="canonical" href="https://www.qualtr.com/agency/:id" />
+                {/* Canonical URL */}
+                <link rel="canonical" href="https://www.qualtr.com/agency/:id" />
 
-  {/* Favicon */}
-  <link rel="icon" href="/Q.ico" />
+                {/* Favicon */}
+                <link rel="icon" href="/Q.ico" />
 
-  {/* Theme Color */}
-  <meta name="theme-color" content="#0056b3" />
+                {/* Theme Color */}
+                <meta name="theme-color" content="#0056b3" />
 
-  {/* Open Graph */}
-  <meta property="og:title" content="Agency Profile | Partner with the Best on Qualtr" />
-  <meta property="og:description" content="Explore agency profiles on Qualtr. Discover their expertise, past projects, and client reviews to find the ideal partner for your brand's success." />
-  <meta property="og:url" content="https://www.qualtr.com/agency/:id" />
-  <meta property="og:type" content="website" />
-  <meta property="og:image" content="https://www.qualtr.com/images/agency/:id-og.jpg" />
-  <meta property="og:locale" content="en_US" />
+                {/* Open Graph */}
+                <meta property="og:title" content="Agency Profile | Partner with the Best on Qualtr" />
+                <meta property="og:description" content="Explore agency profiles on Qualtr. Discover their expertise, past projects, and client reviews to find the ideal partner for your brand's success." />
+                <meta property="og:url" content="https://www.qualtr.com/agency/:id" />
+                <meta property="og:type" content="website" />
+                <meta property="og:image" content="https://www.qualtr.com/images/agency/:id-og.jpg" />
+                <meta property="og:locale" content="en_US" />
 
-  {/* Twitter Card */}
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Agency Profile | Partner with the Best on Qualtr" />
-  <meta name="twitter:description" content="Learn more about agencies on Qualtr. Find the perfect partner for your brand's growth through detailed profiles and client reviews." />
-  <meta name="twitter:image" content="https://www.qualtr.com/images/agency/:id-twitter.jpg" />
+                {/* Twitter Card */}
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content="Agency Profile | Partner with the Best on Qualtr" />
+                <meta name="twitter:description" content="Learn more about agencies on Qualtr. Find the perfect partner for your brand's growth through detailed profiles and client reviews." />
+                <meta name="twitter:image" content="https://www.qualtr.com/images/agency/:id-twitter.jpg" />
 
-  {/* Structured Data */}
-  <script type="application/ld+json">
-    {JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "WebPage",
-      "name": "Agency Profile",
-      "description": "Learn more about agencies on Qualtr. Explore their expertise, past projects, and client reviews to find the perfect partner for your brand's growth.",
-      "url": "https://www.qualtr.com/agency/:id",
-      "thumbnailUrl": "https://www.qualtr.com/images/agency/:id-og.jpg",
-      "publisher": {
-        "@type": "Organization",
-        "name": "Qualtr",
-        "logo": {
-          "@type": "ImageObject",
-          "url": "https://www.qualtr.com/images/logo.png"
-        }
-      }
-    })}
-  </script>
-</Helmet>
+                {/* Structured Data */}
+                <script type="application/ld+json">
+                    {JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "WebPage",
+                        "name": "Agency Profile",
+                        "description": "Learn more about agencies on Qualtr. Explore their expertise, past projects, and client reviews to find the perfect partner for your brand's growth.",
+                        "url": "https://www.qualtr.com/agency/:id",
+                        "thumbnailUrl": "https://www.qualtr.com/images/agency/:id-og.jpg",
+                        "publisher": {
+                            "@type": "Organization",
+                            "name": "Qualtr",
+                            "logo": {
+                                "@type": "ImageObject",
+                                "url": "https://www.qualtr.com/images/logo.png"
+                            }
+                        }
+                    })}
+                </script>
+            </Helmet>
 
             <Navbar />
             <div className="max-w-6xl mx-auto bg-white border border-gray-200 rounded-2xl my-5 p-10">
@@ -354,6 +356,78 @@ const JobSeekerProfile = () => {
                             )}
                         </div>
                     </div>
+                </div>
+            </div>
+            <div className="max-w-6xl mx-auto bg-white border border-gray-200 rounded-2xl my-5 p-10">
+                <div className="relative bg-gradient-to-br from-gray-50 to-white rounded-2xl overflow-hidden">
+                    <div className="relative z-10 grid lg:grid-cols-2 gap-8 items-center p-8 md:p-12">
+                        {/* Left Content */}
+                        <div className="space-y-6">
+                            <div className="space-y-4">
+                                <h4 className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900">
+                                    Get matched with{' '}
+                                    <span className="relative inline-block">
+                                        <span className="relative z-10 text-[#17B169]">{profile?.profile?.agencyName}</span>
+                                        <span className="absolute inset-x-0 -bottom-2 h-4 bg-coral-100 rounded-full -rotate-1"
+                                            style={{ backgroundColor: 'rgba(23, 177, 105, 0.2)' }} />
+                                    </span>
+                                    <br />
+
+                                </h4>
+                                <p className="text-lg text-gray-600 max-w-2xl">
+                                Schedule a meeting with <span className='text-[#8C4A17]'>{profile?.profile?.agencyName}</span> at your convenience. On Qualtr, it takes just 11 seconds to book—faster than ever!
+                                </p>
+                            </div>
+
+                            {/* Trust Signals */}
+                            <div className="grid sm:grid-cols-3 gap-4 pt-4">
+                                <div className="flex items-center gap-2">
+                                    <Shield className="h-5 w-5 text-green-600" />
+                                    <span className="text-sm text-gray-600">Verified Agency</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <Star className="h-5 w-5 text-amber-400" />
+                                    <span className="text-sm text-gray-600">4.9/5 Success</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <Clock className="h-5 w-5 text-blue-600" />
+                                    <span className="text-sm text-gray-600">24/7 Support</span>
+                                </div>
+                            </div>
+
+                            {/* CTA Button */}
+                            <button
+                                onClick={() => {/* Add your scheduling logic */ }}
+                                className="inline-flex items-center px-6 py-3 rounded-lg text-white font-medium transition-all"
+                                style={{ backgroundColor: '#17B169', boxShadow: '0 4px 14px rgba(23, 177, 105, 0.3)' }}
+                            >
+                                <Calendar className="mr-2 h-5 w-5" />
+                                Schedule a Meeting
+                            </button>
+                        </div>
+
+                        {/* Right Illustration */}
+                        <div className="relative lg:h-full flex items-center justify-center">
+                            <div className="w-full max-w-sm">
+                                <img
+                                    src={img1}
+                                    alt="Descriptive Alt Text"
+                                    className="w-full h-auto"
+                                    style={{ filter: 'drop-shadow(0px 4px 16px rgba(0, 0, 0, 0.1))' }}
+                                />
+                            </div>
+                        </div>
+
+                    </div>
+
+                    {/* Background Pattern */}
+                    <div
+                        className="absolute inset-0 z-0"
+                        style={{
+                            backgroundImage: 'radial-gradient(circle at 20% 80%, rgba(23, 177, 105, 0.1) 0%, transparent 50%)',
+                            backgroundSize: '100% 100%'
+                        }}
+                    />
                 </div>
             </div>
             <Footer />
