@@ -60,8 +60,11 @@ const MyMessages = ({ token }) => {
     return (
         <div className="min-h-screen bg-gray-100">
       <Helmet>
-        <title>Your Messages | Connect with Brands & Agencies</title>
-      </Helmet>
+  <title>Your Messages | Connect with Brands & Agencies</title>
+  <meta name="description" content="Access your messages and communicate seamlessly with brands and agencies. Build strong connections today." />
+  <meta name="keywords" content="messages, connect with agencies, brand communication, agency communication, direct messages, networking, professional connections, Qualtr platform chat" />
+</Helmet>
+
             <Navbar/>
             <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
                 <div className="px-4 py-6 sm:px-0">

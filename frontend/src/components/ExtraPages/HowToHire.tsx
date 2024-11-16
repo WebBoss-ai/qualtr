@@ -12,9 +12,12 @@ import { Helmet } from 'react-helmet';
 export default function HowToHire() {
     return (
         <div>
-             <Helmet>
-        <title>How to Hire | Guide for Brands on Qualtr</title>
-      </Helmet>
+            <Helmet>
+  <title>How to Hire | Guide for Brands on Qualtr</title>
+  <meta name="description" content="Learn how to hire the best marketing agencies with Qualtr. Follow our step-by-step guide to streamline your selection process." />
+  <meta name="keywords" content="how to hire, brand guide, hire marketing agencies, selection process, agency hiring tips" />
+</Helmet>
+
             <Navbar />
             <div className="max-w-6xl mx-auto px-4 py-8 font-sans">
                 <header className="flex flex-col md:flex-row justify-between items-center mb-12">

@@ -29,9 +29,12 @@ const Applicants = () => {
 
     return (
         <div className="min-h-screen flex flex-col bg-gray-50">
-             <Helmet>
-        <title>View Bids | Manage Agencies for Your Project</title>
-      </Helmet>
+           <Helmet>
+  <title>View Bids | Manage Agencies for Your Project</title>
+  <meta name="description" content="Review and manage agency bids for your projects. Compare proposals and select the perfect marketing expert on Qualtr." />
+  <meta name="keywords" content="view bids, manage agencies, project proposals, agency bids, bid management, marketing experts, compare proposals" />
+</Helmet>
+
             <Navbar />
             <main className="flex-grow">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

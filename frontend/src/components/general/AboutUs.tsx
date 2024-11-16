@@ -15,8 +15,11 @@ const AboutUs = () => {
   return (
     <div className="min-h-screen bg-gray-50">
        <Helmet>
-        <title>About Qualtr | Our Mission to Connect Brands and Agencies</title>
-      </Helmet>
+  <title>About Qualtr | Our Mission to Connect Brands and Agencies</title>
+  <meta name="description" content="Learn more about Qualtr, our mission, and how we connect brands with the best marketing agencies for successful partnerships." />
+  <meta name="keywords" content="about Qualtr, brand-agency connection, marketing partnerships, platform mission, successful collaborations" />
+</Helmet>
+
       <Navbar/>
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
 

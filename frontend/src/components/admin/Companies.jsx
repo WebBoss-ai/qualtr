@@ -23,9 +23,12 @@ const Companies = () => {
 
     return (
         <div className="min-h-screen flex flex-col bg-gray-50">
-            <Helmet>
-        <title>Company Directory | Leading Brands on Qualtr</title>
-      </Helmet>
+           <Helmet>
+  <title>Company Directory | Leading Brands on Qualtr</title>
+  <meta name="description" content="Explore the directory of leading brands on Qualtr. Connect with established companies and discover partnership opportunities." />
+  <meta name="keywords" content="company directory, leading brands, brand connections, established companies, partnership opportunities, Qualtr brands" />
+</Helmet>
+
             <Navbar />
             <main className="flex-grow">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

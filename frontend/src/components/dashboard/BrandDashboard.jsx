@@ -42,8 +42,11 @@ const BrandDashboard = () => {
   return (
     <div className="flex h-screen bg-gray-100">
       <Helmet>
-        <title>Brand Dashboard | Your Qualtr Business Insights</title>
-      </Helmet>
+  <title>Brand Dashboard | Your Qualtr Business Insights</title>
+  <meta name="description" content="Access your Qualtr brand dashboard for business insights, project tracking, and performance analysis." />
+  <meta name="keywords" content="brand dashboard, business insights, project tracking, performance analysis, Qualtr analytics" />
+</Helmet>
+
 
       {/* Sidebar */}
       <aside

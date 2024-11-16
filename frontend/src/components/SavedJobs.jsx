@@ -85,9 +85,12 @@ const SavedJobs = () => {
 
     return (
         <div className="p-6">
-            <Helmet>
-        <title>Saved Projects | Your Favorite Opportunities on Qualtr</title>
-      </Helmet>
+           <Helmet>
+  <title>Saved Projects | Your Favorite Opportunities on Qualtr</title>
+  <meta name="description" content="View and manage your saved projects. Explore opportunities that align with your goals." />
+  <meta name="keywords" content="saved projects, favorite opportunities, project tracking, bookmarked projects, business opportunities, potential partnerships, marketing projects, Qualtr saved projects" />
+</Helmet>
+
             <div className="flex flex-col gap-6">
                 {currentJobs.map((job) => (
                     <div key={job._id} className="p-5 rounded-lg border border-[1px] bg-white border-gray-300">

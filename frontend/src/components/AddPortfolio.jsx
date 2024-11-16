@@ -116,8 +116,61 @@ const AddPortfolio = () => {
     return (
         <div className="max-w-6xl mx-auto mt-10 p-8 bg-gray-50 rounded-xl shadow-lg">
             <Helmet>
-        <title>Add Portfolio | Showcase Your Work on Qualtr</title>
-      </Helmet>
+                {/* Title */}
+                <title>Showcase Your Portfolio | Get Discovered on Qualtr</title>
+
+                {/* Meta Tags */}
+                <meta name="description" content="Upload your portfolio to Qualtr and showcase your expertise to top brands and agencies. Boost your visibility and connect with potential clients today." />
+                <meta name="keywords" content="add portfolio, digital marketing portfolio, agency portfolio, showcase work, connect with brands" />
+                <meta name="robots" content="index, follow" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                <meta name="language" content="en" />
+                <meta name="rating" content="general" />
+
+                {/* Canonical URL */}
+                <link rel="canonical" href="https://www.qualtr.com/portfolio" />
+
+                {/* Favicon */}
+                <link rel="icon" href="/Q.ico" />
+
+                {/* Theme Color */}
+                <meta name="theme-color" content="#0056b3" />
+
+                {/* Open Graph */}
+                <meta property="og:title" content="Showcase Your Portfolio | Get Discovered on Qualtr" />
+                <meta property="og:description" content="Qualtr helps professionals upload and showcase their portfolio to get discovered by top brands and agencies. Start today!" />
+                <meta property="og:url" content="https://www.qualtr.com/portfolio" />
+                <meta property="og:type" content="website" />
+                <meta property="og:image" content="https://www.qualtr.com/images/portfolio-og.jpg" />
+                <meta property="og:locale" content="en_US" />
+
+                {/* Twitter Card */}
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content="Showcase Your Portfolio | Get Discovered on Qualtr" />
+                <meta name="twitter:description" content="Upload your portfolio on Qualtr to connect with top brands and agencies. Boost your visibility today." />
+                <meta name="twitter:image" content="https://www.qualtr.com/images/portfolio-twitter.jpg" />
+
+                {/* Structured Data */}
+                <script type="application/ld+json">
+                    {JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "WebPage",
+                        "name": "Showcase Your Portfolio",
+                        "description": "Upload your portfolio to Qualtr and connect with top brands and agencies.",
+                        "url": "https://www.qualtr.com/portfolio",
+                        "thumbnailUrl": "https://www.qualtr.com/images/portfolio-og.jpg",
+                        "publisher": {
+                            "@type": "Organization",
+                            "name": "Qualtr",
+                            "logo": {
+                                "@type": "ImageObject",
+                                "url": "https://www.qualtr.com/images/logo.png"
+                            }
+                        }
+                    })}
+                </script>
+            </Helmet>
+
             <h2 className="text-3xl font-bold mb-8 text-center text-gray-800">
                 {editIndex !== null ? "Edit Portfolio" : "Add Portfolio"}
             </h2>
@@ -143,9 +196,8 @@ const AddPortfolio = () => {
                 <div className="flex justify-center mt-6 space-x-4">
                     <button
                         type="submit"
-                        className={`flex items-center justify-center px-6 py-3 ${
-                            loading ? 'bg-gray-400' : editIndex !== null ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-[#17B169] hover:bg-green-600'
-                        } text-white font-semibold rounded-lg transition duration-200`}
+                        className={`flex items-center justify-center px-6 py-3 ${loading ? 'bg-gray-400' : editIndex !== null ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-[#17B169] hover:bg-green-600'
+                            } text-white font-semibold rounded-lg transition duration-200`}
                         disabled={loading}
                     >
                         {loading ? (
@@ -186,7 +238,7 @@ const AddPortfolio = () => {
                                             onClick={() => toggleExpand(index, 'title')}
                                             className="text-[#495057] ml-2 focus:outline-none"
                                         >
-                                            
+
                                         </button>
                                     )}
                                 </h4>
@@ -231,9 +283,8 @@ const AddPortfolio = () => {
                 <div className="flex justify-center mt-6 space-x-4">
                     <button
                         onClick={goToPreviousPage}
-                        className={`px-4 py-2 bg-[#17B169] text-white rounded-lg hover:bg-green-600 focus:outline-none transition duration-150 ${
-                            currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''
-                        }`}
+                        className={`px-4 py-2 bg-[#17B169] text-white rounded-lg hover:bg-green-600 focus:outline-none transition duration-150 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''
+                            }`}
                         disabled={currentPage === 1}
                     >
                         <ChevronLeft className="w-5 h-5" />
@@ -241,9 +292,8 @@ const AddPortfolio = () => {
                     <span className="text-gray-700">{`Page ${currentPage} of ${totalPages}`}</span>
                     <button
                         onClick={goToNextPage}
-                        className={`px-4 py-2 bg-[#17B169] text-white rounded-lg hover:bg-green-600 focus:outline-none transition duration-150 ${
-                            currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''
-                        }`}
+                        className={`px-4 py-2 bg-[#17B169] text-white rounded-lg hover:bg-green-600 focus:outline-none transition duration-150 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''
+                            }`}
                         disabled={currentPage === totalPages}
                     >
                         <ChevronRight className="w-5 h-5" />

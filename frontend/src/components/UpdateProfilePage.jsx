@@ -117,9 +117,12 @@ const UpdateProfilePage = () => {
       if (field === 'awards') {
         return (
           <div key={field} className="space-y-2">
-             <Helmet>
-        <title>Update Profile | Keep Your Qualtr Information Current</title>
-      </Helmet>
+            <Helmet>
+  <title>Update Profile | Keep Your Qualtr Information Current</title>
+  <meta name="description" content="Keep your profile information up-to-date. Stay ahead by presenting accurate and relevant details." />
+  <meta name="keywords" content="update profile, account information, profile management, user settings, profile updates, professional details, profile accuracy, Qualtr profile changes" />
+</Helmet>
+
             <label className="block text-lg font-semibold text-gray-700">Awards</label>
             {input.awards.map((award, index) => (
               <div key={index} className="space-y-2 border p-4 rounded-md">

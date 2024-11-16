@@ -23,9 +23,12 @@ const AdminJobs = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      <Helmet>
-        <title>Manage Project Listings | Admin Dashboard for Qualtr</title>
-      </Helmet>
+     <Helmet>
+  <title>Manage Project Listings | Admin Dashboard for Qualtr</title>
+  <meta name="description" content="Administer and manage all project listings efficiently on Qualtr. Control project visibility, details, and agency bids from the dashboard." />
+  <meta name="keywords" content="manage project listings, admin dashboard, project administration, project control, project visibility, agency bids management" />
+</Helmet>
+
       <Navbar />
       <main className="flex-grow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

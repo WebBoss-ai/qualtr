@@ -65,9 +65,12 @@ const Login = () => {
     },[])
     return (
         <div>
-             <Helmet>
-        <title>Login to Qualtr | Access Top Agency and Brand Connections</title>
-      </Helmet>
+            <Helmet>
+  <title>Login to Qualtr | Access Top Agency and Brand Connections</title>
+  <meta name="description" content="Log in to Qualtr to access a network of marketing agencies and brands. Stay connected and grow your business relationships." />
+  <meta name="keywords" content="login to Qualtr, access agencies, brand connections, professional networking, marketing collaborations" />
+</Helmet>
+
             <div className="min-h-screen flex items-center justify-center bg-gray-100">
     <div className='flex items-center justify-center max-w-7xl mx-auto w-full'>
         <form onSubmit={submitHandler} className='w-full md:w-1/2 border border-black-600 rounded-md p-6 bg-white shadow-lg'>

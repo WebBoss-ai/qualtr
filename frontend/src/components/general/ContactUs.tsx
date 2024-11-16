@@ -28,8 +28,11 @@ const ContactUs = () => {
   return (
     <div className="min-h-screen bg-gray-100">
       <Helmet>
-        <title>Contact Us | Get in Touch with Qualtr Team</title>
-      </Helmet>
+  <title>Contact Us | Get in Touch with Qualtr Team</title>
+  <meta name="description" content="Reach out to the Qualtr team for support, inquiries, or partnership opportunities. We're here to help!" />
+  <meta name="keywords" content="contact us, Qualtr team, support, inquiries, partnership opportunities, customer service" />
+</Helmet>
+
      
         <Navbar/>
       <header className="bg-white shadow-sm">

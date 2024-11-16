@@ -21,8 +21,44 @@ const ResponsiveHome = () => {
     return (
         <div className="font-sans text-gray-900 bg-white">
             <Helmet>
+                {/* Title */}
                 <title>Qualtr | Discover Top Marketing Agencies & Brand Partnerships</title>
+
+                {/* Meta Descriptions */}
+                <meta name="description" content="Find and connect with top-rated digital marketing agencies on Qualtr. Explore agency profiles, compare services, and build successful brand partnerships today!" />
+                <meta name="keywords" content="digital marketing agencies, brand partnerships, top marketing agencies, marketing services, agency reviews, marketing solutions, find agencies" />
+                <meta name="author" content="Qualtr" />
+
+                {/* Open Graph / Social Sharing */}
+                <meta property="og:title" content="Qualtr | Discover Top Marketing Agencies & Brand Partnerships" />
+                <meta property="og:description" content="Qualtr helps you connect with trusted digital marketing agencies. Compare services, read reviews, and find the perfect match for your brand." />
+                <meta property="og:image" content="https://www.qualtr.com/images/qualtr-og-image.jpg" />
+                <meta property="og:url" content="https://www.qualtr.com" />
+                <meta property="og:type" content="website" />
+
+                {/* Twitter Card Metadata */}
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content="Qualtr | Discover Top Marketing Agencies & Brand Partnerships" />
+                <meta name="twitter:description" content="Find trusted digital marketing agencies on Qualtr. Start your next marketing campaign with the best in the business!" />
+                <meta name="twitter:image" content="https://www.qualtr.com/images/qualtr-twitter-image.jpg" />
+
+                {/* Favicon and Theme */}
+                <link rel="icon" href="/Q.ico" />
+                <meta name="theme-color" content="#0056b3" />
+
+                {/* Robots Meta */}
+                <meta name="robots" content="index, follow" />
+                <meta name="googlebot" content="index, follow" />
+
+                {/* Canonical URL */}
+                <link rel="canonical" href="https://www.qualtr.com" />
+
+                {/* Additional Metadata */}
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                <meta name="language" content="en" />
+                <meta name="rating" content="general" />
             </Helmet>
+
             <Navbar />
             <main>
                 {/* Hero Section */}

@@ -70,8 +70,11 @@ const Signup = () => {
     return (
         <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
             <Helmet>
-                <title>Join Qualtr | Sign Up to Connect with Brands & Agencies</title>
-            </Helmet>
+  <title>Join Qualtr | Sign Up to Connect with Brands & Agencies</title>
+  <meta name="description" content="Create your Qualtr account and connect with leading marketing agencies and brands. Start your journey today!" />
+  <meta name="keywords" content="join Qualtr, sign up, connect with agencies, brand collaborations, account registration, marketing platform" />
+</Helmet>
+
             <div className="w-full mt-16 mb-16 max-w-xl px-6 py-8 bg-white l rounded-xl">
                 <h1 className="text-xl font-bold text-green-600 mb-6 text-center">Sign Up to Qualtr</h1>
                 <form onSubmit={submitHandler} className="space-y-6">

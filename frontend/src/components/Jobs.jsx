@@ -45,9 +45,62 @@ const Jobs = () => {
 
     return (
         <div className="bg-gray-50 min-h-screen">
-            <Helmet>
-        <title>Explore Project Listings | Opportunities for Agencies and Marketers</title>
-      </Helmet>
+      <Helmet>
+  {/* Title */}
+  <title>Explore Project Listings | Opportunities for Agencies and Marketers</title>
+
+  {/* Meta Tags */}
+  <meta name="description" content="Browse top project listings on Qualtr. Find opportunities tailored for agencies and marketers to grow their expertise and portfolio." />
+  <meta name="keywords" content="explore projects, project listings, marketing opportunities, agency projects, Qualtr platform, digital marketing projects" />
+  <meta name="robots" content="index, follow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="language" content="en" />
+  <meta name="rating" content="general" />
+
+  {/* Canonical URL */}
+  <link rel="canonical" href="https://www.qualtr.com/open-projects" />
+
+  {/* Favicon */}
+  <link rel="icon" href="/Q.ico" />
+
+  {/* Theme Color */}
+  <meta name="theme-color" content="#0056b3" />
+
+  {/* Open Graph */}
+  <meta property="og:title" content="Explore Opportunities | Top Projects for Agencies & Marketers" />
+  <meta property="og:description" content="Browse top project listings on Qualtr. Find opportunities tailored for agencies and marketers to grow their expertise and portfolio." />
+  <meta property="og:url" content="https://www.qualtr.com/open-projects" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://www.qualtr.com/images/explore-projects-og.jpg" />
+  <meta property="og:locale" content="en_US" />
+
+  {/* Twitter Card */}
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Explore Opportunities | Top Projects for Agencies & Marketers" />
+  <meta name="twitter:description" content="Browse top project listings on Qualtr. Find opportunities tailored for agencies and marketers to grow your expertise." />
+  <meta name="twitter:image" content="https://www.qualtr.com/images/explore-projects-twitter.jpg" />
+
+  {/* Structured Data */}
+  <script type="application/ld+json">
+    {JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Explore Project Listings",
+      "description": "Browse top project listings on Qualtr. Find opportunities tailored for agencies and marketers to grow their expertise and portfolio.",
+      "url": "https://www.qualtr.com/open-projects",
+      "thumbnailUrl": "https://www.qualtr.com/images/explore-projects-og.jpg",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Qualtr",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://www.qualtr.com/images/logo.png"
+        }
+      }
+    })}
+  </script>
+</Helmet>
+
             <Navbar />
             <div className="max-w-7xl mx-auto mt-5 p-4">
                 <div className="flex flex-col lg:flex-row gap-6">

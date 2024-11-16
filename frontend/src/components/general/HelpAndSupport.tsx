@@ -48,9 +48,12 @@ const HelpAndSupport = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-       <Helmet>
-        <title>Help & Support | Assistance with Qualtr Platform</title>
-      </Helmet>
+      <Helmet>
+  <title>Help & Support | Assistance with Qualtr Platform</title>
+  <meta name="description" content="Find answers to your questions or get assistance with the Qualtr platform. Access our Help & Support center." />
+  <meta name="keywords" content="help and support, Qualtr assistance, FAQ, platform guidance, customer help, support center" />
+</Helmet>
+
       <Navbar/>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

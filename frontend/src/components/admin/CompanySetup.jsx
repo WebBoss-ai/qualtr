@@ -77,9 +77,12 @@ const CompanySetup = () => {
 
     return (
         <div>
-            <Helmet>
-        <title>Setup Your Brand Profile | Qualtr Business Center</title>
-      </Helmet>
+           <Helmet>
+  <title>Setup Your Brand Profile | Qualtr Business Center</title>
+  <meta name="description" content="Customize your brand profile on Qualtr and highlight your expertise to attract the best agency partners." />
+  <meta name="keywords" content="setup brand profile, Qualtr business center, brand customization, attract agencies, business profile optimization" />
+</Helmet>
+
             <Navbar />
             <div className='max-w-xl mx-auto my-10'>
                 <form onSubmit={submitHandler}>

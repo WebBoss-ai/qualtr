@@ -52,6 +52,8 @@ const QualtrSuccessStories = () => {
     <div className="min-h-screen bg-gray-50">
        <Helmet>
         <title>Success Stories | Qualtr Connections That Made a Difference</title>
+        <meta name="description" content="Discover inspiring success stories of brands and agencies connected through Qualtr. See how our platform fosters impactful partnerships and drives business growth." />
+  <meta name="keywords" content="success stories, brand-agency partnerships, impactful collaborations, marketing success stories, Qualtr achievements, business growth through partnerships" />
       </Helmet>
       <Navbar/>
 

@@ -102,9 +102,12 @@ const JobSeekersList = () => {
 
     return (
         <div className="bg-gray-50 min-h-screen font-sans">
-            <Helmet>
-        <title>Agency Listings | Browse Qualified Marketing Agencies</title>
-      </Helmet>
+           <Helmet>
+  <title>Agency Listings | Browse Qualified Marketing Agencies</title>
+  <meta name="description" content="Discover and browse through our curated list of qualified marketing agencies. Find the perfect partner for your business needs." />
+  <meta name="keywords" content="marketing agencies, agency listings, business partnerships, branding partners, advertising agencies, creative agencies, top agencies, business growth partners" />
+</Helmet>
+
             <Navbar />
             <div className="max-w-9xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
                 <div className="flex flex-col lg:flex-row lg:gap-12">

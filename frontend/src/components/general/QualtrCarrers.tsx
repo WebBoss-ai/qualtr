@@ -59,8 +59,11 @@ const QualtrCareers = () => {
   return (
     <div className="min-h-screen bg-gray-50">
         <Helmet>
-        <title>Careers at Qualtr | Join Our Team</title>
-      </Helmet>
+  <title>Careers at Qualtr | Join Our Team</title>
+  <meta name="description" content="Join the team at Qualtr and contribute to connecting brands with the best marketing agencies. Explore exciting career opportunities." />
+  <meta name="keywords" content="careers at Qualtr, join our team, career opportunities, work at Qualtr, marketing platform jobs" />
+</Helmet>
+
      
       <Navbar/>
       {/* <header className="bg-white shadow-sm">

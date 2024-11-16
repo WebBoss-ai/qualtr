@@ -36,8 +36,11 @@ const CompanyCreate = () => {
     return (
         <div>
             <Helmet>
-        <title>Create New Company Profile | Qualtr for Brands</title>
-      </Helmet>
+  <title>Create New Company Profile | Qualtr for Brands</title>
+  <meta name="description" content="Set up your company profile on Qualtr to showcase your business and connect with top marketing agencies." />
+  <meta name="keywords" content="create company profile, brand setup, connect with agencies, company visibility, Qualtr business profile, marketing collaborations" />
+</Helmet>
+
             <Navbar />
             <div className='max-w-4xl mx-auto'>
                 <div className='my-10'>

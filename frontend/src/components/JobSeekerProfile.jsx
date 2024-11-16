@@ -53,9 +53,62 @@ const JobSeekerProfile = () => {
 
     return (
         <div>
-             <Helmet>
-        <title>Agency Profile | Learn More About Our Partners</title>
-      </Helmet>
+            <Helmet>
+  {/* Title */}
+  <title>Agency Profile | Partner with the Best on Qualtr</title>
+
+  {/* Meta Tags */}
+  <meta name="description" content="Learn more about agencies on Qualtr. Explore their expertise, past projects, and client reviews to find the perfect partner for your brand's growth." />
+  <meta name="keywords" content="agency profile, digital marketing agencies, find agencies, partner with agencies, agency reviews, Qualtr platform" />
+  <meta name="robots" content="index, follow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="language" content="en" />
+  <meta name="rating" content="general" />
+
+  {/* Canonical URL */}
+  <link rel="canonical" href="https://www.qualtr.com/agency/:id" />
+
+  {/* Favicon */}
+  <link rel="icon" href="/Q.ico" />
+
+  {/* Theme Color */}
+  <meta name="theme-color" content="#0056b3" />
+
+  {/* Open Graph */}
+  <meta property="og:title" content="Agency Profile | Partner with the Best on Qualtr" />
+  <meta property="og:description" content="Explore agency profiles on Qualtr. Discover their expertise, past projects, and client reviews to find the ideal partner for your brand's success." />
+  <meta property="og:url" content="https://www.qualtr.com/agency/:id" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://www.qualtr.com/images/agency/:id-og.jpg" />
+  <meta property="og:locale" content="en_US" />
+
+  {/* Twitter Card */}
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Agency Profile | Partner with the Best on Qualtr" />
+  <meta name="twitter:description" content="Learn more about agencies on Qualtr. Find the perfect partner for your brand's growth through detailed profiles and client reviews." />
+  <meta name="twitter:image" content="https://www.qualtr.com/images/agency/:id-twitter.jpg" />
+
+  {/* Structured Data */}
+  <script type="application/ld+json">
+    {JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Agency Profile",
+      "description": "Learn more about agencies on Qualtr. Explore their expertise, past projects, and client reviews to find the perfect partner for your brand's growth.",
+      "url": "https://www.qualtr.com/agency/:id",
+      "thumbnailUrl": "https://www.qualtr.com/images/agency/:id-og.jpg",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Qualtr",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://www.qualtr.com/images/logo.png"
+        }
+      }
+    })}
+  </script>
+</Helmet>
+
             <Navbar />
             <div className="max-w-6xl mx-auto bg-white border border-gray-200 rounded-2xl my-5 p-10">
                 {/* Header Section */}

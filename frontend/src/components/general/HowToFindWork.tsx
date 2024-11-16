@@ -10,9 +10,12 @@ import { Helmet } from 'react-helmet';
 const HowToFindWork = () => {
     return (
         <div>
-            <Helmet>
-        <title>How to Find Work | Tips for Agencies</title>
-      </Helmet>
+           <Helmet>
+  <title>How to Find Work | Tips for Agencies</title>
+  <meta name="description" content="Discover tips and strategies for agencies to find work on Qualtr. Build a strong portfolio and connect with brands." />
+  <meta name="keywords" content="find work, tips for agencies, agency work strategies, connect with brands, Qualtr opportunities" />
+</Helmet>
+
             <Navbar />
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 {/* Hero Section */}

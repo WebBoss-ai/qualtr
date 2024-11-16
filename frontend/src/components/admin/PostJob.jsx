@@ -115,9 +115,12 @@ const PostJob = () => {
             case 1:
                 return (
                     <div>
-                        <Helmet>
-        <title>Post a New Project | Find Marketing Experts on Qualtr</title>
-      </Helmet>
+                     <Helmet>
+  <title>Post a New Project | Find Marketing Experts on Qualtr</title>
+  <meta name="description" content="Post your project on Qualtr to connect with top marketing agencies. Share details and attract expert bids tailored to your needs." />
+  <meta name="keywords" content="post a new project, find marketing experts, project submissions, agency bids, marketing collaborations, expert marketers" />
+</Helmet>
+
                         <Label>I'm looking for...</Label>
                         <Input
                             type="text"

@@ -217,8 +217,11 @@ const ProfileDashboard = () => {
     return (
         <div className="flex flex-col lg:flex-row min-h-screen bg-gray-100">
             <Helmet>
-                <title>Your Profile | Manage Your Qualtr Account & Portfolio</title>
-            </Helmet>
+  <title>Your Profile | Manage Your Qualtr Account & Portfolio</title>
+  <meta name="description" content="Manage your Qualtr account, update your portfolio, and showcase your expertise to potential partners." />
+  <meta name="keywords" content="profile management, update portfolio, Qualtr account, professional profile, online portfolio, user account settings, profile customization, career showcase" />
+</Helmet>
+
             <aside
                 className={`${
                     isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
