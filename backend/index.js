@@ -19,6 +19,7 @@ import analyticsRoute from "./routes/analytics.route.js";
 import jobAnalyticsRoute from "./routes/jobAnalytics.route.js";
 import portfolioRoute from "./routes/portfolio.route.js";
 import messageRoute from "./routes/message.route.js";
+// import meetingRoute from "./routes/meeting.route.js";
 
 dotenv.config();
 
@@ -71,6 +72,7 @@ app.use("/api/v1/analytics", analyticsRoute);
 app.use("/api/v1/job-analytics", jobAnalyticsRoute);
 app.use("/api/v1/portfolio", portfolioRoute);
 app.use("/api/v1/message", messageRoute);
+// app.use("/api/v1/meeting", meetingRoute);
 
 // Serve React frontend for other routes
 app.get('*', (req, res) => {
