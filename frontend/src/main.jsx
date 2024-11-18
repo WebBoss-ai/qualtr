@@ -1,13 +1,14 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
-import './index.css'
-import { Toaster } from './components/ui/sonner.jsx'
-import { Provider } from 'react-redux'
-import store from './redux/store.js'
-import { persistStore } from 'redux-persist'
-import { PersistGate } from 'redux-persist/integration/react'
-import { UserProvider } from './context/UserContext' // Import UserProvider
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App.jsx';
+import './index.css';
+import { Toaster } from './components/ui/sonner.jsx';
+import { Provider } from 'react-redux';
+import store from './redux/store.js';
+import { persistStore } from 'redux-persist';
+import { PersistGate } from 'redux-persist/integration/react';
+import { HelmetProvider } from 'react-helmet-async'; // Import HelmetProvider
+import { UserProvider } from './context/UserContext'; // Import UserProvider
 
 const persistor = persistStore(store);
 
@@ -15,9 +16,13 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-          <App />
-          <Toaster />
+        <HelmetProvider>
+          <UserProvider>
+            <App />
+            <Toaster />
+          </UserProvider>
+        </HelmetProvider>
       </PersistGate>
     </Provider>
   </React.StrictMode>
-)
+);

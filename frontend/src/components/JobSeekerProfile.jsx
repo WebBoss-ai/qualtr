@@ -20,6 +20,9 @@ const JobSeekerProfile = () => {
     const [isModalOpen, setIsModalOpen] = useState(false); // State for modal open
     const [mailIconDisabled, setMailIconDisabled] = useState(false);
 
+
+
+
     const handleMailClick = () => {
         if (mailIconDisabled) {
             alert("Your message has already been sent. Qualtr will reach out to you soon.");
@@ -375,7 +378,7 @@ const JobSeekerProfile = () => {
 
                                 </h4>
                                 <p className="text-lg text-gray-600 max-w-2xl">
-                                Schedule a meeting with <span className='text-[#8C4A17]'>{profile?.profile?.agencyName}</span> at your convenience. On Qualtr, it takes just 11 seconds to book—faster than ever!
+                                    Schedule a meeting with <span className='text-[#8C4A17]'>{profile?.profile?.agencyName}</span> at your convenience. On Qualtr, it takes just 11 seconds to book—faster than ever!
                                 </p>
                             </div>
 
@@ -395,7 +398,6 @@ const JobSeekerProfile = () => {
                                 </div>
                             </div>
 
-                            {/* CTA Button */}
                             <button
                                 onClick={() => {/* Add your scheduling logic */ }}
                                 className="inline-flex items-center px-6 py-3 rounded-lg text-white font-medium transition-all"
