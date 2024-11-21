@@ -38,7 +38,7 @@ const Browse = () => {
   <link rel="icon" href="/Q.ico" />
 
   {/* Theme Color */}
-  <meta name="theme-color" content="#0056b3" />
+  <meta name="theme-color" content="#17B169" />
 
   {/* Open Graph */}
   <meta property="og:title" content="Discover Projects & Agencies | Qualtr - Empower Your Brand" />

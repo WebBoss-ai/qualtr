@@ -229,3 +229,40 @@ export default PostJob;
   </button>
 </div>
 </section>
+
+
+
+
+                {/* Features Section */}
+                <section className="py-20 px-4 md:px-8 lg:px-16 bg-gray-50">
+                    <div className="max-w-7xl mx-auto">
+                        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-center">
+                            Our <span className="text-[#17B169]">Services</span> for Your Business Growth
+                        </h2>
+                        <p className="text-xl text-gray-600 mb-12 text-center max-w-3xl mx-auto">
+                            We bridge the gap between brands and top-tier digital marketing agencies, offering tailored solutions for your business needs.
+                        </p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {[
+                                { icon: '🏷️', title: 'Branding and Identity', description: 'Craft a strong, unique brand identity that connects with your target audience.' },
+                                { icon: '📱', title: 'Social Media Marketing', description: 'Develop effective social media strategies to boost your online presence.' },
+                                { icon: '🔍', title: 'Search Engine Optimization (SEO)', description: 'Optimize your website and increase organic visibility in search rankings.' },
+                                { icon: '💰', title: 'Pay-Per-Click (PPC) Advertising', description: 'Launch targeted ad campaigns that drive high-quality traffic and results.' },
+                                { icon: '✍️', title: 'Content Marketing', description: 'Create meaningful content to attract, engage, and convert your audience.' },
+                                { icon: '📧', title: 'Email Marketing', description: 'Build and nurture relationships with tailored email campaigns.' },
+                            ].map((feature, index) => (
+                                <div key={index} className="bg-white p-6 rounded-lg shadow-md">
+                                    <div className="text-4xl mb-4">{feature.icon}</div>
+                                    <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+                                    <p className="text-gray-600">{feature.description}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
+
+<Avatar className="h-24 w-24">
+                            <AvatarImage src={profile?.profile?.profilePhoto || 'https://via.placeholder.com/150'} alt="profile" />
+                        </Avatar>
+                        

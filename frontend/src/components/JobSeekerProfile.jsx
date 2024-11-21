@@ -77,7 +77,7 @@ const JobSeekerProfile = () => {
                 <link rel="icon" href="/Q.ico" />
 
                 {/* Theme Color */}
-                <meta name="theme-color" content="#0056b3" />
+                <meta name="theme-color" content="#17B169" />
 
                 {/* Open Graph */}
                 <meta property="og:title" content="Agency Profile | Partner with the Best on Qualtr" />
@@ -119,9 +119,14 @@ const JobSeekerProfile = () => {
                 {/* Header Section */}
                 <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center gap-4">
-                        <Avatar className="h-24 w-24">
-                            <AvatarImage src={profile?.profile?.profilePhoto || 'https://via.placeholder.com/150'} alt="profile" />
-                        </Avatar>
+                        
+                        <div className="h-24 w-24 rounded-full flex items-center justify-center overflow-hidden">
+                                                <img
+                                                    src={profile.profile.profilePhoto || "https://via.placeholder.com/40"}
+                                                    alt={`${profile?.profile?.agencyName || "Agency"} logo`}
+                                                    className="h-full w-full object-contain"
+                                                />
+                                        </div>
                         <div>
                             <h1 className="text-3xl font-semibold text-gray-800">{profile?.profile?.agencyName}</h1>
                             <p className="text-sm text-gray-500 flex items-center gap-2">

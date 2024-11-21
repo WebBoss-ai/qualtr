@@ -64,7 +64,7 @@ const Jobs = () => {
   <link rel="icon" href="/Q.ico" />
 
   {/* Theme Color */}
-  <meta name="theme-color" content="#0056b3" />
+  <meta name="theme-color" content="#17B169" />
 
   {/* Open Graph */}
   <meta property="og:title" content="Explore Opportunities | Top Projects for Agencies & Marketers" />

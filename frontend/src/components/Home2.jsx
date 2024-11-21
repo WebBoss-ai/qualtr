@@ -1,5 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
 import { Helmet } from 'react-helmet';
+import { JOB_SEEKER_API_END_POINT } from "@/utils/constant";
+import { Star, Globe, DollarSign, Briefcase, MapPin, ExternalLink } from "lucide-react";
+import { Badge } from './ui/badge';
 import { FaSearch, FaCheckCircle, FaClock, FaCogs } from 'react-icons/fa';
 import img1 from '../images/img1.png'
 import img2 from '../images/img2.png'
@@ -9,7 +12,7 @@ import imgHome from '../images/img_home.jpg'
 import Navbar from './shared/Navbar';
 import Footer from './shared/Footer';
 import styled from 'styled-components';
-
+import { useDispatch, useSelector } from 'react-redux'
 import dev from '../images/logos/dev.png'
 import dawdle from '../images/logos/dawdle.jpg'
 import deeptrue from '../images/logos/deeptrue.jpg'
@@ -18,11 +21,29 @@ import techdev_white from '../images/logos/techdev_white.png'
 
 
 const ResponsiveHome = () => {
+    const { user } = useSelector(store => store.auth)
+
+    const [randomJobSeekers, setRandomJobSeekers] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        fetch(`${JOB_SEEKER_API_END_POINT}`)
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success) {
+                    const shuffledJobSeekers = data.jobSeekers.sort(() => 0.5 - Math.random());
+                    setRandomJobSeekers(shuffledJobSeekers.slice(0, 6));
+                }
+            })
+            .catch((error) => console.error("Error fetching job seekers:", error))
+            .finally(() => setIsLoading(false));
+    }, []);
+
     return (
         <div className="font-sans text-gray-900 bg-white">
             <Helmet>
                 {/* Title */}
-                <title>Qualtr | Discover Top Marketing Agencies & Brand Partnerships</title>
+                <title>Qualtr | Connect with Top Digital Marketing Agencies</title>
 
                 {/* Meta Descriptions */}
                 <meta name="description" content="Find and connect with top-rated digital marketing agencies on Qualtr. Explore agency profiles, compare services, and build successful brand partnerships today!" />
@@ -30,7 +51,7 @@ const ResponsiveHome = () => {
                 <meta name="author" content="Qualtr" />
 
                 {/* Open Graph / Social Sharing */}
-                <meta property="og:title" content="Qualtr | Discover Top Marketing Agencies & Brand Partnerships" />
+                <meta property="og:title" content="Qualtr | Connect with Top Digital Marketing Agencies" />
                 <meta property="og:description" content="Qualtr helps you connect with trusted digital marketing agencies. Compare services, read reviews, and find the perfect match for your brand." />
                 <meta property="og:image" content="https://www.qualtr.com/images/qualtr-og-image.jpg" />
                 <meta property="og:url" content="https://www.qualtr.com" />
@@ -38,13 +59,13 @@ const ResponsiveHome = () => {
 
                 {/* Twitter Card Metadata */}
                 <meta name="twitter:card" content="summary_large_image" />
-                <meta name="twitter:title" content="Qualtr | Discover Top Marketing Agencies & Brand Partnerships" />
+                <meta name="twitter:title" content="Qualtr | Connect with Top Digital Marketing Agencies" />
                 <meta name="twitter:description" content="Find trusted digital marketing agencies on Qualtr. Start your next marketing campaign with the best in the business!" />
                 <meta name="twitter:image" content="https://www.qualtr.com/images/qualtr-twitter-image.jpg" />
 
                 {/* Favicon and Theme */}
                 <link rel="icon" href="/Q.ico" />
-                <meta name="theme-color" content="#0056b3" />
+                <meta name="theme-color" content="#17B169" />
 
                 {/* Robots Meta */}
                 <meta name="robots" content="index, follow" />
@@ -66,15 +87,33 @@ const ResponsiveHome = () => {
                     <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center">
                         <div className="md:w-1/2 mb-10 md:mb-0">
                             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-                                Connect with <span className="text-[#17B169]">Marketing Agencies</span> on Qualtr.
+                                Connect with{" "}
+                                <span className="text-[#17B169]">
+                                    {user?.role === 'student' ? "Brands" : "Marketing Agencies"}
+                                </span>{" "}
+                                on Qualtr.
                             </h1>
-                            <p className="text-xl text-gray-600 mb-8">Find the perfect agency to elevate your brand.</p>
+                            <p className="text-xl text-gray-600 mb-8">
+                                {user?.role === 'student'
+                                    ? "Find the perfect brand to collaborate with and showcase your skills."
+                                    : "Find the perfect agency to elevate your brand."}
+                            </p>
+
                             <button
                                 className="bg-transparent text-[#006241] px-6 py-2 font-semibold border-2 border-[#006241] rounded-[5px] hover:bg-[#006241] hover:text-white transition duration-300"
-                                onClick={() => window.location.href = '/admin/projects'}
+                                onClick={() => {
+                                    if (!user) {
+                                        window.location.href = '/login';
+                                    } else if (user.role === 'student') {
+                                        window.location.href = '/open-projects';
+                                    } else if (user.role === 'recruiter') {
+                                        window.location.href = '/agencies';
+                                    }
+                                }}
                             >
                                 Get Started
                             </button>
+
 
                             <p className="mt-8 text-sm font-semibold text-gray-500">OUR TRUSTED CUSTOMERS</p>
                             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-4">
@@ -93,33 +132,105 @@ const ResponsiveHome = () => {
                     </div>
                 </section>
 
-                {/* Features Section */}
-                <section className="py-20 px-4 md:px-8 lg:px-16 bg-gray-50">
+                <main className="py-14 px-4 md:px-8 lg:px-8 bg-gray-50">
                     <div className="max-w-7xl mx-auto">
-                        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-center">
-                            Our <span className="text-[#17B169]">Services</span> for Your Business Growth
-                        </h2>
+                        <h1 className="text-3xl font-bold text-gray-900 mb-2 text-center">Our <span className="text-[#17B169]">Featured Marketing Agencies</span> for Your Business Growth</h1>
                         <p className="text-xl text-gray-600 mb-12 text-center max-w-3xl mx-auto">
                             We bridge the gap between brands and top-tier digital marketing agencies, offering tailored solutions for your business needs.
                         </p>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {[
-                                { icon: '🏷️', title: 'Branding and Identity', description: 'Craft a strong, unique brand identity that connects with your target audience.' },
-                                { icon: '📱', title: 'Social Media Marketing', description: 'Develop effective social media strategies to boost your online presence.' },
-                                { icon: '🔍', title: 'Search Engine Optimization (SEO)', description: 'Optimize your website and increase organic visibility in search rankings.' },
-                                { icon: '💰', title: 'Pay-Per-Click (PPC) Advertising', description: 'Launch targeted ad campaigns that drive high-quality traffic and results.' },
-                                { icon: '✍️', title: 'Content Marketing', description: 'Create meaningful content to attract, engage, and convert your audience.' },
-                                { icon: '📧', title: 'Email Marketing', description: 'Build and nurture relationships with tailored email campaigns.' },
-                            ].map((feature, index) => (
-                                <div key={index} className="bg-white p-6 rounded-lg shadow-md">
-                                    <div className="text-4xl mb-4">{feature.icon}</div>
-                                    <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                                    <p className="text-gray-600">{feature.description}</p>
-                                </div>
-                            ))}
+                        {isLoading ? (
+                            <div className="flex justify-center items-center h-64">
+                                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {randomJobSeekers.map((jobSeeker) => (
+                                    <div
+                                        key={jobSeeker._id}
+                                        className="bg-white rounded-lg border border-gray-300 overflow-hidden hover:border-[#17B169] transition-border duration-300"
+                                    >
+                                        <div className="p-4">
+                                            <div className="flex items-center space-x-3 mb-3">
+                                                <div className="h-12 w-12 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden">
+                                                    <a href={`/agency/${jobSeeker._id}`}>
+                                                        <img
+                                                            src={jobSeeker.profile.profilePhoto || "https://via.placeholder.com/40"}
+                                                            alt={`${jobSeeker?.profile?.agencyName || "Agency"} logo`}
+                                                            className="h-full w-full object-contain"
+                                                        />
+                                                    </a>
+                                                </div>
+                                                <div>
+                                                    <a href={`/agency/${jobSeeker._id}`}>
+                                                        <h2 className="text-lg font-semibold text-gray-900 leading-tight hover:text-[#17B169] transition-colors duration-200">
+                                                            {(jobSeeker?.profile?.agencyName?.slice(0, 20) || "Unknown Agency")}
+                                                        </h2>
+                                                    </a>
+                                                    <p className="text-sm text-gray-500 truncate">
+                                                        {(jobSeeker?.profile?.slogan?.slice(0, 30) + "..." || "Innovating for tomorrow")}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-2 text-sm mb-3">
+                                                <div className="flex items-center text-gray-700">
+                                                    <Globe className="h-4 w-4 text-green-500 mr-1" />
+                                                    <span>Year Founded: {jobSeeker?.profile?.yearFounded || "N/A"}</span>
+                                                </div>
+                                                <div className="flex items-center text-gray-700">
+                                                    <MapPin className="h-4 w-4 text-red-500 mr-1" />
+                                                    <span className="truncate">{jobSeeker.profile.location || "Remote"}</span>
+                                                </div>
+                                                <div className="col-span-2 rounded-lg" style={{ overflowX: 'auto', whiteSpace: 'nowrap', scrollBehavior: 'smooth' }}>
+                                                    <div className="flex gap-2 mt-3">
+                                                        {jobSeeker?.profile?.expertise?.length ? (
+                                                            jobSeeker?.profile?.expertise.slice(-5).map((expertise, index) => (
+                                                                <Badge key={index} className="border border-gray-400 font-light bg-white-500 text-gray-800 px-4 py-1 hover:bg-black hover:text-white transition duration-200">
+                                                                    {expertise}
+                                                                </Badge>
+                                                            ))
+                                                        ) : (
+                                                            <span className="text-sm text-gray-500">No expertise listed.</span>
+                                                        )}
+                                                    </div>
+                                                </div>
+
+                                                <style jsx>{`
+                                            /* Hide scrollbar */
+                                            .col-span-2::-webkit-scrollbar {
+                                                display: none;
+                                            }
+
+                                            /* Smooth scrolling behavior */
+                                            .col-span-2 {
+                                                -ms-overflow-style: none;  /* Internet Explorer 10+ */
+                                                scrollbar-width: none;  /* Firefox */
+                                            }
+                                        `}</style>
+
+                                            </div>
+                                            <a
+                                                href={`/agency/${jobSeeker._id}`}
+                                                className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md hover:text-[#006241] text-[#17B169] bg-green-100 hover:bg-green-200 transition-colors duration-200"
+                                            >
+                                                View Profile
+                                                <ExternalLink className="ml-1 h-4 w-4" />
+                                            </a>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        <div className="mt-8 text-center">
+                            <a
+                                href="/agencies"
+                                className="inline-flex items-center px-4 py-2 border border-transparent text-base font-small rounded-md text-white bg-[#17B169] hover:bg-[#006241] transition-colors duration-200"
+                            >
+                                Explore All Agencies
+                            </a>
                         </div>
                     </div>
-                </section>
+                </main>
 
                 {/* Quality Work Section */}
                 <section className="py-20 px-4 md:px-8 lg:px-16">
