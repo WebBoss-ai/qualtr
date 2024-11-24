@@ -1,6 +1,6 @@
 // routes/messageRoutes.js
 import express from "express";
-import { sendMessage, getUserMessages, getAllMessages } from "../controllers/messageController.js";
+import { sendMessage, getUserMessages, getAllMessages, updateMessageById } from "../controllers/messageController.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 
 const router = express.Router();
@@ -12,6 +12,9 @@ router.route("/send").post(isAuthenticated, sendMessage);
 router.route("/my-messages").get(isAuthenticated, getUserMessages);
 
 // Fetch all messages (admin or superuser feature maybe?)
-router.route("/all-messages").get(isAuthenticated, getAllMessages);
+router.route("/all-messages").get( getAllMessages);
+
+// Update a message by ID (admin feature)
+router.route("/all-messages/:id").put( updateMessageById);
 
 export default router;

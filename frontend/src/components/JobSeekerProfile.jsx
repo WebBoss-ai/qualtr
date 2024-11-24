@@ -11,6 +11,9 @@ import { Helmet } from 'react-helmet';
 import { JOB_SEEKER_API_END_POINT } from '@/utils/constant';
 import { Calendar, Star, Shield, Clock } from 'lucide-react'
 import img1 from '../images/img_cta_dm.png'
+import { useSelector } from 'react-redux'
+import { X, LogIn } from 'lucide-react';
+
 
 const JobSeekerProfile = () => {
     const { id } = useParams();
@@ -19,9 +22,19 @@ const JobSeekerProfile = () => {
     const [selectedPortfolio, setSelectedPortfolio] = useState(null); // State for selected portfolio
     const [isModalOpen, setIsModalOpen] = useState(false); // State for modal open
     const [mailIconDisabled, setMailIconDisabled] = useState(false);
+    const { user } = useSelector(store => store.auth)
 
+    const [showModal, setShowModal] = useState(false);
 
+    const handleClick2 = () => {
+        if (!user) {
+            setShowModal2(true); // Show the modal
+        } else {
+            handleMailClick();
+        }
+    };
 
+    const [showModal2, setShowModal2] = useState(false);
 
     const handleMailClick = () => {
         if (mailIconDisabled) {
@@ -119,14 +132,14 @@ const JobSeekerProfile = () => {
                 {/* Header Section */}
                 <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center gap-4">
-                        
+
                         <div className="h-24 w-24 rounded-full flex items-center justify-center overflow-hidden">
-                                                <img
-                                                    src={profile.profile.profilePhoto || "https://via.placeholder.com/40"}
-                                                    alt={`${profile?.profile?.agencyName || "Agency"} logo`}
-                                                    className="h-full w-full object-contain"
-                                                />
-                                        </div>
+                            <img
+                                src={profile.profile.profilePhoto || "https://via.placeholder.com/40"}
+                                alt={`${profile?.profile?.agencyName || "Agency"} logo`}
+                                className="h-full w-full object-contain"
+                            />
+                        </div>
                         <div>
                             <h1 className="text-3xl font-semibold text-gray-800">{profile?.profile?.agencyName}</h1>
                             <p className="text-sm text-gray-500 flex items-center gap-2">
@@ -135,17 +148,99 @@ const JobSeekerProfile = () => {
                             </p>
                         </div>
                     </div>
-                    <Mail
-                        className={`w-8 h-8 cursor-pointer ${mailIconDisabled ? 'text-gray-400' : 'text-green-700'}`}
-                        onClick={handleMailClick}
-                    />
-                    {isModalOpen && (
-                        <MessageModal
-                            jobSeekerId={profile?.profile?._id}
-                            onClose={() => setIsModalOpen(false)}
-                            setMailIconDisabled={setMailIconDisabled}
-                        />
-                    )}                </div>
+                    <div className="relative">
+    <button
+        className="px-6 py-3 text-white bg-gradient-to-r from-red-500 to-red-600 font-bold rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-300 ease-in-out transform hover:scale-105 shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+        onClick={() => {
+            if (!user) {
+                // Show the second modal if not authenticated
+                setShowModal2(true);
+            } else {
+                // Show the first modal if authenticated
+                setShowModal(true);
+            }
+        }}
+    >
+        Discuss Project
+    </button>
+
+    {/* Modal 1 - For authenticated users */}
+    {showModal && (
+        <MessageModal
+            agency={profile?.profile?.agencyName || 'Your Preferred Agency'}
+            agencyEmail={profile?.email || 'Your Preferred Agency Email'}
+            userEmail={user?.email || 'Your Email'}
+            userPhone={user?.phoneNumber || 'Your Phone'}
+            setMailIconDisabled={setMailIconDisabled}
+            setShowModal={setShowModal}
+            onClose={() => setShowModal(false)} // Close the modal
+        />
+    )}
+
+    {/* Modal 2 - For non-authenticated users */}
+    {showModal2 && (
+        <div className="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+                <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                    <div className="absolute top-0 right-0 pt-4 pr-4">
+                        <button
+                            type="button"
+                            className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                            onClick={() => setShowModal2(false)}
+                            
+                        >
+                            <span className="sr-only">Close</span>
+                            <X className="h-6 w-6" aria-hidden="true" />
+                        </button>
+                    </div>
+                    <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                        <div className="sm:flex sm:items-start">
+                            <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                                <Mail className="h-6 w-6 text-red-600" aria-hidden="true" />
+                            </div>
+                            <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                                <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                                    Let's Market Something Amazing!
+                                </h3>
+                                <div className="mt-2">
+                                    <p className="text-sm text-gray-500">
+                                        To discuss your project or schedule a meeting with <span className='text-red-500'>{profile?.profile?.agencyName}</span>, please log in to unlock the next step. We're excited to hear about your project!
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                        <button
+                            type="button"
+                            className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
+                            onClick={() => {
+                                setShowModal(false); // Close modal
+                                const currentPage = window.location.pathname + window.location.search; // Get current URL
+                                window.location.href = `/login?redirect=${encodeURIComponent(currentPage)}`; // Redirect to login with redirect parameter
+                            }}
+                            
+                        >
+                            <LogIn className="h-5 w-5 mr-2" aria-hidden="true" />
+                            Log In Now
+                        </button>
+                        <button
+                            type="button"
+                            className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                            onClick={() => setShowModal2(false)}
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )}
+</div>
+
+                </div>
 
                 {/* Responsive Grid Layout */}
                 <div className="grid grid-cols-2 gap-6">
@@ -383,7 +478,7 @@ const JobSeekerProfile = () => {
 
                                 </h4>
                                 <p className="text-lg text-gray-600 max-w-2xl">
-                                    Schedule a meeting with <span className='text-[#8C4A17]'>{profile?.profile?.agencyName}</span> at your convenience. On Qualtr, it takes just 11 seconds to book—faster than ever!
+                                    Schedule a meeting with <span className='text-[#8C4A17]'>{profile?.profile?.agencyName}</span> at your convenience. On Qualtr, it takes just 10 seconds to book—faster than ever!
                                 </p>
                             </div>
 
@@ -404,8 +499,15 @@ const JobSeekerProfile = () => {
                             </div>
 
                             <button
-                                onClick={() => {/* Add your scheduling logic */ }}
-                                className="inline-flex items-center px-6 py-3 rounded-lg text-white font-medium transition-all"
+                                onClick={() => {
+                                    if (!user) {
+                                        // Show the second modal if not authenticated
+                                        setShowModal2(true);
+                                    } else {
+                                        // Show the first modal if authenticated
+                                        setShowModal(true);
+                                    }
+                                }} className="inline-flex items-center px-6 py-3 rounded-lg text-white font-medium transition-all"
                                 style={{ backgroundColor: '#17B169', boxShadow: '0 4px 14px rgba(23, 177, 105, 0.3)' }}
                             >
                                 <Calendar className="mr-2 h-5 w-5" />

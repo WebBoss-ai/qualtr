@@ -22,6 +22,7 @@ const Login = () => {
     const { loading,user } = useSelector(store => store.auth);
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const redirectTo = new URLSearchParams(location.search).get("redirect") || "/"; // Default to home page if no redirect parameter
 
     const changeEventHandler = (e) => {
         setInput({ ...input, [e.target.name]: e.target.value });
@@ -46,7 +47,8 @@ const Login = () => {
                 localStorage.setItem('token', res.data.token); // Corrected this line
                 localStorage.setItem('loggedInUserRole', res.data.user.role);
                 // Navigate after successful login
-                navigate("/");
+                // navigate("/");
+                navigate(redirectTo);
                 toast.success(res.data.message);
             }
         } catch (error) {

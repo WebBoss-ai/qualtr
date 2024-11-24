@@ -53,13 +53,13 @@ const Navbar = () => {
                                     <NavLink to="/agencies">Agencies</NavLink>
                                     <NavLink to="/admin/companies">Companies</NavLink>
                                     <NavLink to="/admin/projects">Projects</NavLink>
-                                    <NavLink to="/my-messages">Messages</NavLink>
+                                    <NavLink to="/my-meetings">My Meetings</NavLink>
                                 </>
                             ) : (
                                 <>
                                     <NavLink to="/open-projects">Open Projects</NavLink>
                                     <NavLink to="/profile?tab=applied">Bids</NavLink>
-                                    <NavLink to="/my-messages">Messages</NavLink>
+                                    <NavLink to="/my-meetings">My Meetings</NavLink>
                                     <NavLink to={`/agency/${user?._id}`} onClick={(e) => {
                                         if (!user) {
                                             e.preventDefault()
