@@ -130,117 +130,135 @@ const JobSeekerProfile = () => {
             <Navbar />
             <div className="max-w-6xl mx-auto bg-white border border-gray-200 rounded-2xl my-5 p-10">
                 {/* Header Section */}
-                <div className="flex items-center justify-between mb-8">
-                    <div className="flex items-center gap-4">
-
+                <div className="flex flex-col sm:flex-row items-center justify-between mb-8 space-y-4 sm:space-y-0">
+                    <div className="flex flex-col sm:flex-row items-center gap-4">
                         <div className="h-24 w-24 rounded-full flex items-center justify-center overflow-hidden">
                             <img
-                                src={profile.profile.profilePhoto || "https://via.placeholder.com/40"}
+                                src={profile?.profile?.profilePhoto || "https://via.placeholder.com/40"}
                                 alt={`${profile?.profile?.agencyName || "Agency"} logo`}
                                 className="h-full w-full object-contain"
                             />
                         </div>
-                        <div>
-                            <h1 className="text-3xl font-semibold text-gray-800">{profile?.profile?.agencyName}</h1>
-                            <p className="text-sm text-gray-500 flex items-center gap-2">
-                                <MapPin className="w-4 h-4 text-gray-500" /> {/* Added Location Icon */}
+                        <div className="text-center sm:text-left">
+                            <h1 className="text-2xl sm:text-3xl font-semibold text-gray-800">{profile?.profile?.agencyName}</h1>
+                            <p className="text-sm text-gray-500 flex items-center justify-center sm:justify-start gap-2">
+                                <MapPin className="w-4 h-4 text-gray-500" />
                                 {profile?.profile?.location || "Location not provided"}
                             </p>
                         </div>
                     </div>
-                    <div className="relative">
-    <button
-        className="px-6 py-3 text-white bg-gradient-to-r from-red-500 to-red-600 font-bold rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-300 ease-in-out transform hover:scale-105 shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
-        onClick={() => {
-            if (!user) {
-                // Show the second modal if not authenticated
-                setShowModal2(true);
-            } else {
-                // Show the first modal if authenticated
-                setShowModal(true);
-            }
-        }}
-    >
-        Discuss Project
-    </button>
-
-    {/* Modal 1 - For authenticated users */}
-    {showModal && (
-        <MessageModal
-            agency={profile?.profile?.agencyName || 'Your Preferred Agency'}
-            agencyEmail={profile?.email || 'Your Preferred Agency Email'}
-            userEmail={user?.email || 'Your Email'}
-            userPhone={user?.phoneNumber || 'Your Phone'}
-            setMailIconDisabled={setMailIconDisabled}
-            setShowModal={setShowModal}
-            onClose={() => setShowModal(false)} // Close the modal
-        />
-    )}
-
-    {/* Modal 2 - For non-authenticated users */}
-    {showModal2 && (
-        <div className="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-            <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
-                <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                    <div className="absolute top-0 right-0 pt-4 pr-4">
+                    <div className="relative w-full sm:w-auto flex justify-center sm:justify-end">
                         <button
-                            type="button"
-                            className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                            onClick={() => setShowModal2(false)}
-                            
+                            className="px-6 py-3 text-white bg-gradient-to-r from-red-500 to-red-600 font-bold rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-300 ease-in-out transform hover:scale-105 shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+                            onClick={() => {
+                                if (!user) {
+                                    // Show the second modal if not authenticated
+                                    setShowModal2(true);
+                                } else {
+                                    // Show the first modal if authenticated
+                                    setShowModal(true);
+                                }
+                            }}
                         >
-                            <span className="sr-only">Close</span>
-                            <X className="h-6 w-6" aria-hidden="true" />
+                            Discuss Project
                         </button>
-                    </div>
-                    <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                        <div className="sm:flex sm:items-start">
-                            <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-                                <Mail className="h-6 w-6 text-red-600" aria-hidden="true" />
-                            </div>
-                            <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                                <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-title">
-                                    Let's Market Something Amazing!
-                                </h3>
-                                <div className="mt-2">
-                                    <p className="text-sm text-gray-500">
-                                        To discuss your project or schedule a meeting with <span className='text-red-500'>{profile?.profile?.agencyName}</span>, please log in to unlock the next step. We're excited to hear about your project!
-                                    </p>
+
+                        {/* Modal 1 - For authenticated users */}
+                        {showModal && (
+                            <MessageModal
+                                agency={profile?.profile?.agencyName || "Your Preferred Agency"}
+                                agencyEmail={profile?.email || "Your Preferred Agency Email"}
+                                userEmail={user?.email || "Your Email"}
+                                userPhone={user?.phoneNumber || "Your Phone"}
+                                setMailIconDisabled={setMailIconDisabled}
+                                setShowModal={setShowModal}
+                                onClose={() => setShowModal(false)} // Close the modal
+                            />
+                        )}
+
+                        {/* Modal 2 - For non-authenticated users */}
+                        {showModal2 && (
+                            <div
+                                className="fixed inset-0 z-50 overflow-y-auto"
+                                aria-labelledby="modal-title"
+                                role="dialog"
+                                aria-modal="true"
+                            >
+                                <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                                    <div
+                                        className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+                                        aria-hidden="true"
+                                    ></div>
+                                    <span
+                                        className="hidden sm:inline-block sm:align-middle sm:h-screen"
+                                        aria-hidden="true"
+                                    >
+                                        &#8203;
+                                    </span>
+                                    <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                                        <div className="absolute top-0 right-0 pt-4 pr-4">
+                                            <button
+                                                type="button"
+                                                className="bg-white rounded-md text-gray-400 hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                                                onClick={() => setShowModal2(false)}
+                                            >
+                                                <span className="sr-only">Close</span>
+                                                <X className="h-6 w-6" aria-hidden="true" />
+                                            </button>
+                                        </div>
+                                        <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                                            <div className="sm:flex sm:items-start">
+                                                <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
+                                                    <Mail className="h-6 w-6 text-[#17B169]" aria-hidden="true" />
+                                                </div>
+                                                <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                                                    <h3
+                                                        className="text-lg leading-6 font-medium text-gray-900"
+                                                        id="modal-title"
+                                                    >
+                                                        Let's Market Something Amazing!
+                                                    </h3>
+                                                    <div className="mt-2">
+                                                        <p className="text-sm text-gray-500">
+                                                            To discuss your project or schedule a meeting with{" "}
+                                                            <span className="text-[#006241]">{profile?.profile?.agencyName}</span>, please log in to unlock the next step. We're excited to hear about your project!
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                                            <button
+                                                type="button"
+                                                className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-[#17B169] text-base font-medium text-white hover:bg-[#006241] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#17B169] sm:ml-3 sm:w-auto sm:text-sm"
+                                                onClick={() => {
+                                                    setShowModal(false); // Close modal
+                                                    const currentPage =
+                                                        window.location.pathname +
+                                                        window.location.search; // Get current URL
+                                                    window.location.href = `/login?redirect=${encodeURIComponent(
+                                                        currentPage
+                                                    )}`; // Redirect to login with redirect parameter
+                                                }}
+                                            >
+                                                <LogIn className="h-5 w-5 mr-2" aria-hidden="true" />
+                                                Log In Now
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#17B169] sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                                                onClick={() => setShowModal2(false)}
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                        <button
-                            type="button"
-                            className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
-                            onClick={() => {
-                                setShowModal(false); // Close modal
-                                const currentPage = window.location.pathname + window.location.search; // Get current URL
-                                window.location.href = `/login?redirect=${encodeURIComponent(currentPage)}`; // Redirect to login with redirect parameter
-                            }}
-                            
-                        >
-                            <LogIn className="h-5 w-5 mr-2" aria-hidden="true" />
-                            Log In Now
-                        </button>
-                        <button
-                            type="button"
-                            className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-                            onClick={() => setShowModal2(false)}
-                        >
-                            Cancel
-                        </button>
+                        )}
                     </div>
                 </div>
-            </div>
-        </div>
-    )}
-</div>
 
-                </div>
 
                 {/* Responsive Grid Layout */}
                 <div className="grid grid-cols-2 gap-6">
@@ -392,54 +410,141 @@ const JobSeekerProfile = () => {
 
                     {selectedPortfolio && (
                         <div
-                            className={`fixed inset-0 z-50 overflow-y-auto ${isModalOpen ? 'flex' : 'hidden'} items-center justify-center`}
-                            aria-labelledby="modal-title"
+                            className={`fixed inset-0 z-50 ${isModalOpen ? 'flex' : 'hidden'}`}
+                            aria-labelledby="portfolio-modal"
                             role="dialog"
                             aria-modal="true"
                         >
-                            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+                            {/* Background Overlay */}
+                            <div
+                                className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
+                                onClick={closeModal}
+                                aria-hidden="true"
+                            ></div>
 
-                            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                                <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                                    <div className="sm:flex sm:items-start">
-                                        <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
-                                            <svg className="h-6 w-6 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                            </svg>
-                                        </div>
-                                        <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                                            <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-title">
-                                                {selectedPortfolio.title}
-                                            </h3>
-                                            <div className="mt-2">
-                                                <div className="mb-4">
-                                                    <h4 className="text-sm font-medium text-gray-500">Challenge</h4>
-                                                    <p className="mt-1 text-sm text-gray-900">{selectedPortfolio.challenge}</p>
-                                                </div>
-                                                <div className="mb-4">
-                                                    <h4 className="text-sm font-medium text-gray-500">Solution</h4>
-                                                    <p className="mt-1 text-sm text-gray-900">{selectedPortfolio.solution}</p>
-                                                </div>
-                                                <div>
-                                                    <h4 className="text-sm font-medium text-gray-500">Result</h4>
-                                                    <p className="mt-1 text-sm text-gray-900">{selectedPortfolio.result}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                            {/* Right-Side Panel */}
+                            <div
+                                className={`fixed right-0 top-0 h-full w-full max-w-xl bg-white shadow-2xl transition-transform transform duration-300 ease-in-out ${isModalOpen ? 'translate-x-0' : 'translate-x-full'
+                                    }`}
+                            >
+                                {/* Header */}
+                                <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-[#17B169] to-[#17B169]">
+                                    <h2
+                                        className="text-xl font-bold text-white"
+                                        id="portfolio-modal"
+                                    >
+                                        {selectedPortfolio.title}
+                                    </h2>
                                     <button
                                         type="button"
-                                        className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm"
+                                        className="text-white hover:text-gray-200 focus:outline-none focus:ring-2 focus:ring-white rounded-full p-1"
                                         onClick={closeModal}
                                     >
-                                        Close
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className="h-6 w-6"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                            aria-hidden="true"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth="2"
+                                                d="M6 18L18 6M6 6l12 12"
+                                            />
+                                        </svg>
                                     </button>
                                 </div>
+
+                                {/* Content */}
+                                <div
+                                    className="px-6 py-6 space-y-8 overflow-y-auto"
+                                    style={{ maxHeight: 'calc(100vh - 8rem)', scrollbarWidth: 'none' }}
+                                >
+                                    {selectedPortfolio.challenge && (
+                                        <div className="bg-gray-50 rounded-lg p-4 shadow-sm">
+                                            <h4 className="text-lg font-semibold text-gray-800 mb-2 flex items-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+                                                </svg>
+                                                Challenge
+                                            </h4>
+                                            <p
+                                                className="text-gray-600 leading-relaxed"
+                                                dangerouslySetInnerHTML={{
+                                                    __html: selectedPortfolio.challenge.replace(
+                                                        /(https?:\/\/[^\s]+)/g,
+                                                        '<a href="$1" class="text-blue-600 hover:text-blue-800 underline transition duration-200" target="_blank" rel="noopener noreferrer">$1</a>'
+                                                    ),
+                                                }}
+                                            ></p>
+                                        </div>
+                                    )}
+                                    {selectedPortfolio.solution && (
+                                        <div className="bg-gray-50 rounded-lg p-4 shadow-sm">
+                                            <h4 className="text-lg font-semibold text-gray-800 mb-2 flex items-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                                </svg>
+                                                Solution
+                                            </h4>
+                                            <p
+                                                className="text-gray-600 leading-relaxed"
+                                                dangerouslySetInnerHTML={{
+                                                    __html: selectedPortfolio.solution.replace(
+                                                        /(https?:\/\/[^\s]+)/g,
+                                                        '<a href="$1" class="text-blue-600 hover:text-blue-800 underline transition duration-200" target="_blank" rel="noopener noreferrer">$1</a>'
+                                                    ),
+                                                }}
+                                            ></p>
+                                        </div>
+                                    )}
+                                    {selectedPortfolio.result && (
+                                        <div className="bg-gray-50 rounded-lg p-4 shadow-sm">
+                                            <h4 className="text-lg font-semibold text-gray-800 mb-2 flex items-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-purple-500" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
+                                                </svg>
+                                                Result
+                                            </h4>
+                                            <p
+                                                className="text-gray-600 leading-relaxed"
+                                                dangerouslySetInnerHTML={{
+                                                    __html: selectedPortfolio.result.replace(
+                                                        /(https?:\/\/[^\s]+)/g,
+                                                        '<a href="$1" class="text-blue-600 hover:text-blue-800 underline transition duration-200" target="_blank" rel="noopener noreferrer">$1</a>'
+                                                    ),
+                                                }}
+                                            ></p>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Footer */}
+                                <div className="absolute bottom-0 left-0 right-0 px-6 py-4 bg-gray-50 border-t border-gray-200">
+                                    <button
+                                        type="button"
+                                        className="w-full px-4 py-2 bg-[#17B169]  text-white font-medium rounded-md hover:from-[#17B169] hover:to-[#006241] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-200 ease-in-out transform hover:shadow-lg"
+                                        onClick={() => {
+                                            closeModal();
+                                            if (!user) {
+                                                setShowModal2(true);
+                                            } else {
+                                                setShowModal(true);
+                                            }
+                                        }}
+                                    >
+                                        Discuss Project
+                                    </button>
+                                </div>
+
                             </div>
                         </div>
                     )}
+
+
 
 
                     {/* Awards */}

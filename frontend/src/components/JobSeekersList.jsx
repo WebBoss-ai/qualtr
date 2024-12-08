@@ -16,7 +16,7 @@ const JobSeekersList = () => {
     const [isServicesExpanded, setIsServicesExpanded] = useState(true);
     const [isCitiesExpanded, setIsCitiesExpanded] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
-
+    const isMobile = window.innerWidth <= 768;
     const [currentPage, setCurrentPage] = useState(1);
     const jobSeekersPerPage = 8;
 
@@ -64,11 +64,11 @@ const JobSeekersList = () => {
         setSearchQuery(event.target.value);
         filterJobSeekers(servicesFilter, cityFilter, event.target.value);
     };
-    
+
 
     const filterJobSeekers = (service, city, query = "") => {
         let filtered = jobSeekers;
-    
+
         if (service) {
             filtered = filtered.filter(js => js.profile?.servicesOffered?.includes(service));
         }
@@ -82,12 +82,12 @@ const JobSeekersList = () => {
                 return agencyName.includes(query.toLowerCase()) || slogan.includes(query.toLowerCase());
             });
         }
-    
+
         setFilteredJobSeekers(filtered);
         setCurrentPage(1); // Reset to first page after filtering
     };
-    
-    
+
+
 
     // Pagination logic
     const indexOfLastJobSeeker = currentPage * jobSeekersPerPage;
@@ -103,11 +103,11 @@ const JobSeekersList = () => {
 
     return (
         <div className="bg-gray-50 min-h-screen font-sans">
-           <Helmet>
-  <title>Agency Listings | Browse Qualified Marketing Agencies</title>
-  <meta name="description" content="Discover and browse through our curated list of qualified marketing agencies. Find the perfect partner for your business needs." />
-  <meta name="keywords" content="marketing agencies, agency listings, business partnerships, branding partners, advertising agencies, creative agencies, top agencies, business growth partners" />
-</Helmet>
+            <Helmet>
+                <title>Agency Listings | Browse Qualified Marketing Agencies</title>
+                <meta name="description" content="Discover and browse through our curated list of qualified marketing agencies. Find the perfect partner for your business needs." />
+                <meta name="keywords" content="marketing agencies, agency listings, business partnerships, branding partners, advertising agencies, creative agencies, top agencies, business growth partners" />
+            </Helmet>
 
             <Navbar />
             <div className="max-w-9xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
@@ -180,11 +180,11 @@ const JobSeekersList = () => {
                     </aside>
 
                     <main className="w-full lg:w-3/4">
-                    <div className="grid gap-8">
-                    <div className="">
-                                <input 
-                                    type="text" 
-                                    placeholder="Search for digital marketing agencies..." 
+                        <div className="grid gap-8">
+                            <div className="">
+                                <input
+                                    type="text"
+                                    placeholder="Search for digital marketing agencies..."
                                     value={searchQuery}
                                     onChange={handleSearchChange}
                                     className="w-full p-4 border border-gray-300 rounded-md"
@@ -195,20 +195,20 @@ const JobSeekersList = () => {
                                     <div key={jobSeeker._id} className="bg-white rounded-lg overflow-hidden transition-all duration-300 border-b border-gray-400"> {/* Removed shadow */}
                                         <div className="p-6">
                                             <div className="flex items-center justify-between mb-4">
-                                            <div className="flex items-center space-x-3 mb-3">
-                                        <div className="h-16 w-16 rounded-full flex items-center justify-center overflow-hidden">
-                                            <a href={`/agency/${jobSeeker._id}`}>
-                                                <img
-                                                    src={jobSeeker.profile.profilePhoto || "https://via.placeholder.com/40"}
-                                                    alt={`${jobSeeker?.profile?.agencyName || "Agency"} logo`}
-                                                    className="h-full w-full object-contain"
-                                                />
-                                            </a>
-                                        </div>
-                                        <div>
-                                                    <a href={`/agency/${jobSeeker._id}`}>
-                                                    <h2 className="text-2xl font-bold text-gray-900 hover:text-[#17B169] transition-colors duration-200">{jobSeeker?.profile?.agencyName}</h2>
-                                                    </a>
+                                                <div className="flex items-center space-x-3 mb-3">
+                                                    <div className="h-16 w-16 rounded-full flex items-center justify-center overflow-hidden">
+                                                        <a href={`/agency/${jobSeeker._id}`}>
+                                                            <img
+                                                                src={jobSeeker.profile.profilePhoto || "https://via.placeholder.com/40"}
+                                                                alt={`${jobSeeker?.profile?.agencyName || "Agency"} logo`}
+                                                                className="h-full w-full object-contain"
+                                                            />
+                                                        </a>
+                                                    </div>
+                                                    <div>
+                                                        <a href={`/agency/${jobSeeker._id}`}>
+                                                            <h2 className="text-2xl font-bold text-gray-900 hover:text-[#17B169] transition-colors duration-200">{jobSeeker?.profile?.agencyName}</h2>
+                                                        </a>
                                                         <p className="text-sm text-gray-500">{jobSeeker?.profile?.slogan || 'No slogan available'}</p>
                                                     </div>
                                                 </div>
@@ -224,23 +224,23 @@ const JobSeekersList = () => {
 
 
                                             <div className="flex flex-wrap items-center text-sm text-gray-600 mb-4">
-    <span className="flex items-center mr-4 mb-2">
-        <MapPin className="w-4 h-4 mr-1 text-gray-500" />
-        {jobSeeker?.profile?.location || 'No location'}
-    </span>
-    <span className="flex items-center mr-4 mb-2">
-        <Calendar className="w-4 h-4 mr-1 text-gray-500" />
-        {jobSeeker?.profile?.yearFounded || 'N/A'}
-    </span>
-    <span className="flex items-center mr-4 mb-2">
-        <Users className="w-4 h-4 mr-1 text-gray-500" />
-        {jobSeeker?.profile?.numberOfEmployees || 'N/A'} employees
-    </span>
-    <span className="flex items-center mb-2">
-        <Star className="w-4 h-4 mr-1 text-yellow-400" />
-        {jobSeeker?.profile?.rating || 'No rating'}
-    </span>
-</div>
+                                                <span className="flex items-center mr-4 mb-2">
+                                                    <MapPin className="w-4 h-4 mr-1 text-gray-500" />
+                                                    {jobSeeker?.profile?.location || 'No location'}
+                                                </span>
+                                                <span className="flex items-center mr-4 mb-2">
+                                                    <Calendar className="w-4 h-4 mr-1 text-gray-500" />
+                                                    {jobSeeker?.profile?.yearFounded || 'N/A'}
+                                                </span>
+                                                <span className="flex items-center mr-4 mb-2">
+                                                    <Users className="w-4 h-4 mr-1 text-gray-500" />
+                                                    {jobSeeker?.profile?.numberOfEmployees || 'N/A'} employees
+                                                </span>
+                                                <span className="flex items-center mb-2">
+                                                    <Star className="w-4 h-4 mr-1 text-yellow-400" />
+                                                    {jobSeeker?.profile?.rating || 'No rating'}
+                                                </span>
+                                            </div>
 
 
 
@@ -286,24 +286,149 @@ const JobSeekersList = () => {
                         </div>
 
                         {/* Pagination */}
-                        <div className="flex justify-center mt-8">
-                            <nav className="inline-flex">
-                                {[...Array(totalPages).keys()].map(pageNumber => (
-                                    <button
-                                        key={pageNumber + 1}
-                                        onClick={() => paginate(pageNumber + 1)}
-                                        className={`mx-1 px-3 py-2 border rounded ${currentPage === pageNumber + 1 ? 'bg-[#17B169] text-white' : 'bg-white text-gray-600 hover:bg-gray-100'}`}
-                                    >
-                                        {pageNumber + 1}
-                                    </button>
-                                ))}
-                            </nav>
+                        <div
+                            style={{
+                                display: "flex",
+                                flexDirection: isMobile ? "row" : "row",
+                                justifyContent: isMobile ? "space-between" : "center",
+                                alignItems: "center",
+                                marginTop: "16px",
+                            }}
+                        >
+                            {/* Previous Button */}
+                            <button
+                                onClick={() => paginate(currentPage - 1)}
+                                disabled={currentPage === 1}
+                                style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    padding: "8px 16px",
+                                    border: "1px solid #d1d5db",
+                                    borderRadius: "4px",
+                                    backgroundColor: currentPage === 1 ? "#f3f4f6" : "#ffffff",
+                                    color: currentPage === 1 ? "#9ca3af" : "#4b5563",
+                                    cursor: currentPage === 1 ? "not-allowed" : "pointer",
+                                    margin: isMobile ? "0" : "0 8px",
+                                }}
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth="1.5"
+                                    stroke="currentColor"
+                                    style={{ width: "20px", height: "20px", marginRight: "8px" }}
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M15.75 19.5L8.25 12l7.5-7.5"
+                                    />
+                                </svg>
+                                Prev
+                            </button>
+
+                            {isMobile ? (
+                                // Mobile Layout with Page Indicator
+                                <span
+                                    style={{
+                                        fontSize: "14px",
+                                        color: "#374151",
+                                    }}
+                                >
+                                    Page <span style={{ fontWeight: "bold" }}>{currentPage}</span> of{" "}
+                                    <span style={{ fontWeight: "bold" }}>{totalPages}</span>
+                                </span>
+                            ) : (
+                                // Desktop Layout with Pagination Links
+                                <nav className="inline-flex overflow-x-auto whitespace-nowrap">
+                                    {[...Array(totalPages).keys()]
+                                        .filter((pageNumber) => {
+                                            const page = pageNumber + 1;
+                                            return (
+                                                page === 1 ||
+                                                page === totalPages ||
+                                                (page >= currentPage - 2 && page <= currentPage + 2)
+                                            );
+                                        })
+                                        .map((pageNumber, index, filteredPages) => {
+                                            const page = pageNumber + 1;
+                                            const isEllipsisBefore =
+                                                index > 0 && filteredPages[index - 1] + 1 !== pageNumber;
+                                            const isEllipsisAfter =
+                                                index < filteredPages.length - 1 &&
+                                                filteredPages[index + 1] - 1 !== pageNumber;
+
+                                            return (
+                                                <React.Fragment key={page}>
+                                                    {isEllipsisBefore && <span className="mx-1 px-2 py-2">...</span>}
+                                                    <button
+                                                        onClick={() => paginate(page)}
+                                                        className={`mx-1 px-3 py-2 border rounded ${currentPage === page
+                                                                ? "bg-[#17B169] text-white"
+                                                                : "bg-white text-gray-600 hover:bg-gray-100"
+                                                            }`}
+                                                        style={{
+                                                            transition: "transform 0.3s, box-shadow 0.3s",
+                                                        }}
+                                                        onMouseEnter={(e) => {
+                                                            if (currentPage !== page)
+                                                                e.target.style.boxShadow = "0px 4px 6px rgba(0, 0, 0, 0.1)";
+                                                        }}
+                                                        onMouseLeave={(e) => {
+                                                            e.target.style.boxShadow = "none";
+                                                        }}
+                                                    >
+                                                        {page}
+                                                    </button>
+                                                    {isEllipsisAfter && <span className="mx-1 px-2 py-2">...</span>}
+                                                </React.Fragment>
+                                            );
+                                        })}
+                                </nav>
+                                
+                            )}
+                            {/* Next Button */}
+                            <button
+                                onClick={() => paginate(currentPage + 1)}
+                                disabled={currentPage === totalPages}
+                                style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    padding: "8px 16px",
+                                    border: "1px solid #d1d5db",
+                                    borderRadius: "4px",
+                                    backgroundColor: currentPage === totalPages ? "#f3f4f6" : "#ffffff",
+                                    color: currentPage === totalPages ? "#9ca3af" : "#4b5563",
+                                    cursor: currentPage === totalPages ? "not-allowed" : "pointer",
+                                    margin: isMobile ? "0" : "0 8px",
+                                }}
+                            >
+                                Next
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth="1.5"
+                                    stroke="currentColor"
+                                    style={{ width: "20px", height: "20px", marginLeft: "8px" }}
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M8.25 4.5L15.75 12l-7.5 7.5"
+                                    />
+                                </svg>
+                            </button>
                         </div>
+
+
+
                     </main>
                 </div>
             </div>
 
-            <Footer/>
+            <Footer />
         </div>
     );
 };
