@@ -31,7 +31,10 @@ const ResponsiveHome = () => {
             .then((response) => response.json())
             .then((data) => {
                 if (data.success) {
-                    const shuffledJobSeekers = data.jobSeekers.sort(() => 0.5 - Math.random());
+                    const validJobSeekers = data.jobSeekers.filter(
+                        (jobSeeker) => jobSeeker?.profile?.agencyName
+                    );
+                    const shuffledJobSeekers = validJobSeekers.sort(() => 0.5 - Math.random());
                     setRandomJobSeekers(shuffledJobSeekers.slice(0, 6));
                 }
             })
