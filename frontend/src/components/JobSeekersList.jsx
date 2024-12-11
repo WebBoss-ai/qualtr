@@ -261,16 +261,20 @@ const JobSeekersList = () => {
                                                     </span>
                                                 )}
                                             </div>
-
-
-                                            <Link to={`/agency/${jobSeeker._id}`} className="text-[#17B169] hover:underline">
-                                                <div className="flex items-center space-x-2 font-medium">
-                                                    <span>View Complete Profile</span>
-                                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                                        <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 10 10.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                                                    </svg>
-                                                </div>
-                                            </Link>
+                                            <div>
+                                                <a href={`/agency/${jobSeeker._id}`} className="text-[#17B169] hover:underline">
+                                                    <div className="flex items-center space-x-2 font-medium">
+                                                        <span>View Complete Profile</span>
+                                                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path
+                                                                fillRule="evenodd"
+                                                                d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 10 10.293 5.707a1 1 0 010-1.414z"
+                                                                clipRule="evenodd"
+                                                            />
+                                                        </svg>
+                                                    </div>
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 ))
@@ -365,8 +369,8 @@ const JobSeekersList = () => {
                                                     <button
                                                         onClick={() => paginate(page)}
                                                         className={`mx-1 px-3 py-2 border rounded ${currentPage === page
-                                                                ? "bg-[#17B169] text-white"
-                                                                : "bg-white text-gray-600 hover:bg-gray-100"
+                                                            ? "bg-[#17B169] text-white"
+                                                            : "bg-white text-gray-600 hover:bg-gray-100"
                                                             }`}
                                                         style={{
                                                             transition: "transform 0.3s, box-shadow 0.3s",
@@ -386,7 +390,7 @@ const JobSeekersList = () => {
                                             );
                                         })}
                                 </nav>
-                                
+
                             )}
                             {/* Next Button */}
                             <button
