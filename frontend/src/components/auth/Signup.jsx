@@ -35,16 +35,18 @@ const Signup = () => {
     }
     const submitHandler = async (e) => {
         e.preventDefault();
+        if (!input.file) {
+            toast.error("Please upload a file before submitting.");
+            return;
+        }
         const formData = new FormData();
         formData.append("fullname", input.fullname);
         formData.append("email", input.email);
         formData.append("phoneNumber", input.phoneNumber);
         formData.append("password", input.password);
         formData.append("role", input.role);
-        if (input.file) {
-            formData.append("file", input.file);
-        }
-
+        formData.append("file", input.file);
+    
         try {
             dispatch(setLoading(true));
             const res = await axios.post(`${USER_API_END_POINT}/register`, formData, {
@@ -57,15 +59,15 @@ const Signup = () => {
                 toast.success(res.data.message);
             }
         } catch (error) {
-            console.log(error);
-            toast.error(error.response.data.message);
+            console.error(error);
+            toast.error(error.response?.data?.message || "Something went wrong.");
         } finally {
             setTimeout(() => {
-            dispatch(setLoading(false));
-        }, 3000);
+                dispatch(setLoading(false));
+            }, 3000);
         }
-    }
-
+    };
+    
     useEffect(() => {
         if (user) {
             navigate("/");
@@ -200,7 +202,7 @@ const Signup = () => {
                                 <Input
                                     id="file"
                                     type="file"
-                                    required
+                                    name="file"
                                     accept="image/*"
                                     onChange={changeFileHandler}
                                     className="hidden"
