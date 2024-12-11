@@ -94,6 +94,7 @@ const Signup = () => {
                                     id="fullname"
                                     type="text"
                                     name="fullname"
+                                    required
                                     value={input.fullname}
                                     onChange={changeEventHandler}
                                     placeholder="John Doe"
@@ -110,6 +111,7 @@ const Signup = () => {
                                     id="email"
                                     type="email"
                                     name="email"
+                                    required
                                     value={input.email}
                                     onChange={changeEventHandler}
                                     placeholder="you@example.com"
@@ -126,6 +128,7 @@ const Signup = () => {
                                     id="phoneNumber"
                                     type="text"
                                     name="phoneNumber"
+                                    required
                                     value={input.phoneNumber}
                                     onChange={changeEventHandler}
                                     placeholder="+91-8167080111"
@@ -142,6 +145,7 @@ const Signup = () => {
                                     id="password"
                                     type="password"
                                     name="password"
+                                    required
                                     value={input.password}
                                     onChange={changeEventHandler}
                                     placeholder="********"
@@ -193,6 +197,7 @@ const Signup = () => {
                                 <Input
                                     id="file"
                                     type="file"
+                                    required
                                     accept="image/*"
                                     onChange={changeFileHandler}
                                     className="hidden"

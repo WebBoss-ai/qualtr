@@ -120,6 +120,7 @@ const Login = () => {
                                         type="email"
                                         value={input.email}
                                         name="email"
+                                        required
                                         onChange={changeEventHandler}
                                         placeholder="qualtr@gmail.com"
                                         className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#B5D3D3] focus:border-transparent transition-all duration-200"
@@ -133,6 +134,7 @@ const Login = () => {
                                     <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
                                     <Input
                                         type="password"
+                                        required
                                         value={input.password}
                                         name="password"
                         onChange={changeEventHandler}
