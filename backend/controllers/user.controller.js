@@ -427,3 +427,20 @@ export const deletePortfolio = async (req, res) => {
     }
 };
 
+export const getUsersByRole = async (req, res) => {
+    try {
+        const users = await User.find({ role: { $in: ['student', 'recruiter'] } })
+            .select("fullname email phoneNumber role createdAt")
+            .sort({ createdAt: -1 }); // Sort by joined date in descending order
+        return res.status(200).json({
+            success: true,
+            users,
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: "An error occurred while fetching users.",
+        });
+    }
+};

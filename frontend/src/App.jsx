@@ -35,6 +35,7 @@ import HowToFindWork from './components/general/HowToFindWork'
 import ContactUs from './components/general/ContactUs'
 import AdminDashboard from './components/AdminDashboard'
 import AdminMessages from './components/AdminMessages'
+import AdminUsers from './components/AdminUsers'
 
 const appRouter = createBrowserRouter([
   {
@@ -128,6 +129,10 @@ const appRouter = createBrowserRouter([
   {
     path:"/admin/PEbYAjJgctVkocEdaCWF9LCJs731rtQ5lV4VynE4VIQX4dApNioVoyrAjteflZdDv3hxcI9YGY9LLrR3mYq0uc7xN56FwNoZze0j",
     element:<AdminMessages /> 
+  },
+  {
+    path:"/admin/users/PEbYAjJgctVkocEdaCWF9LCJs731rtQ5lV4VynE4VIQX4dApNioVoyrAjteflZdDv3hxcI9YGY9LLrR3mYq0uc7xN56FwNoZze0j",
+    element:<AdminUsers /> 
   },
   {
     path:"/support",
