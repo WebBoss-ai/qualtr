@@ -4,7 +4,9 @@ import Navbar from './shared/Navbar';
 import Footer from './shared/Footer';
 import { Helmet } from 'react-helmet';
 import { JOB_SEEKER_API_END_POINT } from '@/utils/constant';
+import { USER_API_END_POINT } from '@/utils/constant';
 import { Calendar, Star, Users, MapPin } from 'lucide-react';
+import axios from "axios";
 
 const JobSeekersList = () => {
     const [jobSeekers, setJobSeekers] = useState([]);
@@ -87,7 +89,37 @@ const JobSeekersList = () => {
         setCurrentPage(1); // Reset to first page after filtering
     };
 
-
+    const handleAddToCompare = async (agencyId) => {
+        try {
+            // Get the token from local storage
+            const token = localStorage.getItem("token");
+            console.log("Token used for adding to compare:", token);
+     
+            // Make the POST request with the token in the Authorization header
+            const response = axios.post(`${USER_API_END_POINT}/compare`,
+                { agencyId }, // Send only agencyId; the userId will be decoded from the token on the server
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`, // Ensure token is included
+                        "Content-Type": "application/json",
+                    },
+                    withCredentials: true, // Include credentials if needed
+                }
+            );
+    
+            if (response.status === 200) {
+                alert("Agency added to compare list!");
+            }
+        } catch (error) {
+            console.error("Error adding to compare list:", error);
+            alert("Failed to add agency to compare list.");
+        }
+    };
+    
+    // Navigate to compare list page
+    const navigateToCompareList = () => {
+        navigate("/compare-list");
+    };
 
     // Pagination logic
     const indexOfLastJobSeeker = currentPage * jobSeekersPerPage;
@@ -275,6 +307,7 @@ const JobSeekersList = () => {
                                                     </div>
                                                 </a>
                                             </div>
+                                            <button onClick={() => handleAddToCompare(jobSeeker._id)}>Add to Compare</button>
                                         </div>
                                     </div>
                                 ))

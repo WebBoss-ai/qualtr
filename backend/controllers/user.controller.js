@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import getDataUri from "../utils/datauri.js";
 import cloudinary from "../utils/cloudinary.js";
+import CompareList from "../models/CompareList.js";
 
 export const register = async (req, res) => {
     try {
@@ -442,5 +443,47 @@ export const getUsersByRole = async (req, res) => {
             success: false,
             message: "An error occurred while fetching users.",
         });
+    }
+};
+
+export const addToCompare = async (req, res) => {
+    const { agencyId } = req.body; // Only agencyId is needed
+    const userId = req.userId; // Retrieved from the middleware
+
+    try {
+        let compareList = await CompareList.findOne({ userId });
+
+        if (!compareList) {
+            compareList = new CompareList({ userId, agencies: [] });
+        }
+
+        if (compareList.agencies.includes(agencyId)) {
+            return res.status(400).json({ success: false, message: "Agency already in compare list." });
+        }
+
+        compareList.agencies.push(agencyId);
+        await compareList.save();
+
+        res.status(200).json({ success: true, message: "Agency added to compare list." });
+    } catch (error) {
+        console.error("Error adding to compare list:", error);
+        res.status(500).json({ success: false, message: "Server error." });
+    }
+};
+
+export const getCompareList = async (req, res) => {
+    const userId = req.userId; // Retrieved from the middleware
+
+    try {
+        const compareList = await CompareList.findOne({ userId }).populate("agencies", "fullname email profilePhoto");
+
+        if (!compareList) {
+            return res.status(404).json({ success: false, message: "Compare list not found." });
+        }
+
+        res.status(200).json({ success: true, compareList: compareList.agencies });
+    } catch (error) {
+        console.error("Error fetching compare list:", error);
+        res.status(500).json({ success: false, message: "Server error." });
     }
 };
