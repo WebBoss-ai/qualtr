@@ -344,7 +344,7 @@ const JobSeekersList = () => {
                                                         }
 
                                                     }}
-                                                    className={`px-4 ${compareList.includes(jobSeeker._id) ? "text-gray-500" : "text-[#FA8072]"} hover:underline cursor-pointer`}
+                                                    className={`px-4 ${compareList.includes(jobSeeker._id) ? "text-gray-500" : "text-[#43291f]"} hover:underline cursor-pointer`}
                                                 >
                                                     <div className="flex items-center space-x-2 font-medium">
                                                         <span>{compareList.includes(jobSeeker._id) ? "Already Added" : "Add to Compare"}</span>
