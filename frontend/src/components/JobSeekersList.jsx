@@ -5,10 +5,14 @@ import Footer from './shared/Footer';
 import { Helmet } from 'react-helmet';
 import { JOB_SEEKER_API_END_POINT } from '@/utils/constant';
 import { USER_API_END_POINT } from '@/utils/constant';
-import { Calendar, Star, Users, MapPin, CookingPot } from 'lucide-react';
+import { Mail, Calendar, Star, Users, MapPin, CookingPot } from 'lucide-react';
 import axios from "axios";
+import { useSelector } from 'react-redux'
+import { X, LogIn } from 'lucide-react';
 
 const JobSeekersList = () => {
+    const { user } = useSelector(store => store.auth)
+
     const [jobSeekers, setJobSeekers] = useState([]);
     const [filteredJobSeekers, setFilteredJobSeekers] = useState([]);
     const [servicesFilter, setServicesFilter] = useState("");
@@ -36,6 +40,9 @@ const JobSeekersList = () => {
     const [compareList, setCompareList] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
     const [totalAgencies, setTotalAgencies] = useState(0);
+
+    const [showModal, setShowModal] = useState(false);
+    const [showModal2, setShowModal2] = useState(false);
 
     useEffect(() => {
         fetch(`${JOB_SEEKER_API_END_POINT}`)
@@ -328,8 +335,14 @@ const JobSeekersList = () => {
                                                 <a
                                                     href="#"
                                                     onClick={(e) => {
-                                                        e.preventDefault();
-                                                        !compareList.includes(jobSeeker._id) && handleAddToCompare(jobSeeker._id);
+                                                        if (!user) {
+                                                            // Show the second modal if not authenticated
+                                                            setShowModal2(true);
+                                                        } else {
+                                                            e.preventDefault();
+                                                            !compareList.includes(jobSeeker._id) && handleAddToCompare(jobSeeker._id);
+                                                        }
+
                                                     }}
                                                     className={`px-4 ${compareList.includes(jobSeeker._id) ? "text-gray-500" : "text-[#17B169]"} hover:underline cursor-pointer`}
                                                 >
@@ -346,6 +359,86 @@ const JobSeekersList = () => {
                                                         )}
                                                     </div>
                                                 </a>
+                                                {/* Modal 2 - For non-authenticated users */}
+                        {showModal2 && (
+                            <div
+                                className="fixed inset-0 z-50 overflow-y-auto"
+                                aria-labelledby="modal-title"
+                                role="dialog"
+                                aria-modal="true"
+                            >
+                                <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                                    <div
+                                        className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+                                        aria-hidden="true"
+                                    ></div>
+                                    <span
+                                        className="hidden sm:inline-block sm:align-middle sm:h-screen"
+                                        aria-hidden="true"
+                                    >
+                                        &#8203;
+                                    </span>
+                                    <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                                        <div className="absolute top-0 right-0 pt-4 pr-4">
+                                            <button
+                                                type="button"
+                                                className="bg-white rounded-md text-gray-400 hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                                                onClick={() => setShowModal2(false)}
+                                            >
+                                                <span className="sr-only">Close</span>
+                                                <X className="h-6 w-6" aria-hidden="true" />
+                                            </button>
+                                        </div>
+                                        <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                                            <div className="sm:flex sm:items-start">
+                                                <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
+                                                    <Mail className="h-6 w-6 text-[#17B169]" aria-hidden="true" />
+                                                </div>
+                                                <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                                                    <h3
+                                                        className="text-lg leading-6 font-medium text-gray-900"
+                                                        id="modal-title"
+                                                    >
+                                                        Let's Market Something Amazing!
+                                                    </h3>
+                                                    <div className="mt-2">
+                                                        <p className="text-sm text-gray-500">
+                                                            To compare agencies and unlock all the powerful tools of Qualtr, please log in. This will help you make the best choice for your project with{" "}
+                                                            <span className="text-[#006241]">{jobSeeker?.profile?.agencyName}</span>.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                                            <button
+                                                type="button"
+                                                className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-[#17B169] text-base font-medium text-white hover:bg-[#006241] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#17B169] sm:ml-3 sm:w-auto sm:text-sm"
+                                                onClick={() => {
+                                                    setShowModal(false); // Close modal
+                                                    const currentPage =
+                                                        window.location.pathname +
+                                                        window.location.search; // Get current URL
+                                                    window.location.href = `/login?redirect=${encodeURIComponent(
+                                                        currentPage
+                                                    )}`; // Redirect to login with redirect parameter
+                                                }}
+                                            >
+                                                <LogIn className="h-5 w-5 mr-2" aria-hidden="true" />
+                                                Log In Now
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#17B169] sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                                                onClick={() => setShowModal2(false)}
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
 
                                             </div>
                                         </div>
@@ -363,69 +456,44 @@ const JobSeekersList = () => {
                         </div>
 
                         {modalVisible && (
-                            <div
-                                style={{
-                                    position: "fixed",
-                                    top: 0,
-                                    left: 0,
-                                    width: "100%",
-                                    height: "100%",
-                                    backgroundColor: "rgba(0, 0, 0, 0.5)",
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    zIndex: 1000,
-                                }}
-                            >
-                                <div
-                                    style={{
-                                        backgroundColor: "#fff",
-                                        padding: "20px",
-                                        borderRadius: "8px",
-                                        width: "400px",
-                                        textAlign: "center",
-                                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-                                    }}
-                                >
-                                    <h2 style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "10px" }}>
-                                        Agency Added to Compare List
-                                    </h2>
-                                    <p style={{ fontSize: "14px", marginBottom: "20px" }}>
-                                        You've successfully added {totalAgencies} agency{totalAgencies > 1 ? "ies" : ""} to the
-                                        compare list.
-                                    </p>
-                                    <button
-                                        onClick={() => setModalVisible(false)}
-                                        style={{
-                                            display: "inline-block",
-                                            padding: "10px 20px",
-                                            backgroundColor: "#17B169",
-                                            color: "#fff",
-                                            borderRadius: "5px",
-                                            cursor: "pointer",
-                                            textDecoration: "none",
-                                            fontSize: "14px",
-                                            marginBottom: "10px",
-                                        }}
-                                    >
-                                        Close
-                                    </button>
-                                    <br />
-                                    <a
-                                        href="/compare-list"
-                                        style={{
-                                            display: "inline-block",
-                                            padding: "10px 20px",
-                                            backgroundColor: "#007BFF",
-                                            color: "#fff",
-                                            borderRadius: "5px",
-                                            cursor: "pointer",
-                                            textDecoration: "none",
-                                            fontSize: "14px",
-                                        }}
-                                    >
-                                        View Complete Compare List
-                                    </a>
+                            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+                                <div className="bg-white rounded-lg shadow-xl w-full max-w-md transform transition-all ease-in-out duration-300 scale-100 opacity-100">
+                                    <div className="relative p-6">
+                                        <button
+                                            onClick={() => setModalVisible(false)}
+                                            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors duration-200"
+                                        >
+                                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+                                            </svg>
+                                        </button>
+
+                                        <div className="text-center">
+                                            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
+                                                <svg className="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                                                </svg>
+                                            </div>
+                                            <h3 className="text-lg leading-6 font-medium text-gray-900 mb-2">Agency Added to Compare List</h3>
+                                            <p className="text-sm text-gray-500 mb-6">
+                                                You've successfully added {totalAgencies} agency{totalAgencies > 1 ? "ies" : ""} to the compare list.
+                                            </p>
+                                            <div className="mt-5 sm:mt-6 space-y-3">
+                                                <button
+                                                    onClick={() => setModalVisible(false)}
+                                                    className="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-[#17B169] text-base font-medium text-white hover:bg-[#148F56] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#17B169] transition-colors duration-200 sm:text-sm"
+                                                >
+                                                    Close
+                                                </button>
+                                                <a
+                                                    href="/compare-list"
+                                                    className="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-[#007BFF] text-base font-medium text-white hover:bg-[#0056b3] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#007BFF] transition-colors duration-200 sm:text-sm"
+                                                >
+                                                    View Complete Compare List
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         )}
