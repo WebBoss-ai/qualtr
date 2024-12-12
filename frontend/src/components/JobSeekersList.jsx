@@ -33,6 +33,10 @@ const JobSeekersList = () => {
 
     const generateRandomRating = () => (Math.random() * 0.5 + 4.5).toFixed(1);
 
+    const [compareList, setCompareList] = useState([]);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [totalAgencies, setTotalAgencies] = useState(0);
+
     useEffect(() => {
         fetch(`${JOB_SEEKER_API_END_POINT}`)
             .then(response => response.json())
@@ -50,6 +54,24 @@ const JobSeekersList = () => {
                 }
             })
             .catch(error => console.error("Error fetching agencies:", error));
+    }, []);
+
+    useEffect(() => {
+        const fetchCompareList = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                const response = await axios.get(`${USER_API_END_POINT}/compare`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                if (response.status === 200) {
+                    setCompareList(response.data.compareList.map((agency) => agency._id));
+                    setTotalAgencies(response.data.compareList.length);
+                }
+            } catch (error) {
+                console.error("Error fetching compare list:", error);
+            }
+        };
+        fetchCompareList();
     }, []);
 
     const handleServiceFilterChange = (service) => {
@@ -91,32 +113,28 @@ const JobSeekersList = () => {
 
     const handleAddToCompare = async (agencyId) => {
         try {
-            // Get the token from local storage
             const token = localStorage.getItem("token");
-            console.log("Token used for adding to compare:", token);
-            console.log("Agency id sent: ", agencyId);
-     
-            // Make the POST request with the token in the Authorization header
-            const response = axios.post(`${USER_API_END_POINT}/compare`,
-                { agencyId }, // Send only agencyId; the userId will be decoded from the token on the server
+            const response = await axios.post(
+                `${USER_API_END_POINT}/compare`,
+                { agencyId },
                 {
                     headers: {
-                        Authorization: `Bearer ${token}`, // Ensure token is included
+                        Authorization: `Bearer ${token}`,
                         "Content-Type": "application/json",
                     },
-                    withCredentials: true, // Include credentials if needed
                 }
             );
-    
+
             if (response.status === 200) {
-                alert("Agency added to compare list!");
+                setCompareList((prevList) => [...prevList, agencyId]);
+                setTotalAgencies((prevCount) => prevCount + 1);
+                setModalVisible(true); // Show modal
             }
         } catch (error) {
             console.error("Error adding to compare list:", error);
-            alert("Failed to add agency to compare list.");
         }
     };
-    
+
     // Navigate to compare list page
     const navigateToCompareList = () => {
         navigate("/compare-list");
@@ -294,7 +312,7 @@ const JobSeekersList = () => {
                                                     </span>
                                                 )}
                                             </div>
-                                            <div>
+                                            <div className='flex'>
                                                 <a href={`/agency/${jobSeeker._id}`} className="text-[#17B169] hover:underline">
                                                     <div className="flex items-center space-x-2 font-medium">
                                                         <span>View Complete Profile</span>
@@ -307,8 +325,29 @@ const JobSeekersList = () => {
                                                         </svg>
                                                     </div>
                                                 </a>
+                                                <a
+                                                    href="#"
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        !compareList.includes(jobSeeker._id) && handleAddToCompare(jobSeeker._id);
+                                                    }}
+                                                    className={`px-4 ${compareList.includes(jobSeeker._id) ? "text-gray-500" : "text-[#17B169]"} hover:underline cursor-pointer`}
+                                                >
+                                                    <div className="flex items-center space-x-2 font-medium">
+                                                        <span>{compareList.includes(jobSeeker._id) ? "Already Added" : "Add to Compare"}</span>
+                                                        {!compareList.includes(jobSeeker._id) && (
+                                                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                                                <path
+                                                                    fillRule="evenodd"
+                                                                    d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 10 10.293 5.707a1 1 0 010-1.414z"
+                                                                    clipRule="evenodd"
+                                                                />
+                                                            </svg>
+                                                        )}
+                                                    </div>
+                                                </a>
+
                                             </div>
-                                            <button onClick={() => handleAddToCompare(jobSeeker._id)}>Add to Compare</button>
                                         </div>
                                     </div>
                                 ))
@@ -322,6 +361,74 @@ const JobSeekersList = () => {
                                 </div>
                             )}
                         </div>
+
+                        {modalVisible && (
+                            <div
+                                style={{
+                                    position: "fixed",
+                                    top: 0,
+                                    left: 0,
+                                    width: "100%",
+                                    height: "100%",
+                                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    zIndex: 1000,
+                                }}
+                            >
+                                <div
+                                    style={{
+                                        backgroundColor: "#fff",
+                                        padding: "20px",
+                                        borderRadius: "8px",
+                                        width: "400px",
+                                        textAlign: "center",
+                                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+                                    }}
+                                >
+                                    <h2 style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "10px" }}>
+                                        Agency Added to Compare List
+                                    </h2>
+                                    <p style={{ fontSize: "14px", marginBottom: "20px" }}>
+                                        You've successfully added {totalAgencies} agency{totalAgencies > 1 ? "ies" : ""} to the
+                                        compare list.
+                                    </p>
+                                    <button
+                                        onClick={() => setModalVisible(false)}
+                                        style={{
+                                            display: "inline-block",
+                                            padding: "10px 20px",
+                                            backgroundColor: "#17B169",
+                                            color: "#fff",
+                                            borderRadius: "5px",
+                                            cursor: "pointer",
+                                            textDecoration: "none",
+                                            fontSize: "14px",
+                                            marginBottom: "10px",
+                                        }}
+                                    >
+                                        Close
+                                    </button>
+                                    <br />
+                                    <a
+                                        href="/compare-list"
+                                        style={{
+                                            display: "inline-block",
+                                            padding: "10px 20px",
+                                            backgroundColor: "#007BFF",
+                                            color: "#fff",
+                                            borderRadius: "5px",
+                                            cursor: "pointer",
+                                            textDecoration: "none",
+                                            fontSize: "14px",
+                                        }}
+                                    >
+                                        View Complete Compare List
+                                    </a>
+                                </div>
+                            </div>
+                        )}
 
                         {/* Pagination */}
                         <div
