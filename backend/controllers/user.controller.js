@@ -450,26 +450,55 @@ export const addToCompare = async (req, res) => {
     const { agencyId } = req.body; // Only agencyId is needed
     const userId = req.id; // Retrieved from the middleware
 
+    // Debugging: Check if userId is available
+    console.log("User ID from token:", userId);
+
     try {
+        // Check if agencyId is provided
+        if (!agencyId) {
+            console.log("Agency ID is missing in the request body");
+            return res.status(400).json({ success: false, message: "Agency ID is required." });
+        }
+
+        // Fetch the current compare list for the user
         let compareList = await CompareList.findOne({ userId });
 
+        // Debugging: Check if compareList is found
+        console.log("Compare list found for user:", compareList);
+
         if (!compareList) {
+            // If no compare list exists, create a new one
+            console.log("No compare list found for user, creating new compare list.");
             compareList = new CompareList({ userId, agencies: [] });
         }
 
+        // Debugging: Log the current agencies in the compare list
+        console.log("Current agencies in compare list:", compareList.agencies);
+
+        // Check if the agency is already in the compare list
         if (compareList.agencies.includes(agencyId)) {
+            console.log("Agency already in compare list:", agencyId);
             return res.status(400).json({ success: false, message: "Agency already in compare list." });
         }
 
+        // Add the agency to the compare list
         compareList.agencies.push(agencyId);
+
+        // Save the updated compare list
         await compareList.save();
+
+        // Debugging: Confirm the agency is added to the compare list
+        console.log("Updated compare list:", compareList.agencies);
 
         res.status(200).json({ success: true, message: "Agency added to compare list." });
     } catch (error) {
         console.error("Error adding to compare list:", error);
+
+        // Send a server error response if something fails
         res.status(500).json({ success: false, message: "Server error." });
     }
 };
+
 
 export const getCompareList = async (req, res) => {
     const userId = req.id; // Retrieved from the middleware

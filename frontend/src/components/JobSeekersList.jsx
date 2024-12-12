@@ -5,7 +5,7 @@ import Footer from './shared/Footer';
 import { Helmet } from 'react-helmet';
 import { JOB_SEEKER_API_END_POINT } from '@/utils/constant';
 import { USER_API_END_POINT } from '@/utils/constant';
-import { Calendar, Star, Users, MapPin } from 'lucide-react';
+import { Calendar, Star, Users, MapPin, CookingPot } from 'lucide-react';
 import axios from "axios";
 
 const JobSeekersList = () => {
@@ -94,6 +94,7 @@ const JobSeekersList = () => {
             // Get the token from local storage
             const token = localStorage.getItem("token");
             console.log("Token used for adding to compare:", token);
+            console.log("Agency id sent: ", agencyId);
      
             // Make the POST request with the token in the Authorization header
             const response = axios.post(`${USER_API_END_POINT}/compare`,
