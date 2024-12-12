@@ -448,7 +448,7 @@ export const getUsersByRole = async (req, res) => {
 
 export const addToCompare = async (req, res) => {
     const { agencyId } = req.body; // Only agencyId is needed
-    const userId = req.userId; // Retrieved from the middleware
+    const userId = req.id; // Retrieved from the middleware
 
     try {
         let compareList = await CompareList.findOne({ userId });
@@ -472,7 +472,7 @@ export const addToCompare = async (req, res) => {
 };
 
 export const getCompareList = async (req, res) => {
-    const userId = req.userId; // Retrieved from the middleware
+    const userId = req.id; // Retrieved from the middleware
 
     try {
         const compareList = await CompareList.findOne({ userId }).populate("agencies", "fullname email profilePhoto");
