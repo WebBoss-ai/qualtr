@@ -109,7 +109,7 @@ const CompareList = () => {
                                             <p className="font-bold text-gray-800 mb-3 text-lg">Expertise:</p>
                                             <div className="flex flex-wrap gap-2">
                                                 {agency.profile.expertise?.map((experty, index) => (
-                                                    <span key={index} className="bg-white text-[#17B169] border-1 border-[#17B169] px-3 py-1 rounded-[12px] text-sm font-medium shadow-sm transition-all duration-300 hover:bg-[#17B169] hover:text-white">{experty}</span>
+                                                    <span key={index} className="bg-white text-[#17B169] border-1 border-[#17B169] px-3 py-1 text-sm font-medium shadow-sm transition-all duration-300 hover:bg-[#17B169] hover:text-white">{experty}</span>
                                                 ))}
                                             </div>
                                         </div>
@@ -117,7 +117,7 @@ const CompareList = () => {
                                             <p className="font-bold text-gray-800 mb-3 text-lg">Services Offered:</p>
                                             <div className="flex flex-wrap gap-2">
                                                 {agency.profile.servicesOffered?.map((service, index) => (
-                                                    <span key={index} className="bg-white text-[#17B169] border-1 border-[#17B169] px-3 py-1 rounded-[12px] text-sm font-medium shadow-sm transition-all duration-300 hover:bg-[#17B169] hover:text-white">{service}</span>
+                                                    <span key={index} className="bg-white text-[#17B169] border-1 border-[#17B169] px-3 py-1 text-sm font-medium shadow-sm transition-all duration-300 hover:bg-[#17B169] hover:text-white">{service}</span>
                                                 ))}
                                             </div>
                                         </div>
@@ -125,7 +125,7 @@ const CompareList = () => {
                                             <p className="font-bold text-gray-800 mb-3 text-lg">Industries:</p>
                                             <div className="flex flex-wrap gap-2">
                                                 {agency.profile.industries?.map((industry, index) => (
-                                                    <span key={index} className="bg-white text-[#17B169] border-1 border-[#17B169] px-3 py-1 rounded-[12px] text-sm font-medium shadow-sm transition-all duration-300 hover:bg-[#17B169] hover:text-white">{industry}</span>
+                                                    <span key={index} className="bg-white text-[#17B169] border-1 border-[#17B169] px-3 py-1 text-sm font-medium shadow-sm transition-all duration-300 hover:bg-[#17B169] hover:text-white">{industry}</span>
                                                 ))}
                                             </div>
                                         </div>
