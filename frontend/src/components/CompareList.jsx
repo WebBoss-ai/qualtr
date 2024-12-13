@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { USER_API_END_POINT } from "@/utils/constant";
-import { Loader2, ChevronDown, ChevronUp, Award, Briefcase, Users, MapPin, Calendar, DollarSign, Star } from 'lucide-react';
+import { Loader2, ChevronDown, ChevronUp, Award, Briefcase, Users, MapPin } from 'lucide-react';
 import Footer from "./shared/Footer";
 import Navbar from "./shared/Navbar";
 import { Search, ArrowRight, X, Target } from 'lucide-react'
@@ -73,10 +73,9 @@ const CompareList = () => {
             <Navbar />
             <div className="container mx-auto px-4 py-12 bg-gray-50">
                 <div className="w-full mt-6 mb-6 p-4">
-                    <div className="relative overflow-hidden bg-gradient-to-r from-emerald-50 to-teal-50 rounded-3xl shadow-2xl mb-16">
+                    <div className="relative overflow-hidden bg-gradient-to-r from-emerald-50 to-teal-50 rounded-3xl mb-16">
                         <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-300/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
                         <div className="absolute bottom-0 left-0 w-96 h-96 bg-teal-300/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
-
                         <div className="relative z-10 flex flex-col lg:flex-row items-center gap-12 p-8 lg:p-16">
                             <div className="flex-1 space-y-8">
                                 <div className="inline-flex items-center gap-2 bg-emerald-100 text-emerald-800 px-4 py-2 rounded-full text-sm font-medium animate-fade-in">
@@ -93,14 +92,14 @@ const CompareList = () => {
                                 </p>
 
                                 <div className="flex flex-wrap gap-4">
-                                    <button className="group bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-all duration-300 hover:shadow-lg flex items-center space-x-2">
+                                    <button className="group bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-lg text-sm font-semibold transition-all duration-300 hover:shadow-lg flex items-center space-x-2">
                                         <span>Get Started</span>
                                         <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                                     </button>
 
                                     <button
                                         onClick={() => setIsModalOpen(true)}
-                                        className="group bg-white text-emerald-600 border-2 border-emerald-600 hover:bg-emerald-50 px-8 py-4 rounded-lg text-lg font-semibold transition-all duration-300 flex items-center space-x-2"
+                                        className="group bg-white text-emerald-600 border-2 border-emerald-600 hover:bg-emerald-50 px-6 py-2 rounded-lg text-sm font-semibold transition-all duration-300 flex items-center space-x-2"
                                     >
                                         <span>Learn More</span>
                                         <Users className="w-5 h-5 group-hover:scale-110 transition-transform" />
@@ -125,26 +124,27 @@ const CompareList = () => {
                     </div>
                     {isModalOpen && (
                         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-                        <div className="bg-white rounded-2xl p-8 max-w-lg w-full relative animate-fade-in">
-                          <button
-                            onClick={() => setIsModalOpen(false)}
-                            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
-                          >
-                            <X className="w-6 h-6" />
-                          </button>
-                          <h3 className="text-3xl font-bold text-gray-900 mb-4">About Our Agency Matching Service</h3>
-                          <p className="text-gray-600 mb-6 leading-relaxed">
-                            Our premium agency matching service is designed to connect you with the perfect agency for your unique needs. We take into account your project requirements, budget, and preferences to provide tailored recommendations. Our expert team conducts thorough vetting of agencies to ensure quality and reliability.
-                          </p>
-                          <button
-                            onClick={() => setIsModalOpen(false)}
-                            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg text-lg font-semibold transition-all duration-300 hover:shadow-lg flex items-center justify-center space-x-2"
-                          >
-                            <span>Explore All Agencies</span>
-                            <ArrowRight className="w-5 h-5" />
-                          </button>
+                            <div className="bg-white rounded-2xl p-8 max-w-lg w-full relative animate-fade-in">
+                                <button
+                                    onClick={() => setIsModalOpen(false)}
+                                    className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+                                >
+                                    <X className="w-6 h-6" />
+                                </button>
+                                <h3 className="text-3xl font-bold text-gray-900 mb-4">About Our Agency Matching Service</h3>
+                                <p className="text-gray-600 mb-6 leading-relaxed">
+                                    Our premium agency matching service is designed to connect you with the perfect agency for your unique needs. We take into account your project requirements, budget, and preferences to provide tailored recommendations. Our expert team conducts thorough vetting of agencies to ensure quality and reliability.
+                                </p>
+                                <button
+                                    onClick={() => navigate("/agencies")}
+                                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg text-lg font-semibold transition-all duration-300 hover:shadow-lg flex items-center justify-center space-x-2"
+                                >
+                                    <span>Explore All Agencies</span>
+                                    <ArrowRight className="w-5 h-5" />
+                                </button>
+
+                            </div>
                         </div>
-                      </div>
                     )}
 
                     <style jsx>{`
@@ -182,61 +182,66 @@ const CompareList = () => {
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {compareList.map((agency) => (
-                             <div key={agency._id} className="bg-white rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl transform hover:-translate-y-1">
-                             <div className="p-8">
-                               <div className="flex items-center gap-6 mb-6">
-                                 <div className="h-20 w-20 rounded-full overflow-hidden border-4 border-emerald-200 shadow-md">
-                                   <img
-                                     src={agency.profile.profilePhoto}
-                                     alt={`${agency.profile.agencyName} logo`}
-                                     className="h-full w-full object-cover"
-                                   />
-                                 </div>
-                                 <div>
-                                   <h4 className="text-2xl font-bold text-gray-900 hover:text-emerald-600 transition-colors duration-200">
-                                     {agency.profile.agencyName}
-                                   </h4>
-                                   <p className="text-emerald-600 font-medium">Top Rated Agency</p>
-                                 </div>
-                               </div>
-                               <button
-                                 onClick={() => toggleAgencyDetails(agency._id)}
-                                 className="w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 py-3 rounded-lg transition-colors duration-200 flex items-center justify-center"
-                               >
-                                 {expandedAgencies[agency._id] ? (
-                                   <>
-                                     <span>Hide Details</span>
-                                     <ChevronUp className="ml-2 w-5 h-5" />
-                                   </>
-                                 ) : (
-                                   <>
-                                     <span>Show Details</span>
-                                     <ChevronDown className="ml-2 w-5 h-5" />
-                                   </>
-                                 )}
-                               </button>
-                               {expandedAgencies[agency._id] && (
-                                 <div className="mt-6 space-y-4 animate-fade-in">
-                                   <div className="flex items-center text-gray-600">
-                                     <Award className="w-5 h-5 mr-3 text-emerald-500" />
-                                     <span>5+ Years Experience</span>
-                                   </div>
-                                   <div className="flex items-center text-gray-600">
-                                     <Briefcase className="w-5 h-5 mr-3 text-emerald-500" />
-                                     <span>100+ Projects Completed</span>
-                                   </div>
-                                   <div className="flex items-center text-gray-600">
-                                     <Users className="w-5 h-5 mr-3 text-emerald-500" />
-                                     <span>50+ Team Members</span>
-                                   </div>
-                                   <div className="flex items-center text-gray-600">
-                                     <Star className="w-5 h-5 mr-3 text-emerald-500" />
-                                     <span>4.9/5 Average Rating</span>
-                                   </div>
-                                 </div>
-                               )}
-                             </div>
-                           </div>
+                            <div key={agency._id} className="bg-white rounded-xl overflow-hidden border border-gray-700 border-1 transition-all duration-300">
+                                <div className="p-8">
+                                    <div className="flex items-center gap-6 mb-6">
+                                        <div className="h-20 w-20 rounded-full overflow-hidden border-4 border-emerald-200 shadow-md">
+                                            <img
+                                                src={agency.profile.profilePhoto}
+                                                alt={`${agency.profile.agencyName} logo`}
+                                                className="h-full w-full object-cover"
+                                            />
+                                        </div>
+                                        <div>
+                                            <h4 className="text-2xl font-bold text-gray-900 hover:text-emerald-600 transition-colors duration-200">
+                                                {agency.profile.agencyName}
+                                            </h4>
+                                            <p className="text-emerald-600 font-medium">Top Rated Agency</p>
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={() => toggleAgencyDetails(agency._id)}
+                                        className="w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 py-3 rounded-lg transition-colors duration-200 flex items-center justify-center"
+                                    >
+                                        {expandedAgencies[agency._id] ? (
+                                            <>
+                                                <span>Hide Details</span>
+                                                <ChevronUp className="ml-2 w-5 h-5" />
+                                            </>
+                                        ) : (
+                                            <>
+                                                <span>Show Details</span>
+                                                <ChevronDown className="ml-2 w-5 h-5" />
+                                            </>
+                                        )}
+                                    </button>
+                                    {expandedAgencies[agency._id] && (
+                                        <div className="mt-6 space-y-4 animate-fade-in">
+                                            <div className="flex items-center text-gray-600">
+                                                <MapPin className="w-5 h-5 mr-3 text-emerald-500" />
+                                                <span>{agency.profile.location} Average Rating</span>
+                                            </div>
+
+                                            <div className="flex items-center text-gray-600">
+                                                <Award className="w-5 h-5 mr-3 text-emerald-500" />
+                                                <span>
+                                                    {agency.profile.yearFounded
+                                                        ? `${new Date().getFullYear() - agency.profile.yearFounded} Years Experience`
+                                                        : "Experience not available"}
+                                                </span>
+                                            </div>
+                                            <div className="flex items-center text-gray-600">
+                                                <Briefcase className="w-5 h-5 mr-3 text-emerald-500" />
+                                                <span>{agency.profile.portfolio.length} Portfolio Listed</span>
+                                            </div>
+                                            <div className="flex items-center text-gray-600">
+                                                <Users className="w-5 h-5 mr-3 text-emerald-500" />
+                                                <span>{agency.profile.numberOfEmployees} Team Members</span>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
                         ))}
                     </div>
                 )}
