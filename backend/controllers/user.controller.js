@@ -504,7 +504,7 @@ export const getCompareList = async (req, res) => {
     const userId = req.id; // Retrieved from the middleware
 
     try {
-        const compareList = await CompareList.findOne({ userId }).populate("agencies", "fullname email profilePhoto");
+        const compareList = await CompareList.findOne({ userId }).populate("agencies", "fullname email profilePhoto profile");
 
         if (!compareList) {
             return res.status(404).json({ success: false, message: "Compare list not found." });
