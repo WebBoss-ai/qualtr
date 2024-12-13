@@ -5,6 +5,7 @@ import { Loader2, ChevronDown, ChevronUp, Award, Briefcase, Users, MapPin, Calen
 import Footer from "./shared/Footer";
 import Navbar from "./shared/Navbar";
 import { Search, ArrowRight, X, Target } from 'lucide-react'
+import { useNavigate } from 'react-router-dom';
 
 const CompareList = () => {
     const [compareList, setCompareList] = useState([]);
@@ -13,6 +14,7 @@ const CompareList = () => {
     const [expandedAgencies, setExpandedAgencies] = useState({});
     const [expandedPortfolios, setExpandedPortfolios] = useState({});
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const navigate = useNavigate();
 
     const openModal = () => setIsModalOpen(true)
     const closeModal = () => setIsModalOpen(false)
@@ -142,6 +144,7 @@ const CompareList = () => {
                             <button
                                 className="w-full bg-[#17B169] hover:bg-emerald-600 text-white px-4 py-2 rounded text-sm font-semibold transition-all duration-300 hover:shadow-md"
                                 style={{ borderRadius: '2px' }}
+                                onClick={() => navigate('/agencies')}
                             >
                                 Explore All Agencies
                             </button>
@@ -190,16 +193,16 @@ const CompareList = () => {
                                 <div className="p-6">
                                     <div className="flex items-center mb-6">
                                         <div className="h-16 w-16 rounded-full flex items-center justify-center overflow-hidden">
-                                            <a href={`/agency/${jobSeeker._id}`}>
+                                            <a href={`/agency/${agency._id}`}>
                                                 <img
-                                                    src={jobSeeker.profile.profilePhoto || "https://via.placeholder.com/40"}
-                                                    alt={`${jobSeeker?.profile?.agencyName || "Agency"} logo`}
+                                                    src={agency.profile.profilePhoto || "https://via.placeholder.com/40"}
+                                                    alt={`${agency.profil.agencyName || "Agency"} logo`}
                                                     className="h-full w-full object-contain"
                                                 />
                                             </a>
                                         </div>
                                         <div>
-                                            <a href={`/agency/${jobSeeker._id}`}>
+                                            <a href={`/agency/${agency._id}`}>
                                                 <h3 className="text-2xl font-bold text-gray-900 hover:text-[#17B169] transition-colors duration-200">{agency.profile.agencyName}</h3>
                                             </a>
                                             <p className="text-sm text-gray-600 italic mt-1">{agency.profile.slogan}</p>
