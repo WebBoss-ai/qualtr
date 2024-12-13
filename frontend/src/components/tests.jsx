@@ -218,3 +218,239 @@ const EnhancedDiscussProjectButton = ({ user, handleMailClick }) => {
 };
 
 export default EnhancedDiscussProjectButton;
+
+
+
+
+import React, { useState, useEffect } from 'react'
+import { Loader2, ChevronDown, ChevronUp, Award, Briefcase, Users, MapPin, Calendar, DollarSign, Star, Search, ArrowRight, X, Target } from 'lucide-react'
+
+export default function EnhancedCompareList() {
+  const [compareList, setCompareList] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [expandedAgencies, setExpandedAgencies] = useState({})
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  useEffect(() => {
+    const fetchCompareList = async () => {
+      try {
+        // Simulating API call
+        await new Promise(resolve => setTimeout(resolve, 1500))
+        const mockData = [
+          { _id: '1', profile: { agencyName: 'Digital Dynamos', profilePhoto: 'https://picsum.photos/seed/agency1/200' } },
+          { _id: '2', profile: { agencyName: 'Creative Catalysts', profilePhoto: 'https://picsum.photos/seed/agency2/200' } },
+          { _id: '3', profile: { agencyName: 'Marketing Mavericks', profilePhoto: 'https://picsum.photos/seed/agency3/200' } },
+        ]
+        setCompareList(mockData)
+        setLoading(false)
+      } catch (err) {
+        console.error("Error fetching compare list:", err)
+        setError("Failed to fetch compare list. Please try again.")
+        setLoading(false)
+      }
+    }
+
+    fetchCompareList()
+  }, [])
+
+  const toggleAgencyDetails = (agencyId) => {
+    setExpandedAgencies(prev => ({ ...prev, [agencyId]: !prev[agencyId] }))
+  }
+
+  const renderHeroSection = () => (
+    <div className="relative overflow-hidden bg-gradient-to-r from-emerald-50 to-teal-50 rounded-3xl shadow-2xl mb-16">
+      <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-300/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-teal-300/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+      
+      <div className="relative z-10 flex flex-col lg:flex-row items-center gap-12 p-8 lg:p-16">
+        <div className="flex-1 space-y-8">
+          <div className="inline-flex items-center gap-2 bg-emerald-100 text-emerald-800 px-4 py-2 rounded-full text-sm font-medium animate-fade-in">
+            <Search className="w-4 h-4" />
+            <span>Premium Agency Matching</span>
+          </div>
+          
+          <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
+            Find your perfect <span className="text-emerald-600">agency match</span>
+          </h2>
+          
+          <p className="text-xl text-gray-600 leading-relaxed max-w-2xl">
+            Our expert marketing consultants will meet with you to understand your unique needs and recommend the best-fit agencies tailored to your goals.
+          </p>
+          
+          <div className="flex flex-wrap gap-4">
+            <button className="group bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-all duration-300 hover:shadow-lg flex items-center space-x-2">
+              <span>Get Started</span>
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </button>
+            
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="group bg-white text-emerald-600 border-2 border-emerald-600 hover:bg-emerald-50 px-8 py-4 rounded-lg text-lg font-semibold transition-all duration-300 flex items-center space-x-2"
+            >
+              <span>Learn More</span>
+              <Users className="w-5 h-5 group-hover:scale-110 transition-transform" />
+            </button>
+          </div>
+        </div>
+        
+        <div className="flex-shrink-0 w-64 h-64 lg:w-80 lg:h-80 relative">
+          <div className="absolute inset-0 animate-float">
+            <div className="absolute top-1/4 right-1/4 w-32 h-32 bg-emerald-500 rounded-2xl transform rotate-45 opacity-80" />
+            <div className="absolute bottom-1/4 left-1/4 w-32 h-32 bg-teal-400 rounded-2xl transform -rotate-12 opacity-80" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded-full shadow-xl">
+              <Target className="w-20 h-20 text-emerald-600" />
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div className="absolute bottom-4 right-8 bg-emerald-100 text-emerald-800 px-6 py-3 rounded-full text-lg font-semibold animate-pulse">
+        $99 - Pay after successful match
+      </div>
+    </div>
+  )
+
+  const renderAgencyCard = (agency) => (
+    <div key={agency._id} className="bg-white rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl transform hover:-translate-y-1">
+      <div className="p-8">
+        <div className="flex items-center gap-6 mb-6">
+          <div className="h-20 w-20 rounded-full overflow-hidden border-4 border-emerald-200 shadow-md">
+            <img
+              src={agency.profile.profilePhoto}
+              alt={`${agency.profile.agencyName} logo`}
+              className="h-full w-full object-cover"
+            />
+          </div>
+          <div>
+            <h4 className="text-2xl font-bold text-gray-900 hover:text-emerald-600 transition-colors duration-200">
+              {agency.profile.agencyName}
+            </h4>
+            <p className="text-emerald-600 font-medium">Top Rated Agency</p>
+          </div>
+        </div>
+        <button
+          onClick={() => toggleAgencyDetails(agency._id)}
+          className="w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 py-3 rounded-lg transition-colors duration-200 flex items-center justify-center"
+        >
+          {expandedAgencies[agency._id] ? (
+            <>
+              <span>Hide Details</span>
+              <ChevronUp className="ml-2 w-5 h-5" />
+            </>
+          ) : (
+            <>
+              <span>Show Details</span>
+              <ChevronDown className="ml-2 w-5 h-5" />
+            </>
+          )}
+        </button>
+        {expandedAgencies[agency._id] && (
+          <div className="mt-6 space-y-4 animate-fade-in">
+            <div className="flex items-center text-gray-600">
+              <Award className="w-5 h-5 mr-3 text-emerald-500" />
+              <span>5+ Years Experience</span>
+            </div>
+            <div className="flex items-center text-gray-600">
+              <Briefcase className="w-5 h-5 mr-3 text-emerald-500" />
+              <span>100+ Projects Completed</span>
+            </div>
+            <div className="flex items-center text-gray-600">
+              <Users className="w-5 h-5 mr-3 text-emerald-500" />
+              <span>50+ Team Members</span>
+            </div>
+            <div className="flex items-center text-gray-600">
+              <Star className="w-5 h-5 mr-3 text-emerald-500" />
+              <span>4.9/5 Average Rating</span>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+
+  const renderModal = () => (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-2xl p-8 max-w-lg w-full relative animate-fade-in">
+        <button
+          onClick={() => setIsModalOpen(false)}
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+        >
+          <X className="w-6 h-6" />
+        </button>
+        <h3 className="text-3xl font-bold text-gray-900 mb-4">About Our Agency Matching Service</h3>
+        <p className="text-gray-600 mb-6 leading-relaxed">
+          Our premium agency matching service is designed to connect you with the perfect agency for your unique needs. We take into account your project requirements, budget, and preferences to provide tailored recommendations. Our expert team conducts thorough vetting of agencies to ensure quality and reliability.
+        </p>
+        <button
+          onClick={() => setIsModalOpen(false)}
+          className="w-full bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg text-lg font-semibold transition-all duration-300 hover:shadow-lg flex items-center justify-center space-x-2"
+        >
+          <span>Explore All Agencies</span>
+          <ArrowRight className="w-5 h-5" />
+        </button>
+      </div>
+    </div>
+  )
+
+  if (loading) return (
+    <div className="flex items-center justify-center h-screen bg-gradient-to-r from-emerald-50 to-teal-50">
+      <Loader2 className="w-16 h-16 animate-spin text-emerald-600" />
+    </div>
+  )
+
+  if (error) return (
+    <div className="flex items-center justify-center h-screen bg-gradient-to-r from-red-50 to-pink-50">
+      <p className="text-red-600 text-xl font-semibold bg-white px-8 py-6 rounded-lg shadow-lg">{error}</p>
+    </div>
+  )
+
+  return (
+    <div className="min-h-screen bg-gradient-to-r from-emerald-50 to-teal-50 py-16 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        {renderHeroSection()}
+
+        <h3 className="text-4xl font-bold mb-12 text-center text-gray-800">Compare Top Agencies</h3>
+        
+        {compareList.length === 0 ? (
+          <p className="text-center text-gray-600 text-xl bg-white p-8 rounded-xl shadow-md">No agencies added to the compare list yet.</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {compareList.map(renderAgencyCard)}
+          </div>
+        )}
+      </div>
+
+      {isModalOpen && renderModal()}
+
+      <style jsx>{`
+        @keyframes float {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-20px) rotate(5deg); }
+        }
+        
+        @keyframes fade-in {
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.8; transform: scale(0.95); }
+        }
+        
+        .animate-float {
+          animation: float 6s ease-in-out infinite;
+        }
+        
+        .animate-fade-in {
+          animation: fade-in 0.5s ease-out forwards;
+        }
+        
+        .animate-pulse {
+          animation: pulse 2s ease-in-out infinite;
+        }
+      `}</style>
+    </div>
+  )
+}

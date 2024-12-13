@@ -73,83 +73,78 @@ const CompareList = () => {
             <Navbar />
             <div className="container mx-auto px-4 py-12 bg-gray-50">
                 <div className="w-full mt-6 mb-6 p-4">
-                    <div className="relative overflow-hidden bg-gradient-to-r from-emerald-50 to-white border-none shadow-lg rounded-lg">
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
-                        <div className="absolute bottom-0 left-0 w-64 h-64 bg-teal-500/10 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2" />
+                    <div className="relative overflow-hidden bg-gradient-to-r from-emerald-50 to-teal-50 rounded-3xl shadow-2xl mb-16">
+                        <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-300/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+                        <div className="absolute bottom-0 left-0 w-96 h-96 bg-teal-300/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
 
-                        <div className="flex flex-col md:flex-row items-center gap-6 p-6 relative">
-                            <div className="flex-1 space-y-4">
-                                <div className="flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-sm font-medium animate-fade-in">
+                        <div className="relative z-10 flex flex-col lg:flex-row items-center gap-12 p-8 lg:p-16">
+                            <div className="flex-1 space-y-8">
+                                <div className="inline-flex items-center gap-2 bg-emerald-100 text-emerald-800 px-4 py-2 rounded-full text-sm font-medium animate-fade-in">
                                     <Search className="w-4 h-4" />
                                     <span>Premium Agency Matching</span>
                                 </div>
 
-                                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">
-                                    Find your matching agency - Premium
+                                <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
+                                    Find your perfect <span className="text-emerald-600">agency match</span>
                                 </h2>
 
-                                <p className="text-sm md:text-base text-gray-600 leading-relaxed">
-                                    Our expert marketing consultants will meet with you to understand your unique marketing needs and recommend the best-fit agencies tailored to your goals.
+                                <p className="text-xl text-gray-600 leading-relaxed max-w-2xl">
+                                    Our expert marketing consultants will meet with you to understand your unique needs and recommend the best-fit agencies tailored to your goals.
                                 </p>
 
-                                <div className="flex flex-wrap gap-3">
-                                    <button
-                                        className="group bg-[#17B169] hover:bg-emerald-600 text-white px-4 py-2 rounded text-sm font-semibold transition-all duration-300 hover:shadow-md flex items-center"
-                                        style={{ borderRadius: '10px' }}
-                                    >
-                                        Get Started
-                                        <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                                <div className="flex flex-wrap gap-4">
+                                    <button className="group bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-all duration-300 hover:shadow-lg flex items-center space-x-2">
+                                        <span>Get Started</span>
+                                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                                     </button>
 
                                     <button
-                                        onClick={openModal}
-                                        className="group bg-white text-[#17B169] border border-emerald-200 hover:border-emerald-300 px-4 py-2 rounded text-sm font-semibold transition-all duration-300 flex items-center"
-                                        style={{ borderRadius: '10px' }}
+                                        onClick={() => setIsModalOpen(true)}
+                                        className="group bg-white text-emerald-600 border-2 border-emerald-600 hover:bg-emerald-50 px-8 py-4 rounded-lg text-lg font-semibold transition-all duration-300 flex items-center space-x-2"
                                     >
-                                        Learn More
-                                        <Users className="ml-2 w-4 h-4 group-hover:scale-110 transition-transform" />
+                                        <span>Learn More</span>
+                                        <Users className="w-5 h-5 group-hover:scale-110 transition-transform" />
                                     </button>
                                 </div>
                             </div>
 
-                            <div className="flex-shrink-0 w-32 h-32 md:w-40 md:h-40 relative">
+                            <div className="flex-shrink-0 w-64 h-64 lg:w-80 lg:h-80 relative">
                                 <div className="absolute inset-0 animate-float">
-                                    <div className="absolute top-1/4 right-1/4 w-16 h-16 bg-[#17B169] rounded-xl transform rotate-45 opacity-80" />
-                                    <div className="absolute bottom-1/4 left-1/4 w-16 h-16 bg-emerald-400 rounded-xl transform -rotate-12 opacity-80" />
-                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-3 rounded-full shadow-lg">
-                                        <Target className="w-8 h-8 text-[#17B169]" />
+                                    <div className="absolute top-1/4 right-1/4 w-32 h-32 bg-emerald-500 rounded-2xl transform rotate-45 opacity-80" />
+                                    <div className="absolute bottom-1/4 left-1/4 w-32 h-32 bg-teal-400 rounded-2xl transform -rotate-12 opacity-80" />
+                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded-full shadow-xl">
+                                        <Target className="w-20 h-20 text-emerald-600" />
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="absolute bottom-2 right-4 bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-xs font-semibold animate-pulse">
-                            $99 - Pay after deal
+                        <div className="absolute bottom-4 right-8 bg-emerald-100 text-emerald-800 px-6 py-3 rounded-full text-lg font-semibold animate-pulse">
+                            $99 - Pay after successful match
                         </div>
                     </div>
-
                     {isModalOpen && (
                         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-                            <div className="bg-white rounded-lg p-6 max-w-md w-full relative animate-fade-in">
-                                <button
-                                    onClick={closeModal}
-                                    className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-                                >
-                                    <X className="w-6 h-6" />
-                                </button>
-                                <h3 className="text-2xl font-bold text-gray-900 mb-4">About Our Agency Matching Service</h3>
-                                <p className="text-gray-600 mb-6">
-                                    Our agency matching service is designed to connect you with the perfect agency for your needs. We take into account your project requirements, budget, and preferences to provide tailored recommendations. Our expert team conducts thorough vetting of agencies to ensure quality and reliability.
-                                </p>
-                                <button
-                                    className="w-full bg-[#17B169] hover:bg-emerald-600 text-white px-4 py-2 rounded text-sm font-semibold transition-all duration-300 hover:shadow-md"
-                                    style={{ borderRadius: '2px' }}
-                                    onClick={() => navigate('/agencies')}
-                                >
-                                    Explore All Agencies
-                                </button>
-                            </div>
+                        <div className="bg-white rounded-2xl p-8 max-w-lg w-full relative animate-fade-in">
+                          <button
+                            onClick={() => setIsModalOpen(false)}
+                            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+                          >
+                            <X className="w-6 h-6" />
+                          </button>
+                          <h3 className="text-3xl font-bold text-gray-900 mb-4">About Our Agency Matching Service</h3>
+                          <p className="text-gray-600 mb-6 leading-relaxed">
+                            Our premium agency matching service is designed to connect you with the perfect agency for your unique needs. We take into account your project requirements, budget, and preferences to provide tailored recommendations. Our expert team conducts thorough vetting of agencies to ensure quality and reliability.
+                          </p>
+                          <button
+                            onClick={() => setIsModalOpen(false)}
+                            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg text-lg font-semibold transition-all duration-300 hover:shadow-lg flex items-center justify-center space-x-2"
+                          >
+                            <span>Explore All Agencies</span>
+                            <ArrowRight className="w-5 h-5" />
+                          </button>
                         </div>
+                      </div>
                     )}
 
                     <style jsx>{`
@@ -187,26 +182,61 @@ const CompareList = () => {
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {compareList.map((agency) => (
-                            <div key={agency._id} className="bg-white rounded-xl overflow-hidden transition-all duration-300">
-                                <div className="p-6">
-                                    <div className="flex items-center mb-6">
-                                        <div className="h-16 w-16 rounded-full flex items-center justify-center overflow-hidden">
-                                            <a href={`/agency/${agency._id}`}>
-                                                <img
-                                                    src={agency.profile.profilePhoto || "https://via.placeholder.com/40"}
-                                                    alt={`${agency.profile.agencyName || "Agency"} logo`}
-                                                    className="h-full w-full object-contain"
-                                                />
-                                            </a>
-                                        </div>
-                                        <div>
-                                            <a href={`/agency/${agency._id}`}>
-                                                <h4 className="text-2xl font-semibold text-gray-900 hover:text-[#17B169] transition-colors duration-200">{agency.profile.agencyName}</h4>
-                                            </a>
-                                            </div>
-                                    </div>
-                                </div>
-                            </div>
+                             <div key={agency._id} className="bg-white rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl transform hover:-translate-y-1">
+                             <div className="p-8">
+                               <div className="flex items-center gap-6 mb-6">
+                                 <div className="h-20 w-20 rounded-full overflow-hidden border-4 border-emerald-200 shadow-md">
+                                   <img
+                                     src={agency.profile.profilePhoto}
+                                     alt={`${agency.profile.agencyName} logo`}
+                                     className="h-full w-full object-cover"
+                                   />
+                                 </div>
+                                 <div>
+                                   <h4 className="text-2xl font-bold text-gray-900 hover:text-emerald-600 transition-colors duration-200">
+                                     {agency.profile.agencyName}
+                                   </h4>
+                                   <p className="text-emerald-600 font-medium">Top Rated Agency</p>
+                                 </div>
+                               </div>
+                               <button
+                                 onClick={() => toggleAgencyDetails(agency._id)}
+                                 className="w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 py-3 rounded-lg transition-colors duration-200 flex items-center justify-center"
+                               >
+                                 {expandedAgencies[agency._id] ? (
+                                   <>
+                                     <span>Hide Details</span>
+                                     <ChevronUp className="ml-2 w-5 h-5" />
+                                   </>
+                                 ) : (
+                                   <>
+                                     <span>Show Details</span>
+                                     <ChevronDown className="ml-2 w-5 h-5" />
+                                   </>
+                                 )}
+                               </button>
+                               {expandedAgencies[agency._id] && (
+                                 <div className="mt-6 space-y-4 animate-fade-in">
+                                   <div className="flex items-center text-gray-600">
+                                     <Award className="w-5 h-5 mr-3 text-emerald-500" />
+                                     <span>5+ Years Experience</span>
+                                   </div>
+                                   <div className="flex items-center text-gray-600">
+                                     <Briefcase className="w-5 h-5 mr-3 text-emerald-500" />
+                                     <span>100+ Projects Completed</span>
+                                   </div>
+                                   <div className="flex items-center text-gray-600">
+                                     <Users className="w-5 h-5 mr-3 text-emerald-500" />
+                                     <span>50+ Team Members</span>
+                                   </div>
+                                   <div className="flex items-center text-gray-600">
+                                     <Star className="w-5 h-5 mr-3 text-emerald-500" />
+                                     <span>4.9/5 Average Rating</span>
+                                   </div>
+                                 </div>
+                               )}
+                             </div>
+                           </div>
                         ))}
                     </div>
                 )}
