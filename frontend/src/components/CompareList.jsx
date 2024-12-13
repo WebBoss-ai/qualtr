@@ -106,15 +106,15 @@ const CompareList = () => {
                                 {expandedAgencies[agency._id] && agency.profile && (
                                     <div className="px-6 pb-6 space-y-6 animate-fadeIn">
                                         <div>
-                                            <p className="font-bold text-gray-800 mb-3 text-lg">Expertise:</p>
+                                            <p className="font-bold text-gray-700 mb-3 text-lg">Expertise:</p>
                                             <div className="flex flex-wrap gap-2">
                                                 {agency.profile.expertise?.map((experty, index) => (
-                                                    <span key={index} className="bg-white text-[#17B169] border-2 border-[#17B169] px-3 py-1 rounded-full text-sm font-medium shadow-sm transition-all duration-300 hover:bg-[#17B169] hover:text-white">{experty}</span>
+                                                    <span key={index} className="bg-white text-gray-500 border-2 border-gray-500 px-3 py-1 rounded-full text-sm font-medium shadow-sm transition-all duration-300 hover:bg-[#17B169] hover:text-white">{experty}</span>
                                                 ))}
                                             </div>
                                         </div>
                                         <div>
-                                            <p className="font-bold text-gray-800 mb-3 text-lg">Services Offered:</p>
+                                            <p className="font-bold text-gray-700 mb-3 text-lg">Services Offered:</p>
                                             <div className="flex flex-wrap gap-2">
                                                 {agency.profile.servicesOffered?.map((service, index) => (
                                                     <span key={index} className="bg-white text-gray-500 border-2 border--gray-500 px-3 py-1 rounded-full text-sm font-medium shadow-sm transition-all duration-300 hover:bg-[#17B169] hover:text-white">{service}</span>
@@ -122,15 +122,15 @@ const CompareList = () => {
                                             </div>
                                         </div>
                                         <div>
-                                            <p className="font-bold text-gray-800 mb-3 text-lg">Industries:</p>
+                                            <p className="font-bold text-gray-700 mb-3 text-lg">Industries:</p>
                                             <div className="flex flex-wrap gap-2">
                                                 {agency.profile.industries?.map((industry, index) => (
-                                                    <span key={index} className="bg-white text-[#17B169] border-2 border-[#17B169] px-3 py-1 rounded-full text-sm font-medium shadow-sm transition-all duration-300 hover:bg-[#17B169] hover:text-white">{industry}</span>
+                                                    <span key={index} className="bg-white text-gray-500 border-2 border-gray-500 px-3 py-1 rounded-full text-sm font-medium shadow-sm transition-all duration-300 hover:bg-[#17B169] hover:text-white">{industry}</span>
                                                 ))}
                                             </div>
                                         </div>
                                         <div>
-                                            <p className="font-bold text-gray-800 mb-3 text-lg">Portfolio Highlights:</p>
+                                            <p className="font-bold text-gray-700 mb-3 text-lg">Portfolio Highlights:</p>
                                             {agency.profile.portfolio?.length > 0 ? (
                                                 <ul className="space-y-4">
                                                     {agency.profile.portfolio.map((item, index) => (
@@ -157,13 +157,13 @@ const CompareList = () => {
                                             )}
                                         </div>
                                         <div>
-                                            <p className="font-bold text-gray-800 mb-3 text-lg">Awards:</p>
+                                            <p className="font-bold text-gray-700 mb-3 text-lg">Awards:</p>
                                             {agency.profile.awards?.length > 0 ? (
                                                 <ul className="space-y-3">
                                                     {agency.profile.awards.map((award, index) => (
                                                         <li key={index} className="flex items-center bg-yellow-50 p-3 rounded-lg">
                                                             <Award className="w-6 h-6 mr-3 text-yellow-500" />
-                                                            <span className="text-gray-800 font-medium">{award.awardName} <span className="text-gray-600">({award.year})</span></span>
+                                                            <span className="text-gray-700 font-medium">{award.awardName} <span className="text-gray-600">({award.year})</span></span>
                                                         </li>
                                                     ))}
                                                 </ul>
