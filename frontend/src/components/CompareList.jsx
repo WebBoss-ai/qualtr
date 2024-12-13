@@ -19,20 +19,6 @@ const CompareList = () => {
     const openModal = () => setIsModalOpen(true)
     const closeModal = () => setIsModalOpen(false)
 
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 6;
-
-    // Calculate the total pages
-    const totalPages = Math.ceil(compareList.length / itemsPerPage);
-    // Get the current items to display
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = compareList.slice(indexOfFirstItem, indexOfLastItem);
-    // Function to handle page change
-    const handlePageChange = (pageNumber) => {
-        setCurrentPage(pageNumber);
-    };
-
     useEffect(() => {
         const fetchCompareList = async () => {
             try {
@@ -86,7 +72,7 @@ const CompareList = () => {
         <div>
             <Navbar />
             <div className="container mx-auto px-4 py-12 bg-gray-50">
-                <div className="w-full mt-8 p-4">
+                <div className="w-full mt-6 mb-6 p-4">
                     <div className="relative overflow-hidden bg-gradient-to-r from-emerald-50 to-white border-none shadow-lg rounded-lg">
                         <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
                         <div className="absolute bottom-0 left-0 w-64 h-64 bg-teal-500/10 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2" />
@@ -195,16 +181,13 @@ const CompareList = () => {
         }
       `}</style>
                 </div>
-                <h2 className="text-4xl font-bold mb-12 text-center text-gray-800">Compare Agencies</h2>
-                {currentItems.length === 0 ? (
-                    <p className="text-center text-gray-600 text-lg">
-                        No agencies added to the compare list yet.
-                    </p>
+                <h3 className="text-4xl font-bold mb-12 text-center text-gray-800">Compare Agencies</h3>
+                {compareList.length === 0 ? (
+                    <p className="text-center text-gray-600 text-lg">No agencies added to the compare list yet.</p>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {currentItems.map((agency) => (
+                        {compareList.map((agency) => (
                             <div key={agency._id} className="bg-white rounded-xl overflow-hidden transition-all duration-300">
-                                {/* Agency Card Code */}
                                 <div className="p-6">
                                     <div className="flex items-center mb-6">
                                         <div className="h-16 w-16 rounded-full flex items-center justify-center overflow-hidden">
@@ -218,54 +201,15 @@ const CompareList = () => {
                                         </div>
                                         <div>
                                             <a href={`/agency/${agency._id}`}>
-                                                <h3 className="text-2xl font-bold text-gray-900 hover:text-[#17B169] transition-colors duration-200">
-                                                    {agency.profile.agencyName}
-                                                </h3>
+                                                <h4 className="text-2xl font-semibold text-gray-900 hover:text-[#17B169] transition-colors duration-200">{agency.profile.agencyName}</h4>
                                             </a>
-                                            <p className="text-sm text-gray-600 italic mt-1">{agency.profile.slogan}</p>
-                                        </div>
+                                            </div>
                                     </div>
-                                    {/* Other Agency Details */}
                                 </div>
                             </div>
                         ))}
                     </div>
                 )}
-                {/* Pagination Controls */}
-                <div className="flex justify-center mt-8">
-                    <ul className="flex items-center space-x-2">
-                        <li>
-                            <button
-                                onClick={() => handlePageChange(currentPage - 1)}
-                                disabled={currentPage === 1}
-                                className={`px-4 py-2 rounded-md ${currentPage === 1 ? "bg-gray-300 cursor-not-allowed" : "bg-[#17B169] text-white hover:bg-[#149655]"}`}
-                            >
-                                Previous
-                            </button>
-                        </li>
-                        {Array.from({ length: totalPages }, (_, index) => (
-                            <li key={index}>
-                                <button
-                                    onClick={() => handlePageChange(index + 1)}
-                                    className={`px-4 py-2 rounded-md ${currentPage === index + 1 ? "bg-[#17B169] text-white" : "bg-gray-200 hover:bg-[#149655] hover:text-white"
-                                        }`}
-                                >
-                                    {index + 1}
-                                </button>
-                            </li>
-                        ))}
-                        <li>
-                            <button
-                                onClick={() => handlePageChange(currentPage + 1)}
-                                disabled={currentPage === totalPages}
-                                className={`px-4 py-2 rounded-md ${currentPage === totalPages ? "bg-gray-300 cursor-not-allowed" : "bg-[#17B169] text-white hover:bg-[#149655]"
-                                    }`}
-                            >
-                                Next
-                            </button>
-                        </li>
-                    </ul>
-                </div>
             </div>
             <Footer />
         </div>
