@@ -196,7 +196,7 @@ const CompareList = () => {
                                             <a href={`/agency/${agency._id}`}>
                                                 <img
                                                     src={agency.profile.profilePhoto || "https://via.placeholder.com/40"}
-                                                    alt={`${agency.profil.agencyName || "Agency"} logo`}
+                                                    alt={`${agency.profile.agencyName || "Agency"} logo`}
                                                     className="h-full w-full object-contain"
                                                 />
                                             </a>
