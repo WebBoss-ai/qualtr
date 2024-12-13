@@ -187,16 +187,16 @@ const CompareList = () => {
                                     <div className="p-8">
                                         <div className="flex items-center gap-6 mb-6">
                                             <div className="h-16 w-16 rounded-full flex items-center border-2 border-emerald-200 shadow-md justify-center overflow-hidden">
-                                                <a href={`/agency/${jobSeeker._id}`}>
+                                                <a href={`/agency/${agency._id}`}>
                                                     <img
-                                                        src={jobSeeker.profile.profilePhoto || "https://via.placeholder.com/40"}
-                                                        alt={`${jobSeeker?.profile?.agencyName || "Agency"} logo`}
+                                                        src={agency.profile.profilePhoto || "https://via.placeholder.com/40"}
+                                                        alt={`${agency.profile.agencyName || "Agency"} logo`}
                                                         className="h-full w-full object-contain"
                                                     />
                                                 </a>
                                             </div>
                                             <div>
-                                                <a href={`/agency/${jobSeeker._id}`}>
+                                                <a href={`/agency/${agency._id}`}>
                                                     <h4 className="text-2xl font-bold text-gray-900 hover:text-emerald-600 transition-colors duration-200">
                                                         {agency.profile.agencyName}
                                                     </h4>
