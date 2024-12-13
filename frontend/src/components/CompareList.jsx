@@ -60,7 +60,17 @@ const CompareList = () => {
                             <img src={agency.profilePhoto} alt={agency.fullname} width={50} />
                             <div>
                                 <h3>{agency.fullname}</h3>
+                                <h3>{agency.proofile.agencyName}</h3>
                                 <p>{agency.email}</p>
+                            </div>
+                            <div className="h-16 w-16 rounded-full flex items-center justify-center overflow-hidden">
+                                <a href={`/agency/${agency._id}`}>
+                                    <img
+                                        src={agency.profile.profilePhoto || "https://via.placeholder.com/40"}
+                                        alt={`${agency?.profile?.agencyName || "Agency"} logo`}
+                                        className="h-full w-full object-contain"
+                                    />
+                                </a>
                             </div>
                         </li>
                     ))}
