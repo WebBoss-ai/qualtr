@@ -16,7 +16,7 @@ export const register = async (req, res) => {
                 message: "Something is missing",
                 success: false
             });
-        };
+        }
         const file = req.file;
         if (!file) {
             return res.status(400).json({
@@ -27,13 +27,14 @@ export const register = async (req, res) => {
         const fileUri = getDataUri(file);
         const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
 
-        const user = await User.findOne({ email });
+        let user = await User.findOne({ email });
         if (user) {
             return res.status(400).json({
-                message: 'User already exist with this email.',
+                message: 'User already exists with this email.',
                 success: false,
-            })
+            });
         }
+
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const userData = {
@@ -67,8 +68,13 @@ export const register = async (req, res) => {
         });
     } catch (error) {
         console.log(error);
+        return res.status(500).json({
+            message: "Internal server error.",
+            success: false
+        });
     }
-}
+};
+
 
 export const login = async (req, res) => {
     try {
