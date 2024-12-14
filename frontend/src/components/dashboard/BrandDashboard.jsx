@@ -100,31 +100,12 @@ const BrandDashboard = () => {
         </header>
 
         <main className="px-4 py-8 sm:px-6 lg:px-8">
-          <section className="mb-8 rounded-lg bg-white p-6 shadow">
-            <h2 className="mb-4 text-2xl font-semibold text-gray-900">Analytics Overview</h2>
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {[
-                { label: 'Total Requirements', value: analytics.totalRequirements || 0, color: 'bg-blue-500' },
-                { label: 'Active Bids', value: analytics.activeBids || 0, color: 'bg-green-500' },
-                { label: 'Agencies Contacted', value: analytics.agenciesContacted || 0, color: 'bg-yellow-500' },
-                { label: 'Average Bid Amount', value: `₹${(analytics.averageBidAmount || 0).toLocaleString()}`, color: 'bg-purple-500' },
-              ].map((stat, index) => (
-                <div key={index} className="overflow-hidden rounded-lg bg-white shadow">
-                  <div className={`p-3 ${stat.color}`} />
-                  <div className="px-4 py-5 sm:p-6">
-                    <dt className="truncate text-sm font-medium text-gray-500">{stat.label}</dt>
-                    <dd className="mt-1 text-3xl font-semibold text-gray-900">{stat.value}</dd>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
           <section className="mb-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { label: 'Total Requirements', value: analytics.totalRequirements || 0, icon: Briefcase, color: 'bg-blue-500', trend: analytics.projectGrowth },
-              { label: 'Active Bids', value: analytics.activeBids || 0, icon: BarChart2, color: 'bg-green-500', trend: analytics.bidConversion },
-              { label: 'Agencies Contacted', value: analytics.agenciesContacted || 0, icon: Users, color: 'bg-yellow-500' },
-              { label: 'Average Bid Amount', value: `₹${(analytics.averageBidAmount || 0).toLocaleString()}`, icon: DollarSign, color: 'bg-purple-500' },
+              { label: 'Compare List', value: analytics.comparedAgencies || 0, icon: Briefcase, color: 'bg-blue-500', trend: analytics.percentChangeComparedAgencies },
+              { label: 'Meeting Request', value: analytics.messagesRequested || 0, icon: Users, color: 'bg-yellow-500',trend: analytics.percentChangeMessagesRequested  },
+              { label: 'Active Bids', value: analytics.activeBids || 0, icon: BarChart2, color: 'bg-green-500', trend: analytics.percentChangeActiveBids },
+              { label: 'Average Bid Amount', value: `₹${(analytics.averageBidAmount || 0).toLocaleString()}`, icon: DollarSign, color: 'bg-purple-500', trend: analytics.percentChangeAverageBidAmount },
             ].map((stat, index) => (
               <div key={index} className="overflow-hidden rounded-lg bg-white shadow transition-all duration-300 hover:shadow-lg">
                 <div className={`p-1 ${stat.color}`} />
