@@ -1,6 +1,6 @@
 import Job from "../models/job.model.js";
 import User from "../models/user.model.js";
-import CompareList from "../models/compareList.model.js";
+import CompareList from "../models/CompareList.js";
 import Message from "../models/message.model.js";
 import moment from "moment";
 
