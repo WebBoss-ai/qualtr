@@ -37,6 +37,7 @@ import AdminDashboard from './components/AdminDashboard'
 import AdminMessages from './components/AdminMessages'
 import AdminUsers from './components/AdminUsers'
 import CompareList from './components/CompareList'
+import Layout from './components/Layout'
 
 const appRouter = createBrowserRouter([
   {
@@ -74,7 +75,7 @@ const appRouter = createBrowserRouter([
   // admin ke liye yha se start hoga
   {
     path:"/admin/companies",
-    element: <ProtectedRoute><Companies/></ProtectedRoute>
+    element: <Layout><ProtectedRoute><Companies/></ProtectedRoute></Layout>
   },
   {
     path:"/admin/companies/create",
@@ -86,7 +87,7 @@ const appRouter = createBrowserRouter([
   },
   {
     path:"/admin/projects",
-    element:<ProtectedRoute><AdminJobs/></ProtectedRoute> 
+    element:<Layout><ProtectedRoute><AdminJobs/></ProtectedRoute></Layout>
   },
   {
     path:"/admin/projects/create",
@@ -98,7 +99,7 @@ const appRouter = createBrowserRouter([
   },
   {
     path:"/agencies",
-    element:<JobSeekersList />
+    element:<Layout><JobSeekersList /></Layout>
   },{
     path:"/agency/:id",
     element:<JobSeekerProfile /> 
@@ -125,7 +126,7 @@ const appRouter = createBrowserRouter([
   },
   {
     path:"/my-meetings",
-    element:<MyMessages /> 
+    element: <Layout><MyMessages /></Layout>  
   },
   {
     path:"/admin/PEbYAjJgctVkocEdaCWF9LCJs731rtQ5lV4VynE4VIQX4dApNioVoyrAjteflZdDv3hxcI9YGY9LLrR3mYq0uc7xN56FwNoZze0j",

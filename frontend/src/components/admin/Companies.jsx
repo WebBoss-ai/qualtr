@@ -39,7 +39,7 @@ const Companies = () => {
                                     <Building2 className="w-6 h-6 mr-3 text-green-600" />
                                     Companies
                                 </h1>
-                                <Button 
+                                <Button  id="new-company-button"
                                     className="bg-green-600 hover:bg-green-700 text-white w-full sm:w-auto"
                                     onClick={() => navigate("/admin/companies/create")}
                                 >

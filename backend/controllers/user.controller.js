@@ -8,7 +8,7 @@ import CompareList from "../models/CompareList.js";
 export const register = async (req, res) => {
     try {
         const { fullname, email, phoneNumber, password, role } = req.body;
-         
+
         if (!fullname || !email || !phoneNumber || !password || !role) {
             return res.status(400).json({
                 message: "Something is missing",
@@ -40,8 +40,8 @@ export const register = async (req, res) => {
             phoneNumber,
             password: hashedPassword,
             role,
-            profile:{
-                profilePhoto:cloudResponse.secure_url,
+            profile: {
+                profilePhoto: cloudResponse.secure_url,
             }
         });
 
@@ -99,8 +99,12 @@ export const login = async (req, res) => {
             email: user.email,
             phoneNumber: user.phoneNumber,
             role: user.role,
-            profile: user.profile
+            profile: user.profile,
+            isFirstLogin: !user.lastLogin
         };
+
+        user.lastLogin = new Date();
+        await user.save();
 
         // Send the token in both the cookie and the response body
         return res.status(200)
@@ -207,7 +211,7 @@ export const getAllJobSeekers = async (req, res) => {
 
         // Attempt to find agencies (users with role 'student')
         const jobSeekers = await User.find({ role: 'student' }).select('fullname email profile profilePhoto');
-        
+
         // Debug: Check if the query returned anything
         console.log("agencies found:", jobSeekers);
 

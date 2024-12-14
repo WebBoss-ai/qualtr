@@ -47,6 +47,11 @@ const Login = () => {
                 localStorage.setItem('loggedInUserId', res.data.user._id);
                 localStorage.setItem('token', res.data.token);
                 localStorage.setItem('loggedInUserRole', res.data.user.role);
+
+                if (res.data.user.isFirstLogin) {
+                    localStorage.setItem("showWalkthrough", true);
+                }
+                
                 navigate(redirectTo);
                 toast.success(res.data.message);
             }

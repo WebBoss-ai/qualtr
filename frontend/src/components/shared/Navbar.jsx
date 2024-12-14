@@ -50,10 +50,10 @@ const Navbar = () => {
                                 </>
                             ) : user.role === 'recruiter' ? (
                                 <>
-                                    <NavLink to="/agencies">Agencies</NavLink>
+                                    <NavLink to="/agencies" id="agencies-page-link">Agencies</NavLink>
                                     <NavLink to="/admin/companies">Companies</NavLink>
-                                    <NavLink to="/admin/projects">Projects</NavLink>
-                                    <NavLink to="/my-meetings">My Meetings</NavLink>
+                                    <NavLink to="/admin/projects" id="post-project-button">Projects</NavLink>
+                                    <NavLink to="/my-meetings" id="my-meetings-link">My Meetings</NavLink>
                                 </>
                             ) : (
                                 <>
