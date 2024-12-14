@@ -579,10 +579,13 @@ export const verifyEmail = async (req, res) => {
         user.verificationTokenExpires = undefined;
         await user.save();
 
-        // Redirect to login page
-        return res.redirect('https://qualtr.com/login?verified=true');
+        // Send JSON response to indicate success
+        return res.status(200).json({
+            message: "Email successfully verified",
+            success: true
+        });
     } catch (error) {
         console.log(error);
-        res.status(500).json({ message: 'Server error', success: false });
+        return res.status(500).json({ message: 'Server error', success: false });
     }
 };
