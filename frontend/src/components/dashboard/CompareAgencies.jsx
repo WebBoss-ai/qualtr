@@ -2,12 +2,9 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { USER_API_END_POINT } from "@/utils/constant";
 import { Loader2, ChevronDown, ChevronUp, Award, Briefcase, Users, MapPin } from 'lucide-react';
-import Footer from "./shared/Footer";
-import Navbar from "./shared/Navbar";
-import { Search, ArrowRight, X, Target } from 'lucide-react'
 import { useNavigate } from 'react-router-dom';
 
-const CompareList = () => {
+const CompareAgencies = () => {
     const [compareList, setCompareList] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -72,7 +69,6 @@ const CompareList = () => {
         <div>
             <div className="bg-gray-50">
                 <div className="container mx-auto px-4 py-8 bg-gray-50">
-                    <h3 className="text-4xl font-bold mb-12 text-center text-gray-800">Compare Agencies</h3>
                     {compareList.length === 0 ? (
                         <p className="text-center text-gray-600 text-lg">No agencies added to the compare list yet.</p>
                     ) : (
@@ -152,4 +148,4 @@ const CompareList = () => {
     );
 };
 
-export default CompareList;
+export default CompareAgencies;

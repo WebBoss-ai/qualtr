@@ -7,11 +7,11 @@ import AdminJobs from '../admin/AdminJobs';
 import { useDispatch, useSelector } from 'react-redux'
 import { ANALYTICS_API_END_POINT, JOB_ANALYTICS_API_END_POINT, USER_API_END_POINT } from '@/utils/constant';
 import AdminJobsTable from '../admin/AdminJobsTable';
-import CompareList from '../CompareList';
 import ApplicantsTable from '../admin/ApplicantsTable';
 import Meetings from './Meetings';
 import MainSection from './MainSection';
 import { setUser } from '@/redux/authSlice'
+import CompareAgencies from './CompareAgencies';
 
 const BrandDashboard = () => {
   const [selectedMenuItem, setSelectedMenuItem] = useState('dashboard');
@@ -54,7 +54,7 @@ const BrandDashboard = () => {
   const menuItems = [
     { name: 'Dashboard', component: MainSection, icon: BarChart2 },
     { name: 'Projects', component: AdminJobsTable, icon: Briefcase },
-    { name: 'Agencies', component: CompareList, icon: Users },
+    { name: 'Agencies', component: CompareAgencies, icon: Users },
     { name: 'Applicants', component: ApplicantsTable, icon: BarChart2 },
     { name: 'Messages', component: Meetings, icon: MessageSquare },
     { name: 'Settings', component: AdminJobs, icon: Settings },
