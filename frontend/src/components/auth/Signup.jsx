@@ -54,10 +54,14 @@ const Signup = () => {
                 withCredentials: true,
                 timeout: 10000,
             });
-            if (res.data.success) {
-                navigate("/login");
+            if (res.data.message) {
                 toast.success(res.data.message);
+                navigate('/email-sent'); // Navigate to a "Check your email" page
             }
+            // if (res.data.success) {
+            //     navigate("/login");
+            //     toast.success(res.data.message);
+            // }
         } catch (error) {
             console.error(error);
             toast.error(error.response?.data?.message || "Something went wrong.");

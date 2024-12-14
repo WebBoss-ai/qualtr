@@ -1,9 +1,11 @@
 import { User } from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import crypto from 'crypto';
 import getDataUri from "../utils/datauri.js";
 import cloudinary from "../utils/cloudinary.js";
 import CompareList from "../models/CompareList.js";
+import { sendVerificationEmail } from '../utils/emailService.js';
 
 export const register = async (req, res) => {
     try {
@@ -45,6 +47,20 @@ export const register = async (req, res) => {
             }
         });
 
+        if (role === 'recruiter') {
+            const verificationToken = crypto.randomBytes(32).toString('hex');
+            const verificationTokenExpires = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
+            userData.verificationToken = verificationToken;
+            userData.verificationTokenExpires = verificationTokenExpires;
+        }
+
+        user = await User.create(userData);
+
+        // Send verification email if recruiter
+        if (role === 'recruiter') {
+            await sendVerificationEmail(email, user.verificationToken);
+        }
+
         return res.status(201).json({
             message: "Account created successfully.",
             success: true
@@ -69,6 +85,13 @@ export const login = async (req, res) => {
         if (!user) {
             return res.status(400).json({
                 message: "Incorrect email or password.",
+                success: false
+            });
+        }
+
+        if (user.role === 'recruiter' && !user.isVerified) {
+            return res.status(401).json({
+                message: "Please verify your email to login.",
                 success: false
             });
         }
@@ -109,7 +132,7 @@ export const login = async (req, res) => {
 
         // Send the token in both the cookie and the response body
         return res.status(200)
-            .cookie("token", token, { maxAge: 1 * 24 * 60 * 60 * 1000, httpOnly: true, sameSite: 'strict' })
+            .cookie("token", token, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, sameSite: 'strict' })
             .json({
                 message: `Welcome back ${user.fullname}`,
                 user,
@@ -516,5 +539,44 @@ console.log("Tera id:", userId);
     } catch (error) {
         console.error("Error fetching compare list:", error);
         res.status(500).json({ success: false, message: "Server error." });
+    }
+};
+
+// Email Verification Controller
+export const verifyEmail = async (req, res) => {
+    try {
+        const { token } = req.query;
+
+        if (!token) {
+            return res.status(400).json({
+                message: "Invalid or missing token",
+                success: false
+            });
+        }
+
+        // Find the user with the matching verification token and check if token is not expired
+        const user = await User.findOne({
+            verificationToken: token,
+            verificationTokenExpires: { $gt: Date.now() }
+        });
+
+        if (!user) {
+            return res.status(400).json({
+                message: "Invalid or expired token",
+                success: false
+            });
+        }
+
+        // Update user verification status
+        user.isVerified = true;
+        user.verificationToken = undefined;
+        user.verificationTokenExpires = undefined;
+        await user.save();
+
+        // Redirect to login page
+        return res.redirect('https://qualtr.com/login?verified=true');
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Server error', success: false });
     }
 };

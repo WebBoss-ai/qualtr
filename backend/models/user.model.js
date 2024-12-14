@@ -23,6 +23,16 @@ const userSchema = new mongoose.Schema({
         enum: ['student', 'recruiter'],
         required: true
     },
+    isVerified: {
+        type: Boolean,
+        default: false
+    },
+    verificationToken: {
+        type: String
+    },
+    verificationTokenExpires: {
+        type: Date
+    },
     profile: {
         bio: { type: String },
         skills: [{ type: String }],

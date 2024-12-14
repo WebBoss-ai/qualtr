@@ -38,6 +38,8 @@ import AdminMessages from './components/AdminMessages'
 import AdminUsers from './components/AdminUsers'
 import CompareList from './components/CompareList'
 import Layout from './components/Layout'
+import EmailSent from './components/auth/EmailSent'
+import VerifyEmail from './components/auth/VerifyEmail'
 
 const appRouter = createBrowserRouter([
   {
@@ -119,6 +121,14 @@ const appRouter = createBrowserRouter([
   {
     path:"/portfolio",
     element:<AddPortfolio /> 
+  },
+  {
+    path:"/email-sent",
+    element:<EmailSent /> 
+  },
+  {
+    path:"/verify-email",
+    element:<VerifyEmail /> 
   },
   {
     path:"/how-to-hire",
