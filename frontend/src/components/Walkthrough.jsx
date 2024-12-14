@@ -72,7 +72,6 @@ const Walkthrough = ({ startTour }) => {
             borderRadius: "5px",
             border: "none",
             fontSize: "14px",
-            fontWeight: "bold",
             cursor: "pointer",
             transition: "background-color 0.3s ease",
           },
@@ -80,13 +79,11 @@ const Walkthrough = ({ startTour }) => {
             color: "#17B169",
             marginRight: "10px",
             fontSize: "14px",
-            fontWeight: "bold",
             cursor: "pointer",
           },
           buttonSkip: {
             color: "#666666",
             fontSize: "14px",
-            fontWeight: "bold",
             cursor: "pointer",
           },
           beacon: {
