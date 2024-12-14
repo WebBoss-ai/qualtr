@@ -21,8 +21,10 @@ const VerifyEmail = () => {
 
             setLoading(true);
             try {
-                const res = await axios.post(`${USER_API_END_POINT}/verify-email`, { token });
-
+                const res = await axios.get(`${USER_API_END_POINT}/verify-email`, {
+                    params: { token },
+                });
+                
                 if (res.data.success) {
                     setSuccess(true);
                     toast.success('Your email has been successfully verified!');

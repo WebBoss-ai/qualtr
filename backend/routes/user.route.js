@@ -14,7 +14,7 @@ router.route("/admin").get(isAuthenticated, getAdminDashboard);
 router.route("/users-by-role").get(getUsersByRole);
 router.route("/compare").post(isAuthenticated, addToCompare); 
 router.route("/compare").get(isAuthenticated, getCompareList);
-router.route("/verify-email").post(verifyEmail);
+router.route("/verify-email").get(verifyEmail);
 
 export default router;
 
