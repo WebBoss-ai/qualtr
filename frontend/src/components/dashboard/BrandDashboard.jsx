@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-import { Menu, X, LogOut,BarChart2, Briefcase, Users, MessageSquare, Settings, PlusCircle } from 'lucide-react';
+import { Menu, X, LogOut, BarChart2, Briefcase, Users, MessageSquare, Settings, PlusCircle } from 'lucide-react';
 import AdminJobs from '../admin/AdminJobs';
 import { useDispatch, useSelector } from 'react-redux'
 import { ANALYTICS_API_END_POINT, JOB_ANALYTICS_API_END_POINT, USER_API_END_POINT } from '@/utils/constant';
@@ -76,50 +76,57 @@ const BrandDashboard = () => {
 
       {/* Sidebar */}
       <aside
-      className={`${
-        isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-      } fixed inset-y-0 left-0 z-50 w-64 transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0`}
-      style={{
-        background: 'linear-gradient(to bottom, #2C3E50, #34495E)',
-        boxShadow: '4px 0 15px rgba(0, 0, 0, 0.1)',
-        overflowY: 'auto',
-        overflowX: 'hidden',
-      }}
-    >
-      <div className="flex items-center justify-between p-6" style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
-        <h1 className="text-2xl font-bold text-white" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>Qualtr</h1>
-        <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden text-white hover:text-gray-300 transition-colors">
-          <X className="h-6 w-6" />
-        </button>
-      </div>
-      <nav className="mt-8 px-4">
-        {menuItems.map((item) => (
-          <button
-            key={item.name}
-            className={`flex w-full items-center space-x-3 px-4 py-3 mb-2 rounded-lg transition-all duration-200 ${
-              selectedMenuItem.toLowerCase() === item.name.toLowerCase()
+        className={`${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          } fixed inset-y-0 left-0 z-50 w-64 transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0`}
+        style={{
+          background: 'linear-gradient(to bottom, #2C3E50, #34495E)',
+          boxShadow: '4px 0 15px rgba(0, 0, 0, 0.1)',
+          overflowY: 'auto',
+          overflowX: 'hidden',
+        }}
+      >
+        <div className="flex items-center justify-between p-6" style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
+          <a
+            href="/"
+            className="text-2xl font-bold text-white"
+            style={{ textShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
+            onMouseEnter={(e) => (e.target.style.color = '#17B169')}
+            onMouseLeave={(e) => (e.target.style.color = 'white')}
+          >
+            Qualtr
+          </a>
+
+          <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden text-white hover:text-gray-300 transition-colors">
+            <X className="h-6 w-6" />
+          </button>
+        </div>
+        <nav className="mt-8 px-4">
+          {menuItems.map((item) => (
+            <button
+              key={item.name}
+              className={`flex w-full items-center space-x-3 px-4 py-3 mb-2 rounded-lg transition-all duration-200 ${selectedMenuItem.toLowerCase() === item.name.toLowerCase()
                 ? 'bg-white bg-opacity-10 text-white'
                 : 'text-gray-300 hover:bg-white hover:bg-opacity-5 hover:text-white'
-            }`}
-            onClick={() => setSelectedMenuItem(item.name.toLowerCase())}
-            style={{
-              transform: selectedMenuItem.toLowerCase() === item.name.toLowerCase() ? 'translateX(4px)' : 'none',
-            }}
+                }`}
+              onClick={() => setSelectedMenuItem(item.name.toLowerCase())}
+              style={{
+                transform: selectedMenuItem.toLowerCase() === item.name.toLowerCase() ? 'translateX(4px)' : 'none',
+              }}
+            >
+              <item.icon className="h-5 w-5" />
+              <span className="font-medium">{item.name}</span>
+            </button>
+          ))}
+          {/* Logout Button */}
+          <button
+            className="flex w-full items-center space-x-3 px-4 py-3 mt-8 text-gray-300 transition-all duration-200 hover:bg-red-500 hover:bg-opacity-10 hover:text-red-400 rounded-lg"
+            onClick={logoutHandler}
           >
-            <item.icon className="h-5 w-5" />
-            <span className="font-medium">{item.name}</span>
+            <LogOut className="h-5 w-5" />
+            <span className="font-medium">Logout</span>
           </button>
-        ))}
-        {/* Logout Button */}
-        <button
-          className="flex w-full items-center space-x-3 px-4 py-3 mt-8 text-gray-300 transition-all duration-200 hover:bg-red-500 hover:bg-opacity-10 hover:text-red-400 rounded-lg"
-          onClick={logoutHandler}
-        >
-          <LogOut className="h-5 w-5" />
-          <span className="font-medium">Logout</span>
-        </button>
-      </nav>
-      <style jsx>{`
+        </nav>
+        <style jsx>{`
         /* Custom Scrollbar Styles */
         aside::-webkit-scrollbar {
           width: 6px;
@@ -139,7 +146,7 @@ const BrandDashboard = () => {
           transform: translateX(4px);
         }
       `}</style>
-    </aside>
+      </aside>
 
 
 
