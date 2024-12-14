@@ -92,6 +92,10 @@ export const login = async (req, res) => {
         const tokenData = { userId: user._id };
         const token = await jwt.sign(tokenData, process.env.JWT_SECRET, { expiresIn: '30d' });
 
+        const isFirstLogin = !user.lastLogin;
+        user.lastLogin = new Date();
+        await user.save(); // Save updated user document
+
         // Prepare the user object for the response
         user = {
             _id: user._id,
@@ -100,11 +104,8 @@ export const login = async (req, res) => {
             phoneNumber: user.phoneNumber,
             role: user.role,
             profile: user.profile,
-            isFirstLogin: !user.lastLogin
+            isFirstLogin,
         };
-
-        user.lastLogin = new Date();
-        await user.save();
 
         // Send the token in both the cookie and the response body
         return res.status(200)
