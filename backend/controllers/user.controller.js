@@ -213,9 +213,6 @@ export const getAllJobSeekers = async (req, res) => {
         // Attempt to find agencies (users with role 'student')
         const jobSeekers = await User.find({ role: 'student' }).select('fullname email profile profilePhoto');
 
-        // Debug: Check if the query returned anything
-        console.log("agencies found:", jobSeekers);
-
         // If no agencies were found, log this and return a response
         if (!jobSeekers || jobSeekers.length === 0) {
             console.log("No agencies found.");
@@ -507,7 +504,7 @@ export const addToCompare = async (req, res) => {
 
 export const getCompareList = async (req, res) => {
     const userId = req.id; // Retrieved from the middleware
-
+console.log("Tera id:", userId);
     try {
         const compareList = await CompareList.findOne({ userId }).populate("agencies", "fullname email profilePhoto profile");
 
