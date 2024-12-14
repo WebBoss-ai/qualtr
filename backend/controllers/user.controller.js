@@ -36,7 +36,7 @@ export const register = async (req, res) => {
         }
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        await User.create({
+        const userData = {
             fullname,
             email,
             phoneNumber,
@@ -45,7 +45,7 @@ export const register = async (req, res) => {
             profile: {
                 profilePhoto: cloudResponse.secure_url,
             }
-        });
+        };
 
         if (role === 'recruiter') {
             const verificationToken = crypto.randomBytes(32).toString('hex');
