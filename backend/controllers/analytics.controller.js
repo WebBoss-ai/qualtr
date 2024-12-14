@@ -6,7 +6,7 @@ import moment from "moment";
 
 export const getAnalytics = async (req, res) => {
   try {
-    const userId = req.user.id; 
+    const userId = req.id; 
 
     // Get the start of the current and previous month
     const startOfCurrentMonth = moment().startOf('month').toDate();
