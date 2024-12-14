@@ -21,7 +21,7 @@ transporter.verify((error, success) => {
 export const sendVerificationEmail = async (email, token) => {
     try {
         console.log('Sending verification email...');
-        const verificationLink = `${process.env.CLIENT_URL}/verify-email?token=${token}`;
+        const verificationLink = `https://qualtr.com/user/verify-email?token=${token}`;
         console.log(`Verification Link: ${verificationLink}`);
 
         const mailOptions = {
