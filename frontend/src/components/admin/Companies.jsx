@@ -37,7 +37,7 @@ const Companies = () => {
                             <div className="flex flex-col sm:flex-row items-center justify-between mb-6">
                                 <h1 className="text-2xl sm:text-2xl font-bold text-gray-900 flex items-center mb-4 sm:mb-0">
                                     <Building2 className="w-6 h-6 mr-3 text-green-600" />
-                                    Companies
+                                    Companies - Create your company profile here!
                                 </h1>
                                 <Button  id="new-company-button"
                                     className="bg-green-600 hover:bg-green-700 text-white w-full sm:w-auto"

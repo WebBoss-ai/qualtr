@@ -3,12 +3,22 @@ import User from "../models/user.model.js";
 
 export const getAnalytics = async (req, res) => {
   try {
-    // Fetch analytics data
-    const totalRequirements = await Job.countDocuments();
-    const activeBids = await Job.find({ applications: { $exists: true, $ne: [] } }).countDocuments();
-    const agenciesContacted = await User.find({ role: "recruiter" }).countDocuments();
+    const userId = req.user.id;
 
-    const jobsWithApplications = await Job.find({ applications: { $exists: true, $ne: [] } });
+    const totalRequirements = await Job.countDocuments({ createdBy: userId });
+    const activeBids = await Job.find({ 
+      createdBy: userId, 
+      applications: { $exists: true, $ne: [] } 
+    }).countDocuments();
+    const agenciesContacted = await User.find({ 
+      role: "recruiter", 
+      createdBy: userId 
+    }).countDocuments();
+
+    const jobsWithApplications = await Job.find({ 
+      createdBy: userId, 
+      applications: { $exists: true, $ne: [] } 
+    });
     const totalBidAmounts = jobsWithApplications.reduce((acc, job) => acc + job.salary, 0);
     const averageBidAmount = jobsWithApplications.length ? totalBidAmounts / jobsWithApplications.length : 0;
 
