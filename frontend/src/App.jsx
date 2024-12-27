@@ -40,6 +40,7 @@ import CompareList from './components/CompareList'
 import Layout from './components/Layout'
 import EmailSent from './components/auth/EmailSent'
 import VerifyEmail from './components/auth/VerifyEmail'
+import PrivacyPolicy from './components/general/PrivacyPolicy'
 
 const appRouter = createBrowserRouter([
   {
@@ -177,6 +178,10 @@ const appRouter = createBrowserRouter([
   {
     path:"/how-to-find-work",
     element:<HowToFindWork /> 
+  },
+  {
+    path:"/privacy-policy",
+    element:<PrivacyPolicy /> 
   },
 
   {

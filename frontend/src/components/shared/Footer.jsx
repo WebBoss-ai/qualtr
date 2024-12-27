@@ -109,6 +109,7 @@ const Footer = () => {
                 <div style={styles.footerColumn}>
                     <h3 style={styles.footerTitle}>Company</h3>
                     <a href="/about" style={styles.footerLink} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>About Us</a>
+                    <a href="/privacy-policy" target='_blank' style={styles.footerLink} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>Privacy Policy</a>
                     <a href="#" style={styles.footerLink} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>Leadership</a>
                     <a href="/contact" style={styles.footerLink} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>Contact Us</a>
                     <a href="/carrers" style={styles.footerLink} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>Careers</a>
