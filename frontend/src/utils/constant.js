@@ -8,5 +8,6 @@ export const ANALYTICS_API_END_POINT = "https://qualtr.com/api/v1/analytics";
 export const JOB_ANALYTICS_API_END_POINT = "https://qualtr.com/api/v1/job-analytics";
 export const PORTFOLIO_API_END_POINT = "https://qualtr.com/api/v1/portfolio";
 export const MESSAGE_API_END_POINT = "https://qualtr.com/api/v1/message";
+export const MARKETER_API_END_POINT = "https://qualtr.com/api/v1/user/individual";
 
 //changed

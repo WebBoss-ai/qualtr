@@ -19,7 +19,7 @@ import analyticsRoute from "./routes/analytics.route.js";
 import jobAnalyticsRoute from "./routes/jobAnalytics.route.js";
 import portfolioRoute from "./routes/portfolio.route.js";
 import messageRoute from "./routes/message.route.js";
-// import meetingRoute from "./routes/meeting.route.js";
+import marketerRoute from "./routes/marketer.route.js";
 
 dotenv.config();
 
@@ -63,6 +63,7 @@ app.get("/api/v1/s3-url/:key", async (req, res) => {
 
 // Register your other API routes
 app.use("/api/v1/user", userRoute);//
+app.use("/api/v1/user/individual", marketerRoute);//
 app.use("/api/v1/company", companyRoute);//
 app.use("/api/v1/job", jobRoute);//
 app.use("/api/v1/application", applicationRoute);//
