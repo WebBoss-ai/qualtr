@@ -13,10 +13,21 @@ const MarketerUpdateProfile = () => {
         profilePhoto: ''
     });
 
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
     useEffect(() => {
         const fetchProfile = async () => {
+            console.log('Fetching profile data...');
+            setLoading(true);
+            setError(null);
+
             try {
-                const res = await axios.get('/api/users/profile');
+                const id = 'mocked-id'; // Replace with actual ID if needed
+                console.log('API Endpoint:', `${MARKETER_API_END_POINT}/profile/${id}`);
+                const res = await axios.get(`${MARKETER_API_END_POINT}/profile/${id}`);
+                console.log('API Response:', res.data);
+
                 setProfileData(res.data.profile || {
                     fullname: '',
                     phoneNumber: '',
@@ -28,30 +39,53 @@ const MarketerUpdateProfile = () => {
                 });
             } catch (error) {
                 console.error('Failed to fetch profile:', error);
+                setError('Failed to load profile data. Please try again.');
+            } finally {
+                setLoading(false);
             }
         };
+
         fetchProfile();
     }, []);
-    
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setProfileData({ ...profileData, [name]: value });
+        console.log(`Updating field: ${name}, Value: ${value}`);
+        setProfileData((prevData) => ({ ...prevData, [name]: value }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log('Submitting form data:', profileData);
+
         try {
+            setError(null);
+            setLoading(true);
+
             const res = await axios.post(`${MARKETER_API_END_POINT}/profile/update`, profileData, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`,
                 }
             });
+
+            console.log('Profile update response:', res.data);
             alert('Profile updated successfully!');
         } catch (error) {
+            console.error('Profile update failed:', error);
+            setError('Failed to update profile. Please try again.');
             alert('Profile update failed.');
+        } finally {
+            setLoading(false);
         }
     };
+
+    if (loading) {
+        return <p>Loading...</p>;
+    }
+
+    if (error) {
+        return <p>Error: {error}</p>;
+    }
 
     return (
         <form onSubmit={handleSubmit}>
@@ -102,7 +136,13 @@ const MarketerUpdateProfile = () => {
             <input
                 type="file"
                 name="profilePhoto"
-                onChange={handleChange}
+                onChange={(e) => {
+                    console.log('File uploaded:', e.target.files[0]);
+                    setProfileData((prevData) => ({
+                        ...prevData,
+                        profilePhoto: e.target.files[0],
+                    }));
+                }}
             />
             <button type="submit">Update Profile</button>
         </form>
