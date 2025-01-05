@@ -32,6 +32,7 @@
     "embla-carousel-react": "^8.1.6",
     "feather-icons": "^4.29.2",
     "framer-motion": "^11.3.7",
+    "jwt-decode": "^4.0.0",
     "lucide-react": "^0.395.0",
     "next-themes": "^0.3.0",
     "react": "^18.2.0",

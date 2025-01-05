@@ -15,10 +15,7 @@ const MarketerUpdateProfile = () => {
 
     const token = localStorage.getItem('token');
     console.log(token);
-    if (!token) {
-        console.error('No token found in localStorage. Please log in again.');
-        return;
-    }
+
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -29,9 +26,14 @@ const MarketerUpdateProfile = () => {
             setError(null);
 
             try {
-                const id = 'mocked-id'; // Replace with actual ID if needed
-                console.log('API Endpoint:', `${MARKETER_API_END_POINT}/profile/${id}`);
-                const res = await axios.get(`${MARKETER_API_END_POINT}/profile/${id}`, {
+                // Decode token to get user ID
+                const decodedToken = jwtDecode(token); // Ensure `token` is available in your component
+                const userId = decodedToken.userId;
+                console.log('Decoded User ID:', userId);
+
+                // Fetch profile data
+                console.log('API Endpoint:', `${MARKETER_API_END_POINT}/profile/${userId}`);
+                const res = await axios.get(`${MARKETER_API_END_POINT}/profile/${userId}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -57,6 +59,7 @@ const MarketerUpdateProfile = () => {
 
         fetchProfile();
     }, []);
+
 
     const handleChange = (e) => {
         const { name, value } = e.target;
