@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { MARKETER_API_END_POINT } from '@/utils/constant';
+import * as jwtDecode from 'jwt-decode';
 
 const MarketerUpdateProfile = () => {
     const [profileData, setProfileData] = useState({
@@ -26,12 +27,12 @@ const MarketerUpdateProfile = () => {
             setError(null);
 
             try {
-                // Decode token to get user ID
-                const decodedToken = jwtDecode(token); // Ensure `token` is available in your component
+                // Decode the token to extract the user ID
+                const decodedToken = jwtDecode.default(token); // Use `.default` if necessary
                 const userId = decodedToken.userId;
                 console.log('Decoded User ID:', userId);
 
-                // Fetch profile data
+                // Fetch profile data using the user ID
                 console.log('API Endpoint:', `${MARKETER_API_END_POINT}/profile/${userId}`);
                 const res = await axios.get(`${MARKETER_API_END_POINT}/profile/${userId}`, {
                     headers: {
@@ -57,8 +58,13 @@ const MarketerUpdateProfile = () => {
             }
         };
 
-        fetchProfile();
-    }, []);
+        if (token) {
+            fetchProfile();
+        } else {
+            console.error('Token is not available.');
+            setError('User is not authenticated.');
+        }
+    }, [token]);
 
 
     const handleChange = (e) => {
