@@ -105,7 +105,7 @@ export const login = async (req, res) => {
             message: 'Login successful.',
             success: true,
             token,
-            userId: user._id
+            _id: user._id,
         });
     } catch (error) {
         console.error(error);
@@ -120,8 +120,8 @@ export const login = async (req, res) => {
 export const updateProfile = async (req, res) => {
     try {
         const { fullname, phoneNumber, agencyName, bio, skills, location, profilePhoto } = req.body;
-        const userId = req.userId; // Assuming user ID is provided via authentication middleware
-
+        const userId = req.id; // Assuming user ID is provided via authentication middleware
+        console.log(userId)
         // Find user by ID
         const user = await DigitalMarketer.findById(userId);
         if (!user) {
