@@ -43,6 +43,9 @@ import VerifyEmail from './components/auth/VerifyEmail'
 import PrivacyPolicy from './components/general/PrivacyPolicy'
 import Register from './components/marketers/Register'
 import MarketerLogin from './components/marketers/Login'
+import ProfileList from './components/marketers/ProfileList'
+import ProfileDetails from './components/marketers/ProfileDetails'
+import MarketerUpdateProfile from './components/marketers/MarketerUpdateProfile'
 
 const appRouter = createBrowserRouter([
   {
@@ -192,6 +195,18 @@ const appRouter = createBrowserRouter([
   {
     path:"/marketer/login",
     element:<MarketerLogin /> 
+  },
+  {
+    path:"/marketer-profile/update",
+    element:<MarketerUpdateProfile /> 
+  },
+  {
+    path:"/marketer/profiles",
+    element:<ProfileList /> 
+  },
+  {
+    path:"/marketer-profile/:id",
+    element:<ProfileDetails /> 
   },
   {
     path:"/admin/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NmY4NTU2MzU4ZTZmMmI3YTVjOTM0ZGYiLCJpYXQiOjE3MzAxMTMzNzYsImV4cCI6MTczMjcwNTM3Nn0.n4DUTrEBP_InFG8UlQNuWLsl4xhlIopufmi0o5J5ZLQ",

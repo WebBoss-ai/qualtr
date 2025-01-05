@@ -156,3 +156,54 @@ export const updateProfile = async (req, res) => {
         });
     }
 };
+
+// View individual profile
+export const viewProfile = async (req, res) => {
+    try {
+        const userId = req.params.id; // Assuming user ID is passed as a route parameter
+
+        const user = await DigitalMarketer.findById(userId).select('-password'); // Exclude password from response
+        if (!user) {
+            return res.status(404).json({
+                message: 'User not found.',
+                success: false
+            });
+        }
+
+        return res.status(200).json({
+            message: 'Profile retrieved successfully.',
+            success: true,
+            profile: user.profile
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: 'Internal server error.',
+            success: false
+        });
+    }
+};
+
+// Get all profiles
+export const getAllProfiles = async (req, res) => {
+    try {
+        const users = await DigitalMarketer.find().select('-password'); // Exclude password from response
+
+        return res.status(200).json({
+            message: 'All profiles retrieved successfully.',
+            success: true,
+            profiles: users.map(user => ({
+                id: user._id,
+                fullname: user.profile.fullname,
+                agencyName: user.profile.agencyName,
+                location: user.profile.location
+            }))
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: 'Internal server error.',
+            success: false
+        });
+    }
+};
