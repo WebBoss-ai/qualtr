@@ -14,6 +14,7 @@ const MarketerUpdateProfile = () => {
     });
 
     const token = localStorage.getItem('token');
+    console.log(token);
     if (!token) {
         console.error('No token found in localStorage. Please log in again.');
         return;
