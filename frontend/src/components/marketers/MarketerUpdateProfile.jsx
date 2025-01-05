@@ -13,6 +13,11 @@ const MarketerUpdateProfile = () => {
         profilePhoto: ''
     });
 
+    const token = localStorage.getItem('token');
+    if (!token) {
+        console.error('No token found in localStorage. Please log in again.');
+        return;
+    }
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -25,7 +30,11 @@ const MarketerUpdateProfile = () => {
             try {
                 const id = 'mocked-id'; // Replace with actual ID if needed
                 console.log('API Endpoint:', `${MARKETER_API_END_POINT}/profile/${id}`);
-                const res = await axios.get(`${MARKETER_API_END_POINT}/profile/${id}`);
+                const res = await axios.get(`${MARKETER_API_END_POINT}/profile/${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
                 console.log('API Response:', res.data);
 
                 setProfileData(res.data.profile || {
