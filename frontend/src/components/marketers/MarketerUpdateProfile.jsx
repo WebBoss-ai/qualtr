@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { MARKETER_API_END_POINT } from '@/utils/constant';
-import * as jwtDecode from 'jwt-decode';
+import * as jwtDecode from 'jwt-decode'; // Adjust the import as needed
 
 const MarketerUpdateProfile = () => {
     const [profileData, setProfileData] = useState({
@@ -15,7 +15,7 @@ const MarketerUpdateProfile = () => {
     });
 
     const token = localStorage.getItem('token');
-    console.log(token);
+    console.log('Token retrieved from localStorage:', token);
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -27,14 +27,31 @@ const MarketerUpdateProfile = () => {
             setError(null);
 
             try {
+                if (!token) {
+                    throw new Error('Token is not available or invalid.');
+                }
+
                 // Decode the token to extract the user ID
-                const decodedToken = jwtDecode.default(token); // Use `.default` if necessary
+                let decodedToken;
+                try {
+                    decodedToken = jwtDecode.default(token); // Adjust as needed
+                    console.log('Decoded Token:', decodedToken);
+                } catch (decodeError) {
+                    console.error('Failed to decode token:', decodeError);
+                    throw new Error('Invalid or expired token. Please log in again.');
+                }
+
                 const userId = decodedToken.userId;
+                if (!userId) {
+                    throw new Error('User ID is not found in the token.');
+                }
                 console.log('Decoded User ID:', userId);
 
                 // Fetch profile data using the user ID
-                console.log('API Endpoint:', `${MARKETER_API_END_POINT}/profile/${userId}`);
-                const res = await axios.get(`${MARKETER_API_END_POINT}/profile/${userId}`, {
+                const endpoint = `${MARKETER_API_END_POINT}/profile/${userId}`;
+                console.log('API Endpoint:', endpoint);
+
+                const res = await axios.get(endpoint, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -51,21 +68,15 @@ const MarketerUpdateProfile = () => {
                     profilePhoto: ''
                 });
             } catch (error) {
-                console.error('Failed to fetch profile:', error);
-                setError('Failed to load profile data. Please try again.');
+                console.error('Error while fetching profile data:', error);
+                setError(error.message || 'Failed to load profile data. Please try again.');
             } finally {
                 setLoading(false);
             }
         };
 
-        if (token) {
-            fetchProfile();
-        } else {
-            console.error('Token is not available.');
-            setError('User is not authenticated.');
-        }
+        fetchProfile();
     }, [token]);
-
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -81,10 +92,20 @@ const MarketerUpdateProfile = () => {
             setError(null);
             setLoading(true);
 
-            const res = await axios.post(`${MARKETER_API_END_POINT}/profile/update`, profileData, {
+            const formData = new FormData(); // Handle file uploads properly
+            for (const key in profileData) {
+                if (key === 'profilePhoto' && profileData[key]) {
+                    formData.append(key, profileData[key]); // Append file separately
+                } else {
+                    formData.append(key, profileData[key]);
+                }
+            }
+
+            const res = await axios.post(`${MARKETER_API_END_POINT}/profile/update`, formData, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`,
-                }
+                    'Content-Type': 'multipart/form-data',
+                },
             });
 
             console.log('Profile update response:', res.data);
