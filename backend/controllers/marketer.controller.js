@@ -101,19 +101,15 @@ export const login = async (req, res) => {
         // Generate JWT token
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '30d' });
 
-        // Set token in HTTP-only cookie
-        res.cookie("token", token, {
-            httpOnly: true, // Prevent access to the cookie via JavaScript
-            secure: true, // Always secure for production
-            sameSite: "strict", // Prevent CSRF
-            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-        });
+        return res.status(200)
+            .cookie("token", token, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, sameSite: 'strict' })
+            .json({
+                message: 'Login successful.',
+                success: true,
+                token,
+                _id: user._id,
+            });
 
-        return res.status(200).json({
-            message: 'Login successful.',
-            success: true,
-            _id: user._id,
-        });
     } catch (error) {
         console.error(error);
         return res.status(500).json({
