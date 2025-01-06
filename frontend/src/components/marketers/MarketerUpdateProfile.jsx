@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { MARKETER_API_END_POINT } from '@/utils/constant';
-import * as jwtDecode from 'jwt-decode'; // Adjust the import as needed
 
 const MarketerUpdateProfile = () => {
     const [profileData, setProfileData] = useState({
@@ -11,7 +10,7 @@ const MarketerUpdateProfile = () => {
         bio: '',
         skills: '',
         location: '',
-        profilePhoto: ''
+        profilePhoto: '',
     });
 
     const token = localStorage.getItem('token');
@@ -19,6 +18,18 @@ const MarketerUpdateProfile = () => {
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+
+    // Helper function to manually decode the JWT
+    const decodeToken = (token) => {
+        try {
+            const payload = token.split('.')[1]; // Extract the payload part
+            const decodedPayload = atob(payload); // Decode the base64 string
+            return JSON.parse(decodedPayload); // Parse it as JSON
+        } catch (error) {
+            console.error('Failed to decode token:', error);
+            throw new Error('Invalid or expired token. Please log in again.');
+        }
+    };
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -31,10 +42,10 @@ const MarketerUpdateProfile = () => {
                     throw new Error('Token is not available or invalid.');
                 }
 
-                // Decode the token to extract the user ID
+                // Decode the token manually
                 let decodedToken;
                 try {
-                    decodedToken = jwtDecode.default(token); // Adjust as needed
+                    decodedToken = decodeToken(token); // Use the helper function
                     console.log('Decoded Token:', decodedToken);
                 } catch (decodeError) {
                     console.error('Failed to decode token:', decodeError);
@@ -58,15 +69,17 @@ const MarketerUpdateProfile = () => {
                 });
                 console.log('API Response:', res.data);
 
-                setProfileData(res.data.profile || {
-                    fullname: '',
-                    phoneNumber: '',
-                    agencyName: '',
-                    bio: '',
-                    skills: '',
-                    location: '',
-                    profilePhoto: ''
-                });
+                setProfileData(
+                    res.data.profile || {
+                        fullname: '',
+                        phoneNumber: '',
+                        agencyName: '',
+                        bio: '',
+                        skills: '',
+                        location: '',
+                        profilePhoto: '',
+                    }
+                );
             } catch (error) {
                 console.error('Error while fetching profile data:', error);
                 setError(error.message || 'Failed to load profile data. Please try again.');
