@@ -53,7 +53,8 @@
     "swiper": "^11.1.14",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
-    "twin.macro": "^3.4.1"
+    "twin.macro": "^3.4.1",
+    "uuid": "^11.0.4"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",

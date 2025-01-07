@@ -3,6 +3,7 @@ import axios from 'axios';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { MARKETER_API_END_POINT } from '@/utils/constant';
+import { v4 as uuidv4 } from 'uuid';
 
 const employmentTypes = ["Full-time", "Part-time", "Contract", "Internship", "Freelance"];
 const locationTypes = ["On-site", "Remote", "Hybrid"];
@@ -14,6 +15,7 @@ const ExperiencesModal = ({ isOpen, onClose, initialExperiences }) => {
         setExperiences([
             ...experiences,
             {
+                _id: uuidv4(),
                 title: '',
                 employmentType: '',
                 company: '',
