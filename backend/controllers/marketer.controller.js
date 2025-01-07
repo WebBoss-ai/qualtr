@@ -183,8 +183,8 @@ export const viewProfile = async (req, res) => {
             });
         }
 
-        const profilePhotoURL = user.profilePhoto
-            ? await getObjectURL(user.profilePhoto) // Generate a presigned URL
+        const profilePhotoURL = user.profile.profilePhoto
+            ? await getObjectURL(user.profile.profilePhoto) // Generate a presigned URL
             : null;
 
         return res.status(200).json({
