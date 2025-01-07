@@ -42,6 +42,8 @@ const MarketerUpdateProfile = () => {
             throw new Error('Invalid or expired token. Please log in again.');
         }
     };
+
+
     const handleEditExperiences = (experiences) => {
         setSelectedExperiences(experiences); // Store the experience in a state
         setModalOpen1(true); // Open the modal
@@ -281,7 +283,7 @@ const MarketerUpdateProfile = () => {
                 <p>No education listed.</p>
             )}
 
-            <button onClick={() => setModalOpen1(true)}>Edit Experiences</button>
+            <button onClick={() => handleEditExperiences(experiences)}>Edit Experience</button>
             <ExperiencesModal
                 isOpen={isModalOpen1}
                 onClose={() => setModalOpen1(false)}
