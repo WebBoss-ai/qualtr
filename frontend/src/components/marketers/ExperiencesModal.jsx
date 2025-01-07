@@ -35,7 +35,23 @@ const ExperiencesModal = ({ isOpen, onClose, initialExperiences }) => {
 
     const handleSubmit = async () => {
         try {
-            await axios.post(`${MARKETER_API_END_POINT}/profile/experiences`, { experiences });
+            const formattedExperiences = experiences.map(exp => ({
+                ...exp,
+                startDate: exp.startDate
+                    ? {
+                          month: exp.startDate.getMonth() + 1, // getMonth() returns a 0-based month, so add 1
+                          year: exp.startDate.getFullYear(),
+                      }
+                    : null,
+                endDate: exp.endDate
+                    ? {
+                          month: exp.endDate.getMonth() + 1,
+                          year: exp.endDate.getFullYear(),
+                      }
+                    : null,
+            }));
+    
+            await axios.post(`${MARKETER_API_END_POINT}/profile/experiences`, { experiences: formattedExperiences });
             alert('Experiences updated successfully');
             onClose();
         } catch (error) {
