@@ -18,6 +18,29 @@ const experienceSchema = new mongoose.Schema({
     description: { type: String },
 });
 
+const educationSchema = new mongoose.Schema({
+    school: { type: String, required: true }, // School name, required field
+    degree: { type: String, required: true }, // Degree name, e.g., Bachelor’s
+    fieldOfStudy: { type: String, required: true }, // Field of study, e.g., Business
+    startDate: {
+        month: { type: String }, // Start date - Month
+        year: { type: String },  // Start date - Year
+    },
+    endDate: {
+        month: { type: String }, // End date (or expected) - Month
+        year: { type: String },  // End date (or expected) - Year
+    },
+    grade: { type: String }, // Grade, optional
+    activitiesAndSocieties: { 
+        type: String, 
+        maxlength: 500, // Max 500 characters
+    }, 
+    description: { 
+        type: String, 
+        maxlength: 1000, // Max 1000 characters
+    },
+});
+
 const digitalMarketerSchema = new mongoose.Schema({
     email: {
         type: String,
@@ -57,6 +80,7 @@ const digitalMarketerSchema = new mongoose.Schema({
         default: false,
     },
     experiences: [experienceSchema],
+    education: [educationSchema], 
 }, { timestamps: true });
 
 export const DigitalMarketer = mongoose.model('DigitalMarketer', digitalMarketerSchema);

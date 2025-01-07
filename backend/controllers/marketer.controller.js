@@ -215,6 +215,52 @@ export const updateExperiences = async (req, res) => {
     }
 };
 
+export const updateEducation = async (req, res) => {
+    try {
+        const userId = req.id; // User ID from authentication middleware
+        const { education } = req.body;
+
+        console.log("Received userId:", userId);
+        console.log("Received education:", education);
+
+        if (!userId) {
+            console.error("User ID is missing in the request.");
+            return res.status(400).json({ message: 'User ID is required.', success: false });
+        }
+
+        if (!education) {
+            console.error("education is missing in the request.");
+            return res.status(400).json({ message: 'education data is required.', success: false });
+        }
+
+        const user = await DigitalMarketer.findById(userId);
+        if (!user) {
+            console.error(`User with ID ${userId} not found.`);
+            return res.status(404).json({ message: 'User not found.', success: false });
+        }
+
+        console.log(`Found user with ID: ${userId}`);
+
+        // Update education
+        user.education = education;
+        await user.save();
+
+        console.log("Updated education:", user.education);
+
+        return res.status(200).json({
+            message: 'education updated successfully.',
+            success: true,
+            education: user.education,
+        });
+    } catch (error) {
+        console.error("Error occurred during the update process:", error);
+        return res.status(500).json({
+            message: 'Internal server error.',
+            success: false,
+        });
+    }
+};
+
 // View individual profile
 export const viewProfile = async (req, res) => {
     try {

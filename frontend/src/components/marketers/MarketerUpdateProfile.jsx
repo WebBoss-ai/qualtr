@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { MARKETER_API_END_POINT } from '@/utils/constant';
 import ExperiencesModal from './ExperiencesModal';
+import EducationModal from './EducationModal';
+
 
 const MarketerUpdateProfile = () => {
     const [profileData, setProfileData] = useState({
@@ -14,8 +16,11 @@ const MarketerUpdateProfile = () => {
         profilePhoto: '',
     });
 
-    const [isModalOpen, setModalOpen] = useState(false);
+    const [isModalOpen1, setModalOpen1] = useState(false);
     const experiences = []; // Fetch or pass initial experiences
+
+    const [isModalOpen2, setModalOpen2] = useState(false);
+    const education = []; // Fetch or pass initial experiences
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -178,11 +183,18 @@ const MarketerUpdateProfile = () => {
                 <button type="submit" disabled={loading}>Update Profile</button>
             </form>
 
-            <button onClick={() => setModalOpen(true)}>Edit Experiences</button>
+            <button onClick={() => setModalOpen1(true)}>Edit Experiences</button>
             <ExperiencesModal
-                isOpen={isModalOpen}
-                onClose={() => setModalOpen(false)}
+                isOpen={isModalOpen1}
+                onClose={() => setModalOpen1(false)}
                 initialExperiences={experiences}
+            />
+
+            <button onClick={() => setModalOpen2(true)}>Edit Education</button>
+            <EducationModal
+                isOpen={isModalOpen2}
+                onClose={() => setModalOpen2(false)}
+                initialEducation={education}
             />
         </div>
     );
