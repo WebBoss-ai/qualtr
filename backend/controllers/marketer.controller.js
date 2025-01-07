@@ -174,32 +174,43 @@ export const updateExperiences = async (req, res) => {
         const userId = req.id; // User ID from authentication middleware
         const { experiences } = req.body;
 
-        console.log("Received userId:", userId);
-        console.log("Received experiences:", experiences);
-
         if (!userId) {
-            console.error("User ID is missing in the request.");
             return res.status(400).json({ message: 'User ID is required.', success: false });
         }
 
         if (!experiences) {
-            console.error("Experiences are missing in the request.");
             return res.status(400).json({ message: 'Experiences data is required.', success: false });
         }
 
         const user = await DigitalMarketer.findById(userId);
         if (!user) {
-            console.error(`User with ID ${userId} not found.`);
             return res.status(404).json({ message: 'User not found.', success: false });
         }
 
-        console.log(`Found user with ID: ${userId}`);
+        // Handle experiences
+        const existingExperiences = user.experiences || [];
 
-        // Update experiences
-        user.experiences = experiences;
+        // Update existing or add new
+        experiences.forEach((exp) => {
+            if (exp._id) {
+                // Update existing experience
+                const index = existingExperiences.findIndex((e) => e._id.toString() === exp._id);
+                if (index !== -1) {
+                    existingExperiences[index] = { ...existingExperiences[index], ...exp };
+                }
+            } else {
+                // Add new experience
+                existingExperiences.push(exp);
+            }
+        });
+
+        // Remove deleted experiences
+        const incomingIds = experiences.filter((exp) => exp._id).map((exp) => exp._id.toString());
+        user.experiences = existingExperiences.filter((e) =>
+            incomingIds.includes(e._id.toString())
+        );
+
         await user.save();
-
-        console.log("Updated experiences:", user.experiences);
 
         return res.status(200).json({
             message: 'Experiences updated successfully.',
