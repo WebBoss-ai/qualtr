@@ -174,14 +174,32 @@ export const updateExperiences = async (req, res) => {
         const userId = req.id; // User ID from authentication middleware
         const { experiences } = req.body;
 
+        console.log("Received userId:", userId);
+        console.log("Received experiences:", experiences);
+
+        if (!userId) {
+            console.error("User ID is missing in the request.");
+            return res.status(400).json({ message: 'User ID is required.', success: false });
+        }
+
+        if (!experiences) {
+            console.error("Experiences are missing in the request.");
+            return res.status(400).json({ message: 'Experiences data is required.', success: false });
+        }
+
         const user = await DigitalMarketer.findById(userId);
         if (!user) {
+            console.error(`User with ID ${userId} not found.`);
             return res.status(404).json({ message: 'User not found.', success: false });
         }
+
+        console.log(`Found user with ID: ${userId}`);
 
         // Update experiences
         user.experiences = experiences;
         await user.save();
+
+        console.log("Updated experiences:", user.experiences);
 
         return res.status(200).json({
             message: 'Experiences updated successfully.',
@@ -189,7 +207,7 @@ export const updateExperiences = async (req, res) => {
             experiences: user.experiences,
         });
     } catch (error) {
-        console.error(error);
+        console.error("Error occurred during the update process:", error);
         return res.status(500).json({
             message: 'Internal server error.',
             success: false,
