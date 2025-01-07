@@ -60,6 +60,31 @@ export async function uploadFileToCompaniesDoc(file) {
   }
 }
 
+export async function uploadMarketerProfilePhoto(profilePhoto) {
+  console.log('Uploading profile photo:', profilePhoto.originalname);
+  console.log('File buffer size:', profilePhoto.buffer ? profilePhoto.buffer.length : 'No buffer');
+
+  const uploadParams = {
+    Bucket: "qualtr", // Replace with your actual bucket name
+    Key: `marketer_profile_photos/${profilePhoto.originalname}`, // Updated folder path
+    Body: profilePhoto.buffer, // File buffer from Multer
+    ContentType: profilePhoto.mimetype || 'application/octet-stream',
+  };
+
+  try {
+    const command = new PutObjectCommand(uploadParams);
+    const response = await s3Client.send(command);
+    console.log('S3 upload successful:', response);
+    return {
+      Location: `https://${uploadParams.Bucket}.s3.${s3Client.config.region}.amazonaws.com/${uploadParams.Key}`,
+      ...response,
+    };
+  } catch (error) {
+    console.error('Error uploading profile photo to S3:', error);
+    throw error;
+  }
+}
+
 export async function getObjectURL(key) {
   try {
       const command = new GetObjectCommand({
@@ -75,6 +100,3 @@ export async function getObjectURL(key) {
       throw error;
   }
 }
-
-
-

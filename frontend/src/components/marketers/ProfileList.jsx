@@ -25,7 +25,7 @@ const ProfileList = () => {
     }, []);
 
     const handleProfileClick = (id) => {
-        navigate(`/profile/${id}`); // Navigate to individual profile
+        navigate(`/marketer-profile/${id}`); // Navigate to individual profile
     };
 
     return (

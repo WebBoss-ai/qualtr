@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { DigitalMarketer } from '../models/DigitalMarketer.js';
-import { uploadFileToS3 } from '../utils/aws.js';
+import { uploadMarketerProfilePhoto } from '../utils/aws.js';
 
 export const register = async (req, res) => {
     try {
@@ -139,8 +139,8 @@ export const updateProfile = async (req, res) => {
         // Upload profile photo to S3 if provided
         let uploadedProfilePhotoKey = user.profile.profilePhoto; // Use the existing photo if no new photo is uploaded
         if (profilePhoto) {
-            const s3Response = await uploadFileToS3(profilePhoto);
-            uploadedProfilePhotoKey = `profile_photos/${profilePhoto.originalname}`; // Store the S3 key
+            const s3Response = await uploadMarketerProfilePhoto(profilePhoto);
+            uploadedProfilePhotoKey = `marketer_profile_photos/${profilePhoto.originalname}`; // Store the S3 key
         }
 
         // Update user profile fields
@@ -179,20 +179,27 @@ export const viewProfile = async (req, res) => {
         if (!user) {
             return res.status(404).json({
                 message: 'User not found.',
-                success: false
+                success: false,
             });
         }
+
+        const profilePhotoURL = user.profilePhoto
+            ? await getObjectURL(user.profilePhoto) // Generate a presigned URL
+            : null;
 
         return res.status(200).json({
             message: 'Profile retrieved successfully.',
             success: true,
-            profile: user.profile
+            profile: {
+                ...user.profile,
+                profilePhoto: profilePhotoURL,
+            },
         });
     } catch (error) {
         console.error(error);
         return res.status(500).json({
             message: 'Internal server error.',
-            success: false
+            success: false,
         });
     }
 };
