@@ -182,9 +182,9 @@ export const updateExperiences = async (req, res) => {
             return res.status(400).json({ message: 'User ID is required.', success: false });
         }
 
-        if (!experiences) {
-            console.error("Experiences are missing in the request.");
-            return res.status(400).json({ message: 'Experiences data is required.', success: false });
+        if (!experiences || !Array.isArray(experiences)) {
+            console.error("Invalid experiences data in the request.");
+            return res.status(400).json({ message: 'Valid experiences data is required.', success: false });
         }
 
         const user = await DigitalMarketer.findById(userId);
@@ -195,8 +195,20 @@ export const updateExperiences = async (req, res) => {
 
         console.log(`Found user with ID: ${userId}`);
 
-        // Update experiences
-        user.experiences = experiences;
+        // Loop through incoming experiences data
+        experiences.forEach((exp) => {
+            if (exp._id) {
+                // Update existing experience entry
+                const existingExpIndex = user.experiences.findIndex((e) => e._id.toString() === exp._id);
+                if (existingExpIndex !== -1) {
+                    user.experiences[existingExpIndex] = { ...user.experiences[existingExpIndex], ...exp };
+                }
+            } else {
+                // Add new experience entry
+                user.experiences.push(exp);
+            }
+        });
+
         await user.save();
 
         console.log("Updated experiences:", user.experiences);
