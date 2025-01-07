@@ -228,6 +228,58 @@ export const updateExperiences = async (req, res) => {
         });
     }
 };
+export const editExperience = async (req, res) => {
+    try {
+        const userId = req.id; // User ID from authentication middleware
+        const { experienceId, updatedExperience } = req.body;
+
+        console.log("Received userId:", userId);
+        console.log("Experience to edit:", updatedExperience);
+
+        if (!userId) {
+            console.error("User ID is missing in the request.");
+            return res.status(400).json({ message: 'User ID is required.', success: false });
+        }
+
+        if (!experienceId || !updatedExperience) {
+            console.error("Invalid experience ID or updated data.");
+            return res.status(400).json({ message: 'Valid experience ID and data are required.', success: false });
+        }
+
+        const user = await DigitalMarketer.findById(userId);
+        if (!user) {
+            console.error(`User with ID ${userId} not found.`);
+            return res.status(404).json({ message: 'User not found.', success: false });
+        }
+
+        console.log(`Found user with ID: ${userId}`);
+
+        const experienceIndex = user.experiences.findIndex((e) => e._id.toString() === experienceId);
+        if (experienceIndex === -1) {
+            console.error(`Experience with ID ${experienceId} not found.`);
+            return res.status(404).json({ message: 'Experience not found.', success: false });
+        }
+
+        // Update the experience
+        user.experiences[experienceIndex] = { ...user.experiences[experienceIndex]._doc, ...updatedExperience };
+
+        await user.save();
+
+        console.log("Edited experiences:", user.experiences);
+
+        return res.status(200).json({
+            message: 'Experience updated successfully.',
+            success: true,
+            experiences: user.experiences,
+        });
+    } catch (error) {
+        console.error("Error occurred during the edit process:", error);
+        return res.status(500).json({
+            message: 'Internal server error.',
+            success: false,
+        });
+    }
+};
 export const deleteExperience = async (req, res) => {
     try {
         const userId = req.id;
