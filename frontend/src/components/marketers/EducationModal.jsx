@@ -31,7 +31,7 @@ const EducationModal = ({ isOpen, onClose, initialEducation }) => {
 
     const handleSubmit = async () => {
         try {
-            const formattedEducation = education.map(edu => ({
+            const formattedEducation = education.map((edu) => ({
                 ...edu,
                 startDate: edu.startDate
                     ? {
@@ -46,7 +46,7 @@ const EducationModal = ({ isOpen, onClose, initialEducation }) => {
                       }
                     : null,
             }));
-
+    
             await axios.post(`${MARKETER_API_END_POINT}/profile/education`, { education: formattedEducation });
             alert('Education updated successfully');
             onClose();
@@ -54,7 +54,7 @@ const EducationModal = ({ isOpen, onClose, initialEducation }) => {
             console.error(error);
             alert('Failed to update education');
         }
-    };
+    };    
 
     if (!isOpen) return null;
 

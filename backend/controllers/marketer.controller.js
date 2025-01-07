@@ -220,35 +220,37 @@ export const updateEducation = async (req, res) => {
         const userId = req.id; // User ID from authentication middleware
         const { education } = req.body;
 
-        console.log("Received userId:", userId);
-        console.log("Received education:", education);
-
         if (!userId) {
-            console.error("User ID is missing in the request.");
             return res.status(400).json({ message: 'User ID is required.', success: false });
         }
 
-        if (!education) {
-            console.error("education is missing in the request.");
-            return res.status(400).json({ message: 'education data is required.', success: false });
+        if (!education || !Array.isArray(education)) {
+            return res.status(400).json({ message: 'Valid education data is required.', success: false });
         }
 
         const user = await DigitalMarketer.findById(userId);
         if (!user) {
-            console.error(`User with ID ${userId} not found.`);
             return res.status(404).json({ message: 'User not found.', success: false });
         }
 
-        console.log(`Found user with ID: ${userId}`);
+        // Loop through incoming education data
+        education.forEach((edu) => {
+            if (edu._id) {
+                // Update existing education entry
+                const existingEduIndex = user.education.findIndex((e) => e._id.toString() === edu._id);
+                if (existingEduIndex !== -1) {
+                    user.education[existingEduIndex] = { ...user.education[existingEduIndex], ...edu };
+                }
+            } else {
+                // Add new education entry
+                user.education.push(edu);
+            }
+        });
 
-        // Update education
-        user.education = education;
         await user.save();
 
-        console.log("Updated education:", user.education);
-
         return res.status(200).json({
-            message: 'education updated successfully.',
+            message: 'Education updated successfully.',
             success: true,
             education: user.education,
         });
