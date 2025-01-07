@@ -18,6 +18,9 @@ const MarketerUpdateProfile = () => {
         education: [],
     });
 
+    const [selectedExperiences, setSelectedExperiences] = useState(null);
+    const [selectedEducation, setSelectedEducation] = useState(null);
+
     const [isModalOpen1, setModalOpen1] = useState(false);
     const experiences = []; // Fetch or pass initial experiences
 
