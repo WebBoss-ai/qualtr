@@ -169,6 +169,33 @@ export const updateProfile = async (req, res) => {
     }
 };
 
+export const updateExperiences = async (req, res) => {
+    try {
+        const userId = req.id; // User ID from authentication middleware
+        const { experiences } = req.body;
+
+        const user = await DigitalMarketer.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found.', success: false });
+        }
+
+        // Update experiences
+        user.experiences = experiences;
+        await user.save();
+
+        return res.status(200).json({
+            message: 'Experiences updated successfully.',
+            success: true,
+            experiences: user.experiences,
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: 'Internal server error.',
+            success: false,
+        });
+    }
+};
 
 // View individual profile
 export const viewProfile = async (req, res) => {

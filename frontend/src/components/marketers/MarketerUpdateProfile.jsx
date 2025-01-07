@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { MARKETER_API_END_POINT } from '@/utils/constant';
+import ExperiencesModal from './ExperiencesModal';
 
 const MarketerUpdateProfile = () => {
     const [profileData, setProfileData] = useState({
@@ -12,6 +13,9 @@ const MarketerUpdateProfile = () => {
         location: '',
         profilePhoto: '',
     });
+
+    const [isModalOpen, setModalOpen] = useState(false);
+    const experiences = []; // Fetch or pass initial experiences
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -173,6 +177,13 @@ const MarketerUpdateProfile = () => {
                 />
                 <button type="submit" disabled={loading}>Update Profile</button>
             </form>
+
+            <button onClick={() => setModalOpen(true)}>Edit Experiences</button>
+            <ExperiencesModal
+                isOpen={isModalOpen}
+                onClose={() => setModalOpen(false)}
+                initialExperiences={experiences}
+            />
         </div>
     );
 };
