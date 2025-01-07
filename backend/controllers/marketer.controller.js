@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { DigitalMarketer } from '../models/DigitalMarketer.js';
+import { uploadFileToS3 } from '../utils/aws.js';
 
 export const register = async (req, res) => {
     try {
@@ -122,26 +123,34 @@ export const login = async (req, res) => {
 // Update user profile
 export const updateProfile = async (req, res) => {
     try {
-        const { fullname, phoneNumber, agencyName, bio, skills, location, profilePhoto } = req.body;
         const userId = req.id; // Assuming user ID is provided via authentication middleware
-        console.log(userId)
+        const { fullname, phoneNumber, agencyName, bio, skills, location } = req.body;
+        const profilePhoto = req.file; // Multer will handle the file upload
+
         // Find user by ID
         const user = await DigitalMarketer.findById(userId);
         if (!user) {
             return res.status(404).json({
                 message: 'User not found.',
-                success: false
+                success: false,
             });
         }
 
-        // Update user profile
+        // Upload profile photo to S3 if provided
+        let uploadedProfilePhotoKey = user.profile.profilePhoto; // Use the existing photo if no new photo is uploaded
+        if (profilePhoto) {
+            const s3Response = await uploadFileToS3(profilePhoto);
+            uploadedProfilePhotoKey = `profile_photos/${profilePhoto.originalname}`; // Store the S3 key
+        }
+
+        // Update user profile fields
         user.profile.fullname = fullname || user.profile.fullname;
         user.profile.phoneNumber = phoneNumber || user.profile.phoneNumber;
         user.profile.agencyName = agencyName || user.profile.agencyName;
         user.profile.bio = bio || user.profile.bio;
         user.profile.skills = skills || user.profile.skills;
         user.profile.location = location || user.profile.location;
-        user.profile.profilePhoto = profilePhoto || user.profile.profilePhoto;
+        user.profile.profilePhoto = uploadedProfilePhotoKey;
 
         user.isProfileComplete = true;
         await user.save();
@@ -149,16 +158,17 @@ export const updateProfile = async (req, res) => {
         return res.status(200).json({
             message: 'Profile updated successfully.',
             success: true,
-            profile: user.profile
+            profile: user.profile,
         });
     } catch (error) {
         console.error(error);
         return res.status(500).json({
             message: 'Internal server error.',
-            success: false
+            success: false,
         });
     }
 };
+
 
 // View individual profile
 export const viewProfile = async (req, res) => {

@@ -13,76 +13,58 @@ const MarketerUpdateProfile = () => {
         profilePhoto: '',
     });
 
-    const token = localStorage.getItem('token');
-    console.log('Token retrieved from localStorage:', token);
-
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(null);
 
-    // Helper function to manually decode the JWT
+    const token = localStorage.getItem('token');
+
     const decodeToken = (token) => {
         try {
-            const payload = token.split('.')[1]; // Extract the payload part
-            const decodedPayload = atob(payload); // Decode the base64 string
-            return JSON.parse(decodedPayload); // Parse it as JSON
+            const payload = token.split('.')[1];
+            const decodedPayload = atob(payload);
+            return JSON.parse(decodedPayload);
         } catch (error) {
-            console.error('Failed to decode token:', error);
             throw new Error('Invalid or expired token. Please log in again.');
         }
     };
 
     useEffect(() => {
         const fetchProfile = async () => {
-            console.log('Fetching profile data...');
             setLoading(true);
             setError(null);
+            setSuccess(null);
 
             try {
                 if (!token) {
-                    throw new Error('Token is not available or invalid.');
+                    throw new Error('Token is not available. Please log in.');
                 }
 
-                // Decode the token manually
-                let decodedToken;
-                try {
-                    decodedToken = decodeToken(token); // Use the helper function
-                    console.log('Decoded Token:', decodedToken);
-                } catch (decodeError) {
-                    console.error('Failed to decode token:', decodeError);
-                    throw new Error('Invalid or expired token. Please log in again.');
-                }
-
+                const decodedToken = decodeToken(token);
                 const userId = decodedToken.userId;
                 if (!userId) {
                     throw new Error('User ID is not found in the token.');
                 }
-                console.log('Decoded User ID:', userId);
 
-                // Fetch profile data using the user ID
                 const endpoint = `${MARKETER_API_END_POINT}/profile/${userId}`;
-                console.log('API Endpoint:', endpoint);
-
                 const res = await axios.get(endpoint, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 });
-                console.log('API Response:', res.data);
 
-                setProfileData(
-                    res.data.profile || {
-                        fullname: '',
-                        phoneNumber: '',
-                        agencyName: '',
-                        bio: '',
-                        skills: '',
-                        location: '',
-                        profilePhoto: '',
-                    }
-                );
+                setProfileData(res.data.profile || {
+                    fullname: '',
+                    phoneNumber: '',
+                    agencyName: '',
+                    bio: '',
+                    skills: '',
+                    location: '',
+                    profilePhoto: '',
+                });
+                setSuccess('Profile loaded successfully.');
             } catch (error) {
-                console.error('Error while fetching profile data:', error);
-                setError(error.message || 'Failed to load profile data. Please try again.');
+                setError(error.response?.data?.message || error.message || 'Failed to load profile data.');
             } finally {
                 setLoading(false);
             }
@@ -93,22 +75,20 @@ const MarketerUpdateProfile = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        console.log(`Updating field: ${name}, Value: ${value}`);
         setProfileData((prevData) => ({ ...prevData, [name]: value }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Submitting form data:', profileData);
+        setLoading(true);
+        setError(null);
+        setSuccess(null);
 
         try {
-            setError(null);
-            setLoading(true);
-
-            const formData = new FormData(); // Handle file uploads properly
+            const formData = new FormData();
             for (const key in profileData) {
                 if (key === 'profilePhoto' && profileData[key]) {
-                    formData.append(key, profileData[key]); // Append file separately
+                    formData.append(key, profileData[key]);
                 } else {
                     formData.append(key, profileData[key]);
                 }
@@ -121,84 +101,79 @@ const MarketerUpdateProfile = () => {
                 },
             });
 
-            console.log('Profile update response:', res.data);
-            alert('Profile updated successfully!');
+            setSuccess('Profile updated successfully!');
         } catch (error) {
-            console.error('Profile update failed:', error);
-            setError('Failed to update profile. Please try again.');
-            alert('Profile update failed.');
+            setError(error.response?.data?.message || 'Failed to update profile. Please try again.');
         } finally {
             setLoading(false);
         }
     };
 
-    if (loading) {
-        return <p>Loading...</p>;
-    }
-
-    if (error) {
-        return <p>Error: {error}</p>;
-    }
-
     return (
-        <form onSubmit={handleSubmit}>
-            <input
-                type="text"
-                name="fullname"
-                value={profileData.fullname}
-                onChange={handleChange}
-                placeholder="Full Name"
-                required
-            />
-            <input
-                type="text"
-                name="phoneNumber"
-                value={profileData.phoneNumber}
-                onChange={handleChange}
-                placeholder="Phone Number"
-                required
-            />
-            <input
-                type="text"
-                name="agencyName"
-                value={profileData.agencyName}
-                onChange={handleChange}
-                placeholder="Agency Name"
-                required
-            />
-            <textarea
-                name="bio"
-                value={profileData.bio}
-                onChange={handleChange}
-                placeholder="Bio"
-            />
-            <input
-                type="text"
-                name="skills"
-                value={profileData.skills}
-                onChange={handleChange}
-                placeholder="Skills (comma separated)"
-            />
-            <input
-                type="text"
-                name="location"
-                value={profileData.location}
-                onChange={handleChange}
-                placeholder="Location"
-            />
-            <input
-                type="file"
-                name="profilePhoto"
-                onChange={(e) => {
-                    console.log('File uploaded:', e.target.files[0]);
-                    setProfileData((prevData) => ({
-                        ...prevData,
-                        profilePhoto: e.target.files[0],
-                    }));
-                }}
-            />
-            <button type="submit">Update Profile</button>
-        </form>
+        <div>
+            <h2>Update Profile</h2>
+            {loading && <p>Loading...</p>}
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+            {success && <p style={{ color: 'green' }}>{success}</p>}
+
+            <form onSubmit={handleSubmit}>
+                <input
+                    type="text"
+                    name="fullname"
+                    value={profileData.fullname}
+                    onChange={handleChange}
+                    placeholder="Full Name"
+                    required
+                />
+                <input
+                    type="text"
+                    name="phoneNumber"
+                    value={profileData.phoneNumber}
+                    onChange={handleChange}
+                    placeholder="Phone Number"
+                    required
+                />
+                <input
+                    type="text"
+                    name="agencyName"
+                    value={profileData.agencyName}
+                    onChange={handleChange}
+                    placeholder="Agency Name"
+                    required
+                />
+                <textarea
+                    name="bio"
+                    value={profileData.bio}
+                    onChange={handleChange}
+                    placeholder="Bio"
+                />
+                <input
+                    type="text"
+                    name="skills"
+                    value={profileData.skills}
+                    onChange={handleChange}
+                    placeholder="Skills (comma separated)"
+                />
+                <input
+                    type="text"
+                    name="location"
+                    value={profileData.location}
+                    onChange={handleChange}
+                    placeholder="Location"
+                />
+                <input
+                    type="file"
+                    name="profilePhoto"
+                    onChange={(e) =>
+                        setProfileData((prevData) => ({
+                            ...prevData,
+                            profilePhoto: e.target.files[0],
+                        }))
+                    }
+                />
+                <button type="submit" disabled={loading}>Update Profile</button>
+            </form>
+        </div>
     );
 };
 
