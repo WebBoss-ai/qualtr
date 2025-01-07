@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { DigitalMarketer } from '../models/DigitalMarketer.js';
-import { uploadMarketerProfilePhoto } from '../utils/aws.js';
+import { uploadMarketerProfilePhoto, getObjectURL } from '../utils/aws.js';
 
 export const register = async (req, res) => {
     try {
