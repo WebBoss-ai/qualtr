@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -8,7 +8,14 @@ const employmentTypes = ["Full-time", "Part-time", "Contract", "Internship", "Fr
 const locationTypes = ["On-site", "Remote", "Hybrid"];
 
 const ExperiencesModal = ({ isOpen, onClose, initialExperiences }) => {
-    const [experiences, setExperiences] = useState(initialExperiences || []);
+    const [experiences, setExperiences] = useState([]);
+
+    // Update the state when initialExperiences changes
+    useEffect(() => {
+        if (isOpen && initialExperiences) {
+            setExperiences(initialExperiences);
+        }
+    }, [isOpen, initialExperiences]);
 
     const handleAddExperience = () => {
         setExperiences([
@@ -39,7 +46,7 @@ const ExperiencesModal = ({ isOpen, onClose, initialExperiences }) => {
                 ...exp,
                 startDate: exp.startDate
                     ? {
-                          month: exp.startDate.getMonth() + 1, // getMonth() returns a 0-based month, so add 1
+                          month: exp.startDate.getMonth() + 1,
                           year: exp.startDate.getFullYear(),
                       }
                     : null,
@@ -50,7 +57,7 @@ const ExperiencesModal = ({ isOpen, onClose, initialExperiences }) => {
                       }
                     : null,
             }));
-    
+
             await axios.post(`${MARKETER_API_END_POINT}/profile/experiences`, { experiences: formattedExperiences });
             alert('Experiences updated successfully');
             onClose();
