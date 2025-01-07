@@ -14,6 +14,8 @@ const MarketerUpdateProfile = () => {
         skills: '',
         location: '',
         profilePhoto: '',
+        experiences: [],
+        education: [],
     });
 
     const [isModalOpen1, setModalOpen1] = useState(false);
@@ -37,6 +39,48 @@ const MarketerUpdateProfile = () => {
             throw new Error('Invalid or expired token. Please log in again.');
         }
     };
+    const handleEditExperiences = (experiences) => {
+        setSelectedExperiences(experiences); // Store the experience in a state
+        setModalOpen1(true); // Open the modal
+    };
+    
+    const handleDeleteExperiences = async (id) => {
+        try {
+            const res = await axios.delete(`${MARKETER_API_END_POINT}/experiences/${id}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            setProfileData((prevData) => ({
+                ...prevData,
+                experiences: prevData.experiences.filter((exp) => exp._id !== id),
+            }));
+            alert(res.data.message || 'Experience deleted successfully.');
+        } catch (error) {
+            console.error(error);
+            alert(error.response?.data?.message || 'Failed to delete experience.');
+        }
+    };
+    
+    const handleEditEducation = (education) => {
+        setSelectedEducation(education); // Store the education in a state
+        setModalOpen2(true); // Open the modal
+    };
+    
+    const handleDeleteEducation = async (id) => {
+        try {
+            const res = await axios.delete(`${MARKETER_API_END_POINT}/education/${id}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            setProfileData((prevData) => ({
+                ...prevData,
+                education: prevData.education.filter((edu) => edu._id !== id),
+            }));
+            alert(res.data.message || 'Education deleted successfully.');
+        } catch (error) {
+            console.error(error);
+            alert(error.response?.data?.message || 'Failed to delete education.');
+        }
+    };
+    
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -70,6 +114,8 @@ const MarketerUpdateProfile = () => {
                     skills: '',
                     location: '',
                     profilePhoto: '',
+                    experiences: [],
+                    education: [],
                 });
                 setSuccess('Profile loaded successfully.');
             } catch (error) {
@@ -183,11 +229,61 @@ const MarketerUpdateProfile = () => {
                 <button type="submit" disabled={loading}>Update Profile</button>
             </form>
 
+            <h3>Experiences</h3>
+            {profileData.experiences && profileData.experiences.length > 0 ? (
+                <ul>
+                    {profileData.experiences.map((exp, index) => (
+                        <li key={index}>
+                            <p><strong>Title:</strong> {exp.title}</p>
+                            <p><strong>Company:</strong> {exp.company}</p>
+                            <p><strong>Employment Type:</strong> {exp.employmentType}</p>
+                            <p><strong>Location:</strong> {exp.location} ({exp.locationType})</p>
+                            <p><strong>Duration:</strong>
+                                {exp.startDate.month} {exp.startDate.year} -
+                                {exp.isCurrent ? 'Present' : `${exp.endDate?.month} ${exp.endDate?.year}`}
+                            </p>
+                            {exp.description && <p><strong>Description:</strong> {exp.description}</p>}
+                            <button onClick={() => handleEditExperiences(exp)}>Edit</button>
+                            <button onClick={() => handleDeleteExperiences(exp._id)}>Delete</button>
+                        </li>
+                    ))}
+                </ul>
+            ) : (
+                <p>No experiences listed.</p>
+            )}
+
+            <h3>Education</h3>
+            {profileData.education && profileData.education.length > 0 ? (
+                <ul>
+                    {profileData.education.map((edu, index) => (
+                        <li key={index}>
+                            <p><strong>School:</strong> {edu.school}</p>
+                            <p><strong>Degree:</strong> {edu.degree}</p>
+                            <p><strong>Field of Study:</strong> {edu.fieldOfStudy}</p>
+                            <p><strong>Grade:</strong> {edu.grade || 'N/A'}</p>
+                            <p><strong>Duration:</strong>
+                                {edu.startDate?.month} {edu.startDate?.year} -
+                                {edu.endDate?.month} {edu.endDate?.year}
+                            </p>
+                            {edu.activitiesAndSocieties && (
+                                <p><strong>Activities and Societies:</strong> {edu.activitiesAndSocieties}</p>
+                            )}
+                            {edu.description && <p><strong>Description:</strong> {edu.description}</p>}
+                            <button onClick={() => handleEditEducation(edu)}>Edit</button>
+                            <button onClick={() => handleDeleteEducation(edu._id)}>Delete</button>
+                        </li>
+                    ))}
+                </ul>
+            ) : (
+                <p>No education listed.</p>
+            )}
+
             <button onClick={() => setModalOpen1(true)}>Edit Experiences</button>
             <ExperiencesModal
                 isOpen={isModalOpen1}
                 onClose={() => setModalOpen1(false)}
                 initialExperiences={experiences}
+                experiences={selectedExperiences}
             />
 
             <button onClick={() => setModalOpen2(true)}>Edit Education</button>
@@ -195,6 +291,7 @@ const MarketerUpdateProfile = () => {
                 isOpen={isModalOpen2}
                 onClose={() => setModalOpen2(false)}
                 initialEducation={education}
+                education={selectedEducation}
             />
         </div>
     );

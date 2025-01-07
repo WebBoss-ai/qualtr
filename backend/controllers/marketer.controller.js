@@ -159,6 +159,8 @@ export const updateProfile = async (req, res) => {
             message: 'Profile updated successfully.',
             success: true,
             profile: user.profile,
+            experiences: user.experiences,
+            education: user.education,
         });
     } catch (error) {
         console.error(error);
@@ -226,7 +228,25 @@ export const updateExperiences = async (req, res) => {
         });
     }
 };
+export const deleteExperience = async (req, res) => {
+    try {
+        const userId = req.id;
+        const experienceId = req.params.id;
 
+        const user = await DigitalMarketer.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
+
+        user.experiences = user.experiences.filter((exp) => exp._id.toString() !== experienceId);
+        await user.save();
+
+        res.status(200).json({ message: 'Experience deleted successfully.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error.' });
+    }
+};
 export const updateEducation = async (req, res) => {
     try {
         const userId = req.id; // User ID from authentication middleware
@@ -272,6 +292,25 @@ export const updateEducation = async (req, res) => {
             message: 'Internal server error.',
             success: false,
         });
+    }
+};
+export const deleteEducation = async (req, res) => {
+    try {
+        const userId = req.id;
+        const educationId = req.params.id;
+
+        const user = await DigitalMarketer.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
+
+        user.education = user.education.filter((edu) => edu._id.toString() !== educationId);
+        await user.save();
+
+        res.status(200).json({ message: 'Education deleted successfully.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error.' });
     }
 };
 
