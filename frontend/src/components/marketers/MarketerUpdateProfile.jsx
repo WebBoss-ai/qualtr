@@ -3,7 +3,7 @@ import axios from 'axios';
 import { MARKETER_API_END_POINT } from '@/utils/constant';
 import ExperiencesModal from './ExperiencesModal';
 import EducationModal from './EducationModal';
-
+import ExperiencesPage from './ExperiencesPage';
 
 const MarketerUpdateProfile = () => {
     const [profileData, setProfileData] = useState({
@@ -233,6 +233,9 @@ const MarketerUpdateProfile = () => {
                 />
                 <button type="submit" disabled={loading}>Update Profile</button>
             </form>
+
+            <ExperiencesPage profileData={profileData} setProfileData={setProfileData} />
+
 
             <h3>Experiences</h3>
             {profileData.experiences && profileData.experiences.length > 0 ? (
