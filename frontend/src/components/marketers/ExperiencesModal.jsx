@@ -3,7 +3,6 @@ import axios from 'axios';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { MARKETER_API_END_POINT } from '@/utils/constant';
-import { v4 as uuidv4 } from 'uuid';
 
 const employmentTypes = ["Full-time", "Part-time", "Contract", "Internship", "Freelance"];
 const locationTypes = ["On-site", "Remote", "Hybrid"];
@@ -15,7 +14,6 @@ const ExperiencesModal = ({ isOpen, onClose, initialExperiences }) => {
         setExperiences([
             ...experiences,
             {
-                _id: uuidv4(),
                 title: '',
                 employmentType: '',
                 company: '',
@@ -37,27 +35,28 @@ const ExperiencesModal = ({ isOpen, onClose, initialExperiences }) => {
 
     const handleSubmit = async () => {
         try {
-            const formattedExperiences = experiences.map((exp) => ({
+            const formattedExperiences = experiences.map(exp => ({
                 ...exp,
                 startDate: exp.startDate
-                    ? { month: exp.startDate.getMonth() + 1, year: exp.startDate.getFullYear() }
+                    ? {
+                          month: exp.startDate.getMonth() + 1, // getMonth() returns a 0-based month, so add 1
+                          year: exp.startDate.getFullYear(),
+                      }
                     : null,
                 endDate: exp.endDate
-                    ? { month: exp.endDate.getMonth() + 1, year: exp.endDate.getFullYear() }
+                    ? {
+                          month: exp.endDate.getMonth() + 1,
+                          year: exp.endDate.getFullYear(),
+                      }
                     : null,
             }));
-
-            const response = await axios.post(
-                `${MARKETER_API_END_POINT}/profile/experiences`,
-                { experiences: formattedExperiences }
-            );
-
-            console.log('Debug: API response:', response.data);
+    
+            await axios.post(`${MARKETER_API_END_POINT}/profile/experiences`, { experiences: formattedExperiences });
             alert('Experiences updated successfully');
             onClose();
         } catch (error) {
-            console.error('Error updating experiences:', error.response?.data || error.message);
-            alert('Failed to update experiences. Please try again.');
+            console.error(error);
+            alert('Failed to update experiences');
         }
     };
 
@@ -68,7 +67,7 @@ const ExperiencesModal = ({ isOpen, onClose, initialExperiences }) => {
             <div className="bg-white rounded-lg p-6 w-full max-w-2xl shadow-lg">
                 <h2 className="text-xl font-semibold mb-4">Edit Experiences</h2>
                 {experiences.map((exp, idx) => (
-                    <div key={exp._id} className="mb-6 border p-4 rounded-md shadow-sm">
+                    <div key={idx} className="mb-6 border p-4 rounded-md shadow-sm">
                         <input
                             type="text"
                             className="w-full p-2 mb-2 border rounded"
@@ -83,9 +82,7 @@ const ExperiencesModal = ({ isOpen, onClose, initialExperiences }) => {
                         >
                             <option value="">Select Employment Type</option>
                             {employmentTypes.map((type) => (
-                                <option key={type} value={type}>
-                                    {type}
-                                </option>
+                                <option key={type} value={type}>{type}</option>
                             ))}
                         </select>
                         <input
@@ -142,9 +139,7 @@ const ExperiencesModal = ({ isOpen, onClose, initialExperiences }) => {
                         >
                             <option value="">Select Location Type</option>
                             {locationTypes.map((type) => (
-                                <option key={type} value={type}>
-                                    {type}
-                                </option>
+                                <option key={type} value={type}>{type}</option>
                             ))}
                         </select>
                         <textarea

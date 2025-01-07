@@ -174,57 +174,32 @@ export const updateExperiences = async (req, res) => {
         const userId = req.id; // User ID from authentication middleware
         const { experiences } = req.body;
 
-        console.log("Debug: Received userId:", userId);
-        console.log("Debug: Received experiences:", JSON.stringify(experiences, null, 2));
+        console.log("Received userId:", userId);
+        console.log("Received experiences:", experiences);
 
         if (!userId) {
-            console.error("Debug: User ID is missing in the request.");
+            console.error("User ID is missing in the request.");
             return res.status(400).json({ message: 'User ID is required.', success: false });
         }
 
-        if (!Array.isArray(experiences)) {
-            console.error("Debug: Invalid format for experiences:", experiences);
-            return res.status(400).json({ message: 'Invalid experiences format.', success: false });
+        if (!experiences) {
+            console.error("Experiences are missing in the request.");
+            return res.status(400).json({ message: 'Experiences data is required.', success: false });
         }
 
         const user = await DigitalMarketer.findById(userId);
         if (!user) {
-            console.error(`Debug: User with ID ${userId} not found.`);
+            console.error(`User with ID ${userId} not found.`);
             return res.status(404).json({ message: 'User not found.', success: false });
         }
 
-        console.log("Debug: Existing user data before update:", JSON.stringify(user, null, 2));
+        console.log(`Found user with ID: ${userId}`);
 
-        const existingExperiences = user.experiences || [];
-        console.log("Debug: Existing experiences:", JSON.stringify(existingExperiences, null, 2));
-
-        experiences.forEach((exp) => {
-            if (exp._id) {
-                const index = existingExperiences.findIndex((e) => e._id.toString() === exp._id);
-                if (index !== -1) {
-                    console.log(`Debug: Updating experience with ID ${exp._id}`);
-                    existingExperiences[index] = { ...existingExperiences[index], ...exp };
-                } else {
-                    console.warn(`Debug: Experience ID ${exp._id} not found. Adding new.`);
-                    existingExperiences.push(exp);
-                }
-            } else {
-                console.log("Debug: Adding new experience:", JSON.stringify(exp, null, 2));
-                existingExperiences.push({ ...exp, _id: new mongoose.Types.ObjectId() });
-            }
-        });
-
-        const incomingIds = experiences.filter((exp) => exp._id).map((exp) => exp._id.toString());
-        console.log("Debug: Incoming experience IDs:", incomingIds);
-
-        user.experiences = existingExperiences.filter((e) =>
-            !e._id || incomingIds.includes(e._id.toString())
-        );
-
-        console.log("Debug: Final experiences to save:", JSON.stringify(user.experiences, null, 2));
-
+        // Update experiences
+        user.experiences = experiences;
         await user.save();
-        console.log("Debug: Successfully saved user experiences:", user.experiences);
+
+        console.log("Updated experiences:", user.experiences);
 
         return res.status(200).json({
             message: 'Experiences updated successfully.',
