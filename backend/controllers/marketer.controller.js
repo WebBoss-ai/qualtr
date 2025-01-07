@@ -284,6 +284,8 @@ export const viewProfile = async (req, res) => {
             profile: {
                 ...user.profile,
                 profilePhoto: profilePhotoURL,
+                experiences: user.experiences,
+                education: user.education,
             },
         });
     } catch (error) {

@@ -50,6 +50,26 @@ const ProfileDetails = () => {
             <p><strong>Location:</strong> {profile.location}</p>
             <p><strong>Bio:</strong> {profile.bio}</p>
             <p><strong>Skills:</strong> {profile.skills}</p>
+            <h3>Experiences</h3>
+            {profile.experiences && profile.experiences.length > 0 ? (
+                <ul>
+                    {profile.experiences.map((exp, index) => (
+                        <li key={index}>{exp}</li>
+                    ))}
+                </ul>
+            ) : (
+                <p>No experiences listed.</p>
+            )}
+            <h3>Education</h3>
+            {profile.education && profile.education.length > 0 ? (
+                <ul>
+                    {profile.education.map((edu, index) => (
+                        <li key={index}>{edu}</li>
+                    ))}
+                </ul>
+            ) : (
+                <p>No education listed.</p>
+            )}
         </div>
     );
 };
