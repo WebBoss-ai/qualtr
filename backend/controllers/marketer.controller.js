@@ -346,6 +346,58 @@ export const updateEducation = async (req, res) => {
         });
     }
 };
+export const editEducation = async (req, res) => {
+    try {
+        const userId = req.id; // User ID from authentication middleware
+        const { educationId, updatedEducation } = req.body;
+
+        console.log("Received userId:", userId);
+        console.log("Education to edit:", updatedEducation);
+
+        if (!userId) {
+            console.error("User ID is missing in the request.");
+            return res.status(400).json({ message: 'User ID is required.', success: false });
+        }
+
+        if (!educationId || !updatedEducation) {
+            console.error("Invalid education ID or updated data.");
+            return res.status(400).json({ message: 'Valid education ID and data are required.', success: false });
+        }
+
+        const user = await DigitalMarketer.findById(userId);
+        if (!user) {
+            console.error(`User with ID ${userId} not found.`);
+            return res.status(404).json({ message: 'User not found.', success: false });
+        }
+
+        console.log(`Found user with ID: ${userId}`);
+
+        const educationIndex = user.education.findIndex((e) => e._id.toString() === educationId);
+        if (educationIndex === -1) {
+            console.error(`Education with ID ${educationId} not found.`);
+            return res.status(404).json({ message: 'Education not found.', success: false });
+        }
+
+        // Update the education
+        user.education[educationIndex] = { ...user.education[educationIndex]._doc, ...updatedEducation };
+
+        await user.save();
+
+        console.log("Edited education:", user.education);
+
+        return res.status(200).json({
+            message: 'Education updated successfully.',
+            success: true,
+            education: user.education,
+        });
+    } catch (error) {
+        console.error("Error occurred during the edit process:", error);
+        return res.status(500).json({
+            message: 'Internal server error.',
+            success: false,
+        });
+    }
+};
 export const deleteEducation = async (req, res) => {
     try {
         const userId = req.id;

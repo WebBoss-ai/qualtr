@@ -635,3 +635,47 @@ const BrandDashboard = () => {
 };
 
 export default BrandDashboard;
+
+
+
+const handleEditExperiences = (experiences) => {
+  setSelectedExperiences(experiences); // Store the experience in a state
+  setModalOpen1(true); // Open the modal
+};
+
+const handleDeleteExperiences = async (id) => {
+  try {
+      const res = await axios.delete(`${MARKETER_API_END_POINT}/experiences/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+      });
+      setProfileData((prevData) => ({
+          ...prevData,
+          experiences: prevData.experiences.filter((exp) => exp._id !== id),
+      }));
+      alert(res.data.message || 'Experience deleted successfully.');
+  } catch (error) {
+      console.error(error);
+      alert(error.response?.data?.message || 'Failed to delete experience.');
+  }
+};
+
+const handleEditEducation = (education) => {
+  setSelectedEducation(education); // Store the education in a state
+  setModalOpen2(true); // Open the modal
+};
+
+const handleDeleteEducation = async (id) => {
+  try {
+      const res = await axios.delete(`${MARKETER_API_END_POINT}/education/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+      });
+      setProfileData((prevData) => ({
+          ...prevData,
+          education: prevData.education.filter((edu) => edu._id !== id),
+      }));
+      alert(res.data.message || 'Education deleted successfully.');
+  } catch (error) {
+      console.error(error);
+      alert(error.response?.data?.message || 'Failed to delete education.');
+  }
+};
