@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { DigitalMarketer } from '../models/DigitalMarketer.js';
-import { uploadMarketerProfilePhoto, getObjectURL } from '../utils/aws.js';
+import { uploadMarketerProfilePhoto, uploadCampaignImages, getObjectURL } from '../utils/aws.js';
 
 export const register = async (req, res) => {
     try {
@@ -418,6 +418,148 @@ export const deleteEducation = async (req, res) => {
     }
 };
 
+// Add Campaign
+export const addCampaign = async (req, res) => {
+    try {
+        const userId = req.id; // User ID from authentication middleware
+        const { title, description } = req.body;
+        const images = req.files; // Multer handles multiple file uploads
+
+        if (!title || !description) {
+            return res.status(400).json({ message: 'Title and description are required.', success: false });
+        }
+
+        // Upload images to S3
+        let uploadedImageKeys = [];
+        if (images && images.length > 0) {
+            uploadedImageKeys = await Promise.all(images.map((file) => uploadCampaignImages(file)));
+        }
+
+        // Find user and update campaigns
+        const user = await DigitalMarketer.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found.', success: false });
+        }
+
+        const newCampaign = { title, description, images: uploadedImageKeys };
+        user.campaigns.push(newCampaign);
+
+        await user.save();
+
+        return res.status(201).json({
+            message: 'Campaign added successfully.',
+            success: true,
+            campaigns: user.campaigns,
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Internal server error.', success: false });
+    }
+};
+export const editCampaign = async (req, res) => {
+    try {
+        const userId = req.id;
+        const { campaignId, title, description } = req.body;
+        const images = req.files; // Multer handles multiple file uploads
+
+        if (!campaignId) {
+            return res.status(400).json({ message: 'Campaign ID is required.', success: false });
+        }
+
+        const user = await DigitalMarketer.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found.', success: false });
+        }
+
+        const campaign = user.campaigns.id(campaignId);
+        if (!campaign) {
+            return res.status(404).json({ message: 'Campaign not found.', success: false });
+        }
+
+        // Update campaign details
+        if (title) campaign.title = title;
+        if (description) campaign.description = description;
+
+        // Upload new images to S3 if provided
+        if (images && images.length > 0) {
+            const uploadedImageKeys = await Promise.all(images.map((file) => uploadCampaignImages(file)));
+            campaign.images = [...campaign.images, ...uploadedImageKeys].slice(0, 10); // Limit to 10 images
+        }
+
+        await user.save();
+
+        return res.status(200).json({
+            message: 'Campaign updated successfully.',
+            success: true,
+            campaigns: user.campaigns,
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Internal server error.', success: false });
+    }
+};
+export const deleteCampaign = async (req, res) => {
+    try {
+        const userId = req.id;
+        const { campaignId } = req.params;
+
+        const user = await DigitalMarketer.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found.', success: false });
+        }
+
+        user.campaigns = user.campaigns.filter((campaign) => campaign._id.toString() !== campaignId);
+
+        await user.save();
+
+        return res.status(200).json({
+            message: 'Campaign deleted successfully.',
+            success: true,
+            campaigns: user.campaigns,
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Internal server error.', success: false });
+    }
+};
+export const listAllCampaigns = async (req, res) => {
+    try {
+        // Fetch all users with their campaigns
+        const users = await DigitalMarketer.find({}, 'campaigns'); // Only fetch campaigns field
+
+        // Extract and format all campaigns
+        const allCampaigns = [];
+        for (const user of users) {
+            for (const campaign of user.campaigns) {
+                const imageUrls = await Promise.all(
+                    campaign.images.map((imageKey) => getObjectURL(imageKey)) // Generate presigned URLs
+                );
+
+                allCampaigns.push({
+                    id: campaign._id,
+                    title: campaign.title,
+                    description: campaign.description,
+                    images: imageUrls, // Replace S3 keys with presigned URLs
+                    createdAt: campaign.createdAt,
+                    updatedAt: campaign.updatedAt,
+                });
+            }
+        }
+
+        return res.status(200).json({
+            message: 'All campaigns retrieved successfully.',
+            success: true,
+            campaigns: allCampaigns,
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: 'Internal server error.',
+            success: false,
+        });
+    }
+};
+
 // View individual profile
 export const viewProfile = async (req, res) => {
     try {
@@ -453,7 +595,6 @@ export const viewProfile = async (req, res) => {
         });
     }
 };
-
 // Get all profiles
 export const getAllProfiles = async (req, res) => {
     try {

@@ -19,27 +19,40 @@ const experienceSchema = new mongoose.Schema({
 });
 
 const educationSchema = new mongoose.Schema({
-    school: { type: String, required: true }, // School name, required field
-    degree: { type: String, required: true }, // Degree name, e.g., Bachelor’s
-    fieldOfStudy: { type: String, required: true }, // Field of study, e.g., Business
+    school: { type: String, required: true },
+    degree: { type: String, required: true },
+    fieldOfStudy: { type: String, required: true },
     startDate: {
-        month: { type: String }, // Start date - Month
-        year: { type: String },  // Start date - Year
+        month: { type: String },
+        year: { type: String },
     },
     endDate: {
-        month: { type: String }, // End date (or expected) - Month
-        year: { type: String },  // End date (or expected) - Year
+        month: { type: String },
+        year: { type: String },
     },
-    grade: { type: String }, // Grade, optional
-    activitiesAndSocieties: { 
-        type: String, 
-        maxlength: 500, // Max 500 characters
-    }, 
-    description: { 
-        type: String, 
-        maxlength: 1000, // Max 1000 characters
+    grade: { type: String },
+    activitiesAndSocieties: {
+        type: String,
+        maxlength: 500,
+    },
+    description: {
+        type: String,
+        maxlength: 1000,
     },
 });
+
+const campaignSchema = new mongoose.Schema({
+    title: { type: String, required: true }, // Title of the campaign
+    description: { type: String, required: true }, // Description of the campaign
+    images: {
+        type: [String], // Array of image URLs
+        validate: [arrayLimit, '{PATH} exceeds the limit of 10'], // Validation for max 10 images
+    },
+}, { timestamps: true });
+
+function arrayLimit(val) {
+    return val.length <= 10;
+}
 
 const digitalMarketerSchema = new mongoose.Schema({
     email: {
@@ -52,35 +65,21 @@ const digitalMarketerSchema = new mongoose.Schema({
         required: true,
     },
     profile: {
-        fullname: {
-            type: String,
-        },
-        phoneNumber: {
-            type: String,
-        },
-        agencyName: {
-            type: String,
-        },
-        bio: {
-            type: String,
-        },
-        skills: [{
-            type: String,
-        }],
-        location: {
-            type: String,
-        },
-        profilePhoto: {
-            type: String,
-            default: '',
-        },
+        fullname: { type: String },
+        phoneNumber: { type: String },
+        agencyName: { type: String },
+        bio: { type: String },
+        skills: [{ type: String }],
+        location: { type: String },
+        profilePhoto: { type: String, default: '' },
     },
     isProfileComplete: {
         type: Boolean,
         default: false,
     },
     experiences: [experienceSchema],
-    education: [educationSchema], 
+    education: [educationSchema],
+    campaigns: [campaignSchema], // Embedding campaigns in the digital marketer schema
 }, { timestamps: true });
 
 export const DigitalMarketer = mongoose.model('DigitalMarketer', digitalMarketerSchema);

@@ -47,6 +47,7 @@ import ProfileList from './components/marketers/ProfileList'
 import ProfileDetails from './components/marketers/ProfileDetails'
 import MarketerUpdateProfile from './components/marketers/MarketerUpdateProfile'
 import ExperiencesPage from './components/marketers/ExperiencesPage'
+import CampaignManagement from './components/marketers/CampaignManagement'
 
 const appRouter = createBrowserRouter([
   {
@@ -208,6 +209,10 @@ const appRouter = createBrowserRouter([
   {
     path:"/marketer/experience",
     element:<ExperiencesPage /> 
+  },
+  {
+    path:"/marketer/campaigns",
+    element:<CampaignManagement /> 
   },
   {
     path:"/marketer-profile/:id",
