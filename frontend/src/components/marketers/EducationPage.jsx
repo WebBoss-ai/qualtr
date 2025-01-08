@@ -6,37 +6,39 @@ const EducationPage = ({ profileData, fetchProfileData }) => {
     const [editingEducation, setEditingEducation] = useState(null);
     const [updatedEducation, setUpdatedEducation] = useState({});
 
-    console.log("Rendering EducationPage...");
-    console.log("profileData:", profileData);
-
     const handleEditEducation = (education) => {
-        console.log("Editing education:", education);
         setEditingEducation(education);
         setUpdatedEducation({ ...education });
     };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        console.log(`Field changed - Name: ${name}, Value: ${value}`);
-        setUpdatedEducation((prev) => ({ ...prev, [name]: value }));
+
+        // Handle nested fields like startDate and endDate
+        if (name.includes(".")) {
+            const [field, subField] = name.split(".");
+            setUpdatedEducation((prev) => ({
+                ...prev,
+                [field]: {
+                    ...prev[field],
+                    [subField]: value,
+                },
+            }));
+        } else {
+            setUpdatedEducation((prev) => ({ ...prev, [name]: value }));
+        }
     };
 
     const handleSaveEdit = async () => {
-        console.log("Saving edited education:", updatedEducation);
         try {
             const response = await axios.put(`${MARKETER_API_END_POINT}/edit-education`, {
                 educationId: editingEducation._id,
                 updatedEducation,
             });
 
-            console.log("Save response:", response.data);
-
             if (response.data.success) {
-                console.log("Edit saved successfully");
-                fetchProfileData(); // Fetch updated profile data
+                fetchProfileData();
                 setEditingEducation(null);
-            } else {
-                console.error("Error in saving edit:", response.data.message);
             }
         } catch (error) {
             console.error("Error updating education:", error);
@@ -44,16 +46,11 @@ const EducationPage = ({ profileData, fetchProfileData }) => {
     };
 
     const handleDeleteEducation = async (educationId) => {
-        console.log("Deleting education with ID:", educationId);
         try {
             const response = await axios.delete(`${MARKETER_API_END_POINT}/delete-education/${educationId}`);
-            console.log("Delete response:", response.data);
 
             if (response.data.success) {
-                console.log("Education deleted successfully");
-                fetchProfileData(); // Refresh the data
-            } else {
-                console.error("Error in deleting education:", response.data.message);
+                fetchProfileData();
             }
         } catch (error) {
             console.error("Error deleting education:", error);
@@ -61,40 +58,50 @@ const EducationPage = ({ profileData, fetchProfileData }) => {
     };
 
     if (!profileData || !profileData.education) {
-        console.warn("profileData or education is undefined.");
-        return <p>Loading...</p>; // Show a loading state if profileData is not available
+        return <p>Loading...</p>;
     }
 
     return (
         <div>
             <h3>Education</h3>
-            <p>Debug: Rendering education list with {profileData.education.length} items</p>
             {profileData.education.length > 0 ? (
                 <ul>
-                    {profileData.education.map((edu, index) => {
-                        console.log(`Rendering education ${index + 1}:`, edu);
-                        return (
-                            <li key={index}>
+                    {profileData.education.map((edu, index) => (
+                        <li key={index}>
+                            <p>
+                                <strong>School:</strong> {edu.school}
+                            </p>
+                            <p>
+                                <strong>Degree:</strong> {edu.degree}
+                            </p>
+                            <p>
+                                <strong>Field of Study:</strong> {edu.fieldOfStudy}
+                            </p>
+                            <p>
+                                <strong>Start Date:</strong> {edu.startDate?.month} {edu.startDate?.year}
+                            </p>
+                            <p>
+                                <strong>End Date:</strong> {edu.endDate?.month} {edu.endDate?.year}
+                            </p>
+                            {edu.grade && (
                                 <p>
-                                    <strong>Institution:</strong> {edu.institution}
+                                    <strong>Grade:</strong> {edu.grade}
                                 </p>
+                            )}
+                            {edu.activitiesAndSocieties && (
                                 <p>
-                                    <strong>Degree:</strong> {edu.degree}
+                                    <strong>Activities & Societies:</strong> {edu.activitiesAndSocieties}
                                 </p>
+                            )}
+                            {edu.description && (
                                 <p>
-                                    <strong>Field of Study:</strong> {edu.fieldOfStudy}
+                                    <strong>Description:</strong> {edu.description}
                                 </p>
-                                <p>
-                                    <strong>Duration:</strong>{" "}
-                                    {edu.startDate?.month} {edu.startDate?.year} -{" "}
-                                    {edu.isCurrent ? "Present" : `${edu.endDate?.month} ${edu.endDate?.year}`}
-                                </p>
-                                {edu.description && <p><strong>Description:</strong> {edu.description}</p>}
-                                <button onClick={() => handleEditEducation(edu)}>Edit</button>
-                                <button onClick={() => handleDeleteEducation(edu._id)}>Delete</button>
-                            </li>
-                        );
-                    })}
+                            )}
+                            <button onClick={() => handleEditEducation(edu)}>Edit</button>
+                            <button onClick={() => handleDeleteEducation(edu._id)}>Delete</button>
+                        </li>
+                    ))}
                 </ul>
             ) : (
                 <p>No education records listed.</p>
@@ -104,11 +111,11 @@ const EducationPage = ({ profileData, fetchProfileData }) => {
                 <div className="modal">
                     <div className="modal-content">
                         <h4>Edit Education</h4>
-                        <label>Institution</label>
+                        <label>School</label>
                         <input
                             type="text"
-                            name="institution"
-                            value={updatedEducation.institution || ""}
+                            name="school"
+                            value={updatedEducation.school || ""}
                             onChange={handleChange}
                         />
                         <label>Degree</label>
@@ -125,18 +132,61 @@ const EducationPage = ({ profileData, fetchProfileData }) => {
                             value={updatedEducation.fieldOfStudy || ""}
                             onChange={handleChange}
                         />
-                        <label>Is Current</label>
+                        <label>Start Date</label>
+                        <div>
+                            <input
+                                type="text"
+                                name="startDate.month"
+                                placeholder="Month"
+                                value={updatedEducation.startDate?.month || ""}
+                                onChange={handleChange}
+                            />
+                            <input
+                                type="text"
+                                name="startDate.year"
+                                placeholder="Year"
+                                value={updatedEducation.startDate?.year || ""}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <label>End Date</label>
+                        <div>
+                            <input
+                                type="text"
+                                name="endDate.month"
+                                placeholder="Month"
+                                value={updatedEducation.endDate?.month || ""}
+                                onChange={handleChange}
+                            />
+                            <input
+                                type="text"
+                                name="endDate.year"
+                                placeholder="Year"
+                                value={updatedEducation.endDate?.year || ""}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <label>Grade</label>
                         <input
-                            type="checkbox"
-                            name="isCurrent"
-                            checked={updatedEducation.isCurrent || false}
-                            onChange={(e) =>
-                                setUpdatedEducation((prev) => ({
-                                    ...prev,
-                                    isCurrent: e.target.checked,
-                                }))
-                            }
+                            type="text"
+                            name="grade"
+                            value={updatedEducation.grade || ""}
+                            onChange={handleChange}
                         />
+                        <label>Activities & Societies</label>
+                        <textarea
+                            name="activitiesAndSocieties"
+                            maxLength="500"
+                            value={updatedEducation.activitiesAndSocieties || ""}
+                            onChange={handleChange}
+                        ></textarea>
+                        <label>Description</label>
+                        <textarea
+                            name="description"
+                            maxLength="1000"
+                            value={updatedEducation.description || ""}
+                            onChange={handleChange}
+                        ></textarea>
                         <button onClick={handleSaveEdit}>Save</button>
                         <button onClick={() => setEditingEducation(null)}>Cancel</button>
                     </div>
