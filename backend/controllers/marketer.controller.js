@@ -433,6 +433,8 @@ export const addCampaign = async (req, res) => {
         let uploadedImageKeys = [];
         if (images && images.length > 0) {
             uploadedImageKeys = await Promise.all(images.map((file) => uploadCampaignImages(file)));
+        } else {
+            uploadedImageKeys = []; // Ensure it's always an array
         }
 
         // Find user and update campaigns
@@ -441,7 +443,14 @@ export const addCampaign = async (req, res) => {
             return res.status(404).json({ message: 'User not found.', success: false });
         }
 
-        const newCampaign = { title, description, images: uploadedImageKeys };
+        const newCampaign = {
+            title,
+            description,
+            images: Array.isArray(uploadedImageKeys) ? uploadedImageKeys : [], // Validate images
+        };
+
+        console.log('New Campaign:', newCampaign); // Debugging log
+
         user.campaigns.push(newCampaign);
 
         await user.save();
