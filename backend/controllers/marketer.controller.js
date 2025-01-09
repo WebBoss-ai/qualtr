@@ -506,6 +506,13 @@ export const editCampaign = async (req, res) => {
             imageUrls = uploadResponses.map((response) => response.Location);
 
             if (replaceImages === 'true') {
+                // Delete existing images before replacing (ensure proper cleanup from storage)
+                if (campaign.images && campaign.images.length > 0) {
+                    const deleteResponses = await Promise.all(
+                        campaign.images.map((existingImage) => deleteCampaignImage(existingImage))
+                    );
+                    console.log("Deleted existing images:", deleteResponses);
+                }
                 // Replace existing images with new ones
                 campaign.images = imageUrls;
             } else {

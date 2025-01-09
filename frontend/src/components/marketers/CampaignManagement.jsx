@@ -51,7 +51,7 @@ const CampaignManagement = () => {
     console.log(`Removing image at index ${index}`);
     const updatedImages = existingImages.filter((_, i) => i !== index);
     setExistingImages(updatedImages);
-  };
+  };  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -64,15 +64,22 @@ const CampaignManagement = () => {
       form.append("replaceImages", formData.replaceImages);
       if (editMode) form.append("campaignId", campaignId);
       console.log("Campaign ID being sent:", campaignId);
+  
+      // Add new images
       formData.images.forEach((image) => form.append("images", image));
-
+  
+      // Add existing images that remain
+      if (editMode && !formData.replaceImages) {
+        existingImages.forEach((image) => form.append("existingImages", JSON.stringify(image)));
+      }
+  
       console.log("Submitting form to:", editMode
         ? `${MARKETER_API_END_POINT}/campaigns/edit`
         : `${MARKETER_API_END_POINT}/campaigns/add`);
       const response = editMode
         ? await axios.put(`${MARKETER_API_END_POINT}/campaigns/edit`, form)
         : await axios.post(`${MARKETER_API_END_POINT}/campaigns/add`, form);
-
+  
       console.log("Submit response:", response.data);
       if (response.data.success) {
         fetchCampaigns();
@@ -85,7 +92,7 @@ const CampaignManagement = () => {
     } finally {
       setLoading(false);
     }
-  };
+  };  
 
   const handleEdit = (campaign) => {
     console.log("Editing campaign:", campaign);
