@@ -223,7 +223,7 @@ const CampaignManagement = () => {
                             {campaign.images.map((image, index) => (
                                 <img
                                     key={index}
-                                    src={image.Location}
+                                    src={image}
                                     alt={`Campaign ${index + 1}`}
                                     className="w-full h-32 object-cover rounded mb-2"
                                 />
