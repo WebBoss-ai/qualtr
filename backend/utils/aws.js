@@ -1,4 +1,4 @@
-import { S3Client, GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, GetObjectCommand, PutObjectCommand, DeleteObjectCommand  } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner"; // Import the presigner
 
 const s3Client = new S3Client({
@@ -122,6 +122,31 @@ export async function uploadCampaignImages(file) {
     };
   } catch (error) {
     console.error('Error uploading campaign image to S3:', error);
+    throw error;
+  }
+}
+
+export async function deleteCampaignImage(imageUrl) {
+  try {
+    // Extract the Key from the image URL
+    const bucketName = "qualtr"; // Replace with your bucket name
+    const region = s3Client.config.region;
+    const key = imageUrl.replace(`https://${bucketName}.s3.${region}.amazonaws.com/`, '');
+
+    console.log(`Deleting image with key: ${key}`);
+
+    const deleteParams = {
+      Bucket: bucketName,
+      Key: key,
+    };
+
+    const command = new DeleteObjectCommand(deleteParams);
+    const response = await s3Client.send(command);
+
+    console.log('S3 delete successful:', response);
+    return response;
+  } catch (error) {
+    console.error('Error deleting file from S3:', error);
     throw error;
   }
 }

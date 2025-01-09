@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { DigitalMarketer } from '../models/DigitalMarketer.js';
-import { uploadMarketerProfilePhoto, uploadCampaignImages, getObjectURL } from '../utils/aws.js';
+import { uploadMarketerProfilePhoto, uploadCampaignImages, getObjectURL, deleteCampaignImage } from '../utils/aws.js';
 
 export const register = async (req, res) => {
     try {
@@ -474,54 +474,43 @@ export const editCampaign = async (req, res) => {
     try {
         console.log("Edit campaign API hit");
         console.log("Request body:", req.body);
-        const userId = req.id; // User ID from authentication middleware
-        const { campaignId, title, description, replaceImages } = req.body; // 'replaceImages' indicates if existing images should be replaced
-        const images = req.files; // Multer handles multiple file uploads
 
-        // Validate campaignId
-        if (!campaignId) {
-            return res.status(400).json({ message: 'Campaign ID is required.', success: false });
+        const userId = req.id;
+        const { campaignId, title, description, replaceImages } = req.body;
+        const images = req.files;
+
+        if (!campaignId || !mongoose.Types.ObjectId.isValid(campaignId)) {
+            return res.status(400).json({ message: 'Valid campaign ID is required.', success: false });
         }
 
-        // Find the user
         const user = await DigitalMarketer.findById(userId);
         if (!user) {
             return res.status(404).json({ message: 'User not found.', success: false });
         }
 
-        // Find the campaign
         const campaign = user.campaigns.id(campaignId);
         if (!campaign) {
             return res.status(404).json({ message: 'Campaign not found.', success: false });
         }
 
-        // Update campaign details
         if (title) campaign.title = title;
         if (description) campaign.description = description;
 
-        // Handle images
         let imageUrls = [];
         if (images && images.length > 0) {
             const uploadResponses = await Promise.all(images.map((file) => uploadCampaignImages(file)));
             imageUrls = uploadResponses.map((response) => response.Location);
 
             if (replaceImages === 'true') {
-                // Delete existing images before replacing (ensure proper cleanup from storage)
                 if (campaign.images && campaign.images.length > 0) {
-                    const deleteResponses = await Promise.all(
-                        campaign.images.map((existingImage) => deleteCampaignImage(existingImage))
-                    );
-                    console.log("Deleted existing images:", deleteResponses);
+                    await Promise.all(campaign.images.map((existingImage) => deleteCampaignImage(existingImage)));
                 }
-                // Replace existing images with new ones
                 campaign.images = imageUrls;
             } else {
-                // Append new images to existing ones (limit to 10 total images)
                 campaign.images = [...campaign.images, ...imageUrls].slice(0, 10);
             }
         }
 
-        // Save the updated user
         await user.save();
 
         return res.status(200).json({
@@ -531,7 +520,10 @@ export const editCampaign = async (req, res) => {
         });
     } catch (error) {
         console.error('Error editing campaign:', error);
-        return res.status(500).json({ message: 'Internal server error.', success: false });
+        return res.status(500).json({
+            message: 'Internal server error. Please try again later.',
+            success: false,
+        });
     }
 };
 export const deleteCampaign = async (req, res) => {
