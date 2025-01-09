@@ -608,26 +608,30 @@ export const listAllCampaigns = async (req, res) => {
         // Fetch all users with their campaigns
         const users = await DigitalMarketer.find({}, 'campaigns'); // Only fetch campaigns field
 
-        // Extract and format all campaigns
         const allCampaigns = [];
+
         for (const user of users) {
-            for (const campaign of user.campaigns) {
+            for (const campaign of user.campaigns || []) {
+                const imageKeys = campaign.images || []; // Ensure images is an array
+
+                // Generate presigned URLs for all images
                 const imageUrls = await Promise.all(
-                    campaign.images.map(async (imageKey) => {
+                    imageKeys.map(async (imageKey) => {
                         try {
                             return await getObjectURL(imageKey);
                         } catch (error) {
                             console.error(`Error generating URL for key ${imageKey}:`, error);
-                            return null; // Return null for missing keys
+                            return null; // Handle individual image errors gracefully
                         }
                     })
-                ).filter(Boolean); // Remove null entries
+                );
 
+                // Add campaign to allCampaigns
                 allCampaigns.push({
                     id: campaign._id,
                     title: campaign.title,
                     description: campaign.description,
-                    images: imageUrls, // Replace S3 keys with presigned URLs
+                    images: imageUrls.filter(Boolean), // Remove null entries
                     createdAt: campaign.createdAt,
                     updatedAt: campaign.updatedAt,
                 });
@@ -640,7 +644,7 @@ export const listAllCampaigns = async (req, res) => {
             campaigns: allCampaigns,
         });
     } catch (error) {
-        console.error(error);
+        console.error('Error in listAllCampaigns:', error);
         return res.status(500).json({
             message: 'Internal server error.',
             success: false,
