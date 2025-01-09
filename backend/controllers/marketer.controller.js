@@ -473,9 +473,6 @@ export const addCampaign = async (req, res) => {
 };
 export const editCampaign = async (req, res) => {
     try {
-        console.log("Edit campaign API hit");
-        console.log("Request body:", req.body);
-
         const userId = req.id;
         const { campaignId, title, description, replaceImages, removedImages } = req.body;
         const images = req.files;
@@ -499,7 +496,8 @@ export const editCampaign = async (req, res) => {
 
         // Remove specific images if provided
         if (removedImages && Array.isArray(removedImages)) {
-            campaign.images = campaign.images.filter((img) => !removedImages.includes(img));
+            const removedImageUrls = new Set(removedImages);
+            campaign.images = campaign.images.filter((img) => !removedImageUrls.has(img.Location));
 
             // Delete the images from S3
             await Promise.all(removedImages.map((imgUrl) => deleteCampaignImage(imgUrl)));
@@ -511,29 +509,15 @@ export const editCampaign = async (req, res) => {
             const uploadResponses = await Promise.all(images.map((file) => uploadCampaignImages(file)));
             imageUrls = uploadResponses.map((response) => response.Location);
 
-            if (replaceImages === 'true') {
-                if (campaign.images && campaign.images.length > 0) {
-                    await Promise.all(campaign.images.map((existingImage) => deleteCampaignImage(existingImage)));
-                }
-                campaign.images = imageUrls;
-            } else {
-                campaign.images = [...campaign.images, ...imageUrls].slice(0, 10);
-            }
+            if (replaceImages) campaign.images = [...imageUrls];
+            else campaign.images.push(...imageUrls);
         }
 
         await user.save();
-
-        return res.status(200).json({
-            message: 'Campaign updated successfully.',
-            success: true,
-            campaigns: user.campaigns,
-        });
+        res.status(200).json({ message: 'Campaign updated successfully.', success: true });
     } catch (error) {
-        console.error('Error editing campaign:', error);
-        return res.status(500).json({
-            message: 'Internal server error. Please try again later.',
-            success: false,
-        });
+        console.error('Error updating campaign:', error);
+        res.status(500).json({ message: 'Internal server error.', success: false });
     }
 };
 export const deleteCampaign = async (req, res) => {
