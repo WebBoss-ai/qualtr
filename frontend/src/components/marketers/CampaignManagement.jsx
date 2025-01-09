@@ -89,6 +89,8 @@ const CampaignManagement = () => {
 
   const handleEdit = (campaign) => {
     console.log("Editing campaign:", campaign);
+    console.log("Setting campaignId to:", campaign._id);
+    console.log("Setting campaignId to WW:", campaign.id);
     setEditMode(true);
     setCampaignId(campaign._id);
     setFormData({
@@ -96,9 +98,10 @@ const CampaignManagement = () => {
       description: campaign.description,
       images: [],
       replaceImages: false,
+      campaignId:campaign._id,
     });
     setExistingImages(campaign.images);
-  };
+  };  
 
   const handleDelete = async (id) => {
     console.log("Deleting campaign with ID:", id);
