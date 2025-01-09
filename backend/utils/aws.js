@@ -82,7 +82,7 @@ export async function getObjectURL(key) {
     throw error;
   }
 }
-export async function getObjectUR2(key) {
+export async function getObjectURL2(key) {
   try {
     // Validate the key
     if (typeof key !== "string" || !key.trim()) {
