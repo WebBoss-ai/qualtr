@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { DigitalMarketer } from '../models/DigitalMarketer.js';
-import { uploadMarketerProfilePhoto, uploadCampaignImages, getObjectURL, deleteCampaignImage } from '../utils/aws.js';
+import { uploadMarketerProfilePhoto, uploadCampaignImages, getObjectURL,getObjectURL2, deleteCampaignImage } from '../utils/aws.js';
 import mongoose from 'mongoose';
 
 export const register = async (req, res) => {
@@ -550,60 +550,69 @@ export const deleteCampaign = async (req, res) => {
         return res.status(500).json({ message: 'Internal server error.', success: false });
     }
 };
-export const listAllCampaigns = async (req, res) => {
-    try {
-        // Fetch all users with their campaigns
-        const users = await DigitalMarketer.find({}, 'campaigns'); // Only fetch campaigns field
-
-        const allCampaigns = await Promise.all(
-            users.map(async (user) => {
-                const campaigns = user.campaigns || [];
-                return await Promise.all(
-                    campaigns.map(async (campaign) => {
-                        const imageKeys = campaign.images || []; // Ensure images is an array
-
-                        // Generate presigned URLs for all images
-                        const imageUrls = await Promise.all(
-                            imageKeys.map(async (imageKey) => {
-                                try {
-                                    const url = await getObjectURL(imageKey); // Generate presigned URL for the image
-                                    return url;
-                                } catch (error) {
-                                    console.error(`Error generating URL for image ${imageKey}:`, error);
-                                    return null; // Handle individual image errors gracefully
-                                }
-                            })
-                        );
-
-                        return {
-                            id: campaign._id,
-                            title: campaign.title,
-                            description: campaign.description,
-                            images: imageUrls.filter(Boolean), // Exclude null or failed URLs
-                            createdAt: campaign.createdAt,
-                            updatedAt: campaign.updatedAt,
-                        };
-                    })
-                );
-            })
-        );
-
-        // Flatten nested arrays of campaigns
-        const flattenedCampaigns = allCampaigns.flat();
-
-        return res.status(200).json({
-            message: 'All campaigns retrieved successfully.',
-            success: true,
-            campaigns: flattenedCampaigns,
-        });
-    } catch (error) {
-        console.error('Error in listAllCampaigns:', error);
-        return res.status(500).json({
-            message: 'Internal server error.',
-            success: false,
-        });
+const sanitizeKey = (key) => {
+    if (typeof key !== "string" || !key.trim()) {
+      console.warn(`Skipping invalid key: ${key}`);
+      return null;
     }
-};
+    return key.trim();
+  };
+  
+  export const listAllCampaigns = async (req, res) => {
+    try {
+      const users = await DigitalMarketer.find({}, "campaigns");
+  
+      const allCampaigns = await Promise.all(
+        users.map(async (user) => {
+          const campaigns = user.campaigns || [];
+          return await Promise.all(
+            campaigns.map(async (campaign) => {
+              const imageKeys = campaign.images || [];
+  
+              // Sanitize and filter invalid keys
+              const sanitizedKeys = imageKeys.map(sanitizeKey).filter(Boolean);
+  
+              // Generate presigned URLs for valid keys
+              const imageUrls = await Promise.all(
+                sanitizedKeys.map(async (imageKey) => {
+                  try {
+                    return await getObjectURL2(imageKey);
+                  } catch (error) {
+                    console.error(`Error generating URL for image ${imageKey}:`, error);
+                    return null;
+                  }
+                })
+              );
+  
+              return {
+                id: campaign._id,
+                title: campaign.title,
+                description: campaign.description,
+                images: imageUrls.filter(Boolean), // Exclude failed URLs
+                createdAt: campaign.createdAt,
+                updatedAt: campaign.updatedAt,
+              };
+            })
+          );
+        })
+      );
+  
+      const flattenedCampaigns = allCampaigns.flat();
+  
+      return res.status(200).json({
+        message: "All campaigns retrieved successfully.",
+        success: true,
+        campaigns: flattenedCampaigns,
+      });
+    } catch (error) {
+      console.error("Error in listAllCampaigns:", error);
+      return res.status(500).json({
+        message: "Internal server error.",
+        success: false,
+      });
+    }
+  };
+  
 
 // View individual profile
 export const viewProfile = async (req, res) => {

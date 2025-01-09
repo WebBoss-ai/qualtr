@@ -82,6 +82,25 @@ export async function getObjectURL(key) {
     throw error;
   }
 }
+export async function getObjectUR2(key) {
+  try {
+    // Validate the key
+    if (typeof key !== "string" || !key.trim()) {
+      throw new Error(`Invalid S3 key: ${key}`);
+    }
+
+    const command = new GetObjectCommand({
+      Bucket: "qualtr", // Ensure the bucket name is correct
+      Key: key.trim(),  // Trim any unexpected whitespace
+    });
+
+    const url = await getSignedUrl(s3Client, command, { expiresIn: 900 });
+    return url;
+  } catch (error) {
+    console.error(`Error in getObjectURL for key "${key}":`, error);
+    throw error;
+  }
+}
 
 export async function uploadCampaignImages(file) {
   const uploadParams = {
