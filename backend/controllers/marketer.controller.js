@@ -560,22 +560,33 @@ const sanitizeKey = (key) => {
 
 export const listAllCampaigns = async (req, res) => {
     try {
+        console.log("Fetching users and their campaigns...");
+
         const users = await DigitalMarketer.find({}, "campaigns");
+        console.log(`Retrieved ${users.length} users with campaigns.`);
 
         const allCampaigns = await Promise.all(
             users.map(async (user) => {
+                console.log(`Processing user with ID: ${user._id}`);
                 const campaigns = user.campaigns || [];
+                console.log(`Found ${campaigns.length} campaigns for user ${user._id}.`);
+
                 return await Promise.all(
                     campaigns.map(async (campaign) => {
+                        console.log(`Processing campaign with ID: ${campaign._id}`);
+
                         const imageKeys = campaign.images || [];
+                        console.log(`Found ${imageKeys.length} images for campaign ${campaign._id}.`);
 
                         // Sanitize and filter invalid keys
                         const sanitizedKeys = imageKeys.map(sanitizeKey).filter(Boolean);
+                        console.log(`Sanitized image keys. Valid keys: ${sanitizedKeys.length}`);
 
                         // Generate presigned URLs for valid keys
                         const imageUrls = await Promise.all(
                             sanitizedKeys.map(async (imageKey) => {
                                 try {
+                                    console.log(`Generating presigned URL for image key: ${imageKey}`);
                                     return await getObjectURL2(imageKey);
                                 } catch (error) {
                                     console.error(`Error generating URL for image ${imageKey}:`, error);
@@ -583,6 +594,7 @@ export const listAllCampaigns = async (req, res) => {
                                 }
                             })
                         );
+                        console.log(`Generated URLs for ${imageUrls.filter(Boolean).length} valid images.`);
 
                         return {
                             id: campaign._id,
@@ -598,6 +610,7 @@ export const listAllCampaigns = async (req, res) => {
         );
 
         const flattenedCampaigns = allCampaigns.flat();
+        console.log(`Total campaigns retrieved: ${flattenedCampaigns.length}`);
 
         return res.status(200).json({
             message: "All campaigns retrieved successfully.",
