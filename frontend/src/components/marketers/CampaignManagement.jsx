@@ -89,16 +89,15 @@ const CampaignManagement = () => {
 
   const handleEdit = (campaign) => {
     console.log("Editing campaign:", campaign);
-    console.log("Setting campaignId to:", campaign._id);
-    console.log("Setting campaignId to WW:", campaign.id);
+    console.log("Setting campaignId to:", campaign.id);
     setEditMode(true);
-    setCampaignId(campaign._id);
+    setCampaignId(campaign.id);
     setFormData({
       title: campaign.title,
       description: campaign.description,
       images: [],
       replaceImages: false,
-      campaignId:campaign._id,
+      campaignId:campaign.id,
     });
     setExistingImages(campaign.images);
   };  
@@ -230,7 +229,7 @@ const CampaignManagement = () => {
       {/* Campaign List */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {campaigns.map((campaign) => (
-          <div key={campaign._id} className="bg-white p-4 rounded shadow">
+          <div key={campaign.id} className="bg-white p-4 rounded shadow">
             <h2 className="text-lg font-bold">{campaign.title}</h2>
             <p className="text-sm text-gray-600">{campaign.description}</p>
             <div className="mt-4">
@@ -251,7 +250,7 @@ const CampaignManagement = () => {
                 Edit
               </button>
               <button
-                onClick={() => handleDelete(campaign._id)}
+                onClick={() => handleDelete(campaign.id)}
                 className="text-red-500"
               >
                 Delete
