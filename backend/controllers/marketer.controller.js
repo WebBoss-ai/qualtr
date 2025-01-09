@@ -560,17 +560,24 @@ export const listAllCampaigns = async (req, res) => {
         for (const user of users) {
             for (const campaign of user.campaigns || []) {
                 const imageKeys = campaign.images || []; // Ensure images is an array
+                console.log('Campaign image keys:', imageKeys); // Debugging: Log image keys
 
                 // Generate presigned URLs for all images
                 const imageUrls = await Promise.all(
                     imageKeys.map(async (imageKey) => {
                         try {
-                            return await getObjectURL(imageKey);
+                            const url = await getObjectURL(imageKey);
+                            console.log(`Generated URL for ${imageKey}:`, url); // Debugging: Log the generated URL
+                            return url;
                         } catch (error) {
+                            console.error(`Error generating URL for ${imageKey}:`, error); // Debugging: Log error
                             return null; // Handle individual image errors gracefully
                         }
                     })
                 );
+
+                // Log filtered image URLs
+                console.log('Filtered image URLs:', imageUrls.filter(Boolean));
 
                 // Add campaign to allCampaigns
                 allCampaigns.push({
@@ -590,6 +597,7 @@ export const listAllCampaigns = async (req, res) => {
             campaigns: allCampaigns,
         });
     } catch (error) {
+        console.error('Error in listAllCampaigns:', error); // Debugging: Log error
         return res.status(500).json({
             message: 'Internal server error.',
             success: false,

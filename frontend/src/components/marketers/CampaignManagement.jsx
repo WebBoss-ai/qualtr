@@ -220,14 +220,22 @@ const CampaignManagement = () => {
                         <h2 className="text-lg font-bold">{campaign.title}</h2>
                         <p className="text-sm text-gray-600">{campaign.description}</p>
                         <div className="mt-4">
-                            {campaign.images.map((image, index) => (
-                                <img
-                                    key={index}
-                                    src={image} // Use the URL directly
-                                    alt={`Campaign ${index + 1}`}
-                                    className="w-full h-32 object-cover rounded mb-2"
-                                />
-                            ))}
+                            {campaign.images.length > 0 ? (
+                                campaign.images.map((image, index) => {
+                                    console.log('Rendering image:', image); // Debugging: Log image URL
+                                    return (
+                                        <img
+                                            key={index}
+                                            src={image} // Use the URL directly
+                                            alt={`Campaign ${index + 1}`}
+                                            className="w-full h-32 object-cover rounded mb-2"
+                                            onError={() => console.error(`Error loading image: ${image}`)} // Debugging: Handle image load error
+                                        />
+                                    );
+                                })
+                            ) : (
+                                <p>No images available</p> // Debugging: If no images are available
+                            )}
                         </div>
                         <div className="flex justify-between mt-4">
                             <button
@@ -245,8 +253,8 @@ const CampaignManagement = () => {
                         </div>
                     </div>
                 ))}
-
             </div>
+
         </div>
     );
 };
