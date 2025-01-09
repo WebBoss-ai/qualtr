@@ -16,8 +16,10 @@ const CampaignManagement = () => {
     const [loading, setLoading] = useState(false);
 
     const fetchCampaigns = async () => {
+        console.log("Fetching campaigns from:", `${MARKETER_API_END_POINT}/campaigns`);
         try {
             const response = await axios.get(`${MARKETER_API_END_POINT}/campaigns`);
+            console.log("Fetch campaigns response:", response.data);
             if (response.data.success) {
                 setCampaigns(response.data.campaigns);
             } else {
@@ -35,35 +37,49 @@ const CampaignManagement = () => {
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
         const newValue = type === "checkbox" ? checked : value;
+        console.log(`Input change [${name}]:`, newValue);
         setFormData({ ...formData, [name]: newValue });
     };
 
     const handleFileChange = (e) => {
         const files = Array.from(e.target.files);
+        console.log("Selected files:", files);
         setFormData({ ...formData, images: files });
     };
 
+    const [removedImages, setRemovedImages] = useState([]);
+
     const handleImageRemove = (index) => {
+        console.log(`Removing image at index ${index}`);
+        const removedImage = existingImages[index];
+        setRemovedImages([...removedImages, removedImage.Location]); // Track removed image URLs
         setExistingImages(existingImages.filter((_, i) => i !== index)); // Remove locally
     };
     
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log("Form data before submit:", formData);
         setLoading(true);
-        const form = new FormData();
-        form.append("title", formData.title);
-        form.append("description", formData.description);
-        form.append("replaceImages", formData.replaceImages.toString());
-
-        if (editMode) form.append("campaignId", campaignId);
-        formData.images.forEach((image) => form.append("images", image));
-        existingImages.forEach((image) => form.append("removedImages", image.Location)); // Send removed images
-
         try {
+            const form = new FormData();
+            form.append("title", formData.title);
+            form.append("description", formData.description);
+            form.append("replaceImages", formData.replaceImages.toString()); // Convert to string
+            if (editMode) form.append("campaignId", campaignId);
+            formData.images.forEach((image) => form.append("images", image));
+            removedImages.forEach((image) => form.append("removedImages", image)); // Match backend key
+    
+            console.log(
+                "Submitting form to:",
+                editMode
+                    ? `${MARKETER_API_END_POINT}/campaigns/edit`
+                    : `${MARKETER_API_END_POINT}/campaigns/add`
+            );
             const response = editMode
                 ? await axios.put(`${MARKETER_API_END_POINT}/campaigns/edit`, form)
                 : await axios.post(`${MARKETER_API_END_POINT}/campaigns/add`, form);
     
+            console.log("Submit response:", response.data);
             if (response.data.success) {
                 fetchCampaigns();
                 resetForm();
@@ -78,14 +94,18 @@ const CampaignManagement = () => {
     };
     
     const resetForm = () => {
+        console.log("Resetting form");
         setEditMode(false);
         setCampaignId(null);
         setFormData({ title: "", description: "", images: [], replaceImages: false });
         setExistingImages([]);
+        setRemovedImages([]); // Reset removed images
     };
     
 
     const handleEdit = (campaign) => {
+        console.log("Editing campaign:", campaign);
+        console.log("Setting campaignId to:", campaign.id);
         setEditMode(true);
         setCampaignId(campaign.id);
         setFormData({
@@ -93,17 +113,20 @@ const CampaignManagement = () => {
             description: campaign.description,
             images: [],
             replaceImages: false,
+            campaignId: campaign.id,
         });
         setExistingImages(campaign.images);
     };
 
     const handleDelete = async (id) => {
+        console.log("Deleting campaign with ID:", id);
         if (!window.confirm("Are you sure you want to delete this campaign?")) return;
 
         try {
             const response = await axios.delete(
                 `${MARKETER_API_END_POINT}/campaigns/delete/${id}`
             );
+            console.log("Delete response:", response.data);
             if (response.data.success) {
                 fetchCampaigns();
             } else {
@@ -118,6 +141,7 @@ const CampaignManagement = () => {
         <div className="p-6 bg-gray-100 min-h-screen">
             <h1 className="text-2xl font-bold mb-4">Campaign Management</h1>
 
+            {/* Campaign Form */}
             <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow mb-6">
                 <div className="mb-4">
                     <label className="block text-sm font-medium mb-1">Title</label>
@@ -141,6 +165,7 @@ const CampaignManagement = () => {
                     />
                 </div>
 
+                {/* Existing Images */}
                 {editMode && existingImages.length > 0 && (
                     <div className="mb-4">
                         <label className="block text-sm font-medium mb-1">Existing Images</label>
@@ -165,6 +190,7 @@ const CampaignManagement = () => {
                     </div>
                 )}
 
+                {/* Replace Images Option */}
                 {editMode && (
                     <div className="mb-4">
                         <label className="block text-sm font-medium mb-1">
@@ -208,6 +234,7 @@ const CampaignManagement = () => {
                 )}
             </form>
 
+            {/* Campaign List */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {campaigns.map((campaign) => (
                     <div key={campaign.id} className="bg-white p-4 rounded shadow">
