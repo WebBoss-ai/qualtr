@@ -474,49 +474,83 @@ export const addCampaign = async (req, res) => {
 export const editCampaign = async (req, res) => {
     try {
         const userId = req.id;
-        const { campaignId, title, description, replaceImages, removedImages } = req.body;
-        const images = req.files;
+        console.log('Received userId:', userId); // Debugging: Print user ID
 
+        const { campaignId, title, description, replaceImages, removedImages } = req.body;
+        console.log('Received body:', { campaignId, title, description, replaceImages, removedImages }); // Debugging: Print received campaign details
+
+        const images = req.files;
+        console.log('Received images:', images); // Debugging: Print received images
+
+        // Validate campaignId
         if (!campaignId || !mongoose.Types.ObjectId.isValid(campaignId)) {
             return res.status(400).json({ message: 'Valid campaign ID is required.', success: false });
         }
-
+        
         const user = await DigitalMarketer.findById(userId);
         if (!user) {
+            console.error('User not found for userId:', userId); // Debugging: Log if user is not found
             return res.status(404).json({ message: 'User not found.', success: false });
         }
 
         const campaign = user.campaigns.id(campaignId);
         if (!campaign) {
+            console.error('Campaign not found for campaignId:', campaignId); // Debugging: Log if campaign is not found
             return res.status(404).json({ message: 'Campaign not found.', success: false });
         }
 
+        console.log('Found campaign:', campaign); // Debugging: Print the campaign data
+
         if (title) campaign.title = title;
         if (description) campaign.description = description;
+        
+        // Log updated title and description
+        console.log('Updated title:', campaign.title);
+        console.log('Updated description:', campaign.description);
 
-        // Remove specific images if provided
+        // Handle removed images
         if (removedImages && Array.isArray(removedImages)) {
             const removedImageUrls = new Set(removedImages);
+            console.log('Removing images:', removedImageUrls); // Debugging: Log images to be removed
+
             campaign.images = campaign.images.filter((img) => !removedImageUrls.has(img.Location));
 
-            // Delete the images from S3
-            await Promise.all(removedImages.map((imgUrl) => deleteCampaignImage(imgUrl)));
+            // Log the updated images list
+            console.log('Updated images after removal:', campaign.images);
+
+            // Delete the images from S3 (simulate delete)
+            await Promise.all(removedImages.map((imgUrl) => {
+                console.log('Deleting image from S3:', imgUrl); // Debugging: Log each image being deleted
+                return deleteCampaignImage(imgUrl);
+            }));
         }
 
         // Handle new images
         let imageUrls = [];
         if (images && images.length > 0) {
+            console.log('Uploading new images:', images); // Debugging: Log images to be uploaded
+
             const uploadResponses = await Promise.all(images.map((file) => uploadCampaignImages(file)));
             imageUrls = uploadResponses.map((response) => response.Location);
 
-            if (replaceImages) campaign.images = [...imageUrls];
-            else campaign.images.push(...imageUrls);
+            console.log('Uploaded image URLs:', imageUrls); // Debugging: Log the URLs of uploaded images
+
+            if (replaceImages) {
+                console.log('Replacing existing images with new ones'); // Debugging: Log replacement
+                campaign.images = [...imageUrls];
+            } else {
+                console.log('Adding new images to existing ones'); // Debugging: Log appending
+                campaign.images.push(...imageUrls);
+            }
         }
 
+        // Save the campaign
         await user.save();
+        console.log('Campaign updated successfully.'); // Debugging: Log successful update
+
         res.status(200).json({ message: 'Campaign updated successfully.', success: true });
     } catch (error) {
-        console.error('Error updating campaign:', error);
+        console.error('Error updating campaign:', error); // Debugging: Log error
         res.status(500).json({ message: 'Internal server error.', success: false });
     }
 };
