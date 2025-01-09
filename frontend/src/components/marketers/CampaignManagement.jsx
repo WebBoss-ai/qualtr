@@ -50,7 +50,7 @@ const CampaignManagement = () => {
         setRemovedImages([...removedImages, removedImage.Location]);
         setExistingImages(existingImages.filter((_, i) => i !== index));
     };
-    
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -79,7 +79,7 @@ const CampaignManagement = () => {
             setLoading(false);
         }
     };
-    
+
     const resetForm = () => {
         setEditMode(false);
         setCampaignId(null);
@@ -87,7 +87,7 @@ const CampaignManagement = () => {
         setExistingImages([]);
         setRemovedImages([]);
     };
-    
+
 
     const handleEdit = (campaign) => {
         setEditMode(true);
@@ -104,7 +104,7 @@ const CampaignManagement = () => {
 
     const handleDelete = async (id) => {
         if (!window.confirm("Are you sure you want to delete this campaign?")) return;
-    
+
         try {
             const response = await axios.delete(
                 `${MARKETER_API_END_POINT}/campaigns/delete/${id}`, // Passing id in URL
@@ -112,7 +112,7 @@ const CampaignManagement = () => {
                     data: { campaignId: id } // Pass campaignId in the request body
                 }
             );
-    
+
             if (response.data.success) {
                 fetchCampaigns(); // Refresh the campaigns after deletion
             } else {
@@ -121,7 +121,7 @@ const CampaignManagement = () => {
         } catch (error) {
             console.error("Error deleting campaign:", error);
         }
-    };    
+    };
 
     return (
         <div className="p-6 bg-gray-100 min-h-screen">
@@ -223,7 +223,7 @@ const CampaignManagement = () => {
                             {campaign.images.map((image, index) => (
                                 <img
                                     key={index}
-                                    src={image.Location}
+                                    src={image} // Use the URL directly
                                     alt={`Campaign ${index + 1}`}
                                     className="w-full h-32 object-cover rounded mb-2"
                                 />
@@ -245,6 +245,7 @@ const CampaignManagement = () => {
                         </div>
                     </div>
                 ))}
+
             </div>
         </div>
     );
