@@ -501,6 +501,7 @@ export const editCampaign = async (req, res) => {
 
         console.log('Found campaign:', campaign); // Debugging: Print the campaign data
 
+        // Update title and description
         if (title) campaign.title = title;
         if (description) campaign.description = description;
         
@@ -513,12 +514,13 @@ export const editCampaign = async (req, res) => {
             const removedImageUrls = new Set(removedImages);
             console.log('Removing images:', removedImageUrls); // Debugging: Log images to be removed
 
-            campaign.images = campaign.images.filter((img) => !removedImageUrls.has(img.Location));
+            // Filter out removed images from campaign
+            campaign.images = campaign.images.filter((img) => !removedImageUrls.has(img));
 
             // Log the updated images list
             console.log('Updated images after removal:', campaign.images);
 
-            // Delete the images from S3 (simulate delete)
+            // Delete the images from S3
             await Promise.all(removedImages.map((imgUrl) => {
                 console.log('Deleting image from S3:', imgUrl); // Debugging: Log each image being deleted
                 return deleteCampaignImage(imgUrl);
@@ -544,7 +546,7 @@ export const editCampaign = async (req, res) => {
             }
         }
 
-        // Save the campaign
+        // Save the updated campaign
         await user.save();
         console.log('Campaign updated successfully.'); // Debugging: Log successful update
 
