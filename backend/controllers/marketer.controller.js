@@ -472,6 +472,8 @@ export const addCampaign = async (req, res) => {
 };
 export const editCampaign = async (req, res) => {
     try {
+        console.log("Edit campaign API hit");
+        console.log("Request body:", req.body);
         const userId = req.id; // User ID from authentication middleware
         const { campaignId, title, description, replaceImages } = req.body; // 'replaceImages' indicates if existing images should be replaced
         const images = req.files; // Multer handles multiple file uploads
