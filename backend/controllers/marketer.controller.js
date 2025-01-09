@@ -425,43 +425,48 @@ export const addCampaign = async (req, res) => {
         const { title, description } = req.body;
         const images = req.files; // Multer handles multiple file uploads
 
+        // Validate title and description
         if (!title || !description) {
             return res.status(400).json({ message: 'Title and description are required.', success: false });
         }
 
         // Upload images to S3
-        let uploadedImageKeys = [];
+        let imageUrls = [];
         if (images && images.length > 0) {
-            uploadedImageKeys = await Promise.all(images.map((file) => uploadCampaignImages(file)));
-        } else {
-            uploadedImageKeys = []; // Ensure it's always an array
+            const uploadResponses = await Promise.all(images.map((file) => uploadCampaignImages(file)));
+            // Extract only the Location (URL) from each response
+            imageUrls = uploadResponses.map((response) => response.Location);
         }
 
-        // Find user and update campaigns
+        // Find the user and validate
         const user = await DigitalMarketer.findById(userId);
         if (!user) {
             return res.status(404).json({ message: 'User not found.', success: false });
         }
 
+        // Create the new campaign object
         const newCampaign = {
             title,
             description,
-            images: Array.isArray(uploadedImageKeys) ? uploadedImageKeys : [], // Validate images
+            images: imageUrls, // Ensure only URLs are stored
         };
 
         console.log('New Campaign:', newCampaign); // Debugging log
 
+        // Add the new campaign to the user's campaigns array
         user.campaigns.push(newCampaign);
 
+        // Save the updated user
         await user.save();
 
+        // Respond with success
         return res.status(201).json({
             message: 'Campaign added successfully.',
             success: true,
             campaigns: user.campaigns,
         });
     } catch (error) {
-        console.error(error);
+        console.error('Error adding campaign:', error);
         return res.status(500).json({ message: 'Internal server error.', success: false });
     }
 };
