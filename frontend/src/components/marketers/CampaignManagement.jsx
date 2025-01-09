@@ -16,10 +16,14 @@ const CampaignManagement = () => {
   const [loading, setLoading] = useState(false);
 
   const fetchCampaigns = async () => {
+    console.log("Fetching campaigns from:", `${MARKETER_API_END_POINT}/campaigns`);
     try {
       const response = await axios.get(`${MARKETER_API_END_POINT}/campaigns`);
+      console.log("Fetch campaigns response:", response.data);
       if (response.data.success) {
         setCampaigns(response.data.campaigns);
+      } else {
+        console.error("Fetch campaigns failed:", response.data.message);
       }
     } catch (error) {
       console.error("Error fetching campaigns:", error);
@@ -33,20 +37,25 @@ const CampaignManagement = () => {
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     const newValue = type === "checkbox" ? checked : value;
+    console.log(`Input change [${name}]:`, newValue);
     setFormData({ ...formData, [name]: newValue });
   };
 
   const handleFileChange = (e) => {
-    setFormData({ ...formData, images: Array.from(e.target.files) });
+    const files = Array.from(e.target.files);
+    console.log("Selected files:", files);
+    setFormData({ ...formData, images: files });
   };
 
   const handleImageRemove = (index) => {
+    console.log(`Removing image at index ${index}`);
     const updatedImages = existingImages.filter((_, i) => i !== index);
     setExistingImages(updatedImages);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Form data before submit:", formData);
     setLoading(true);
     try {
       const form = new FormData();
@@ -56,13 +65,19 @@ const CampaignManagement = () => {
       if (editMode) form.append("campaignId", campaignId);
       formData.images.forEach((image) => form.append("images", image));
 
+      console.log("Submitting form to:", editMode
+        ? `${MARKETER_API_END_POINT}/campaigns/edit`
+        : `${MARKETER_API_END_POINT}/campaigns/add`);
       const response = editMode
         ? await axios.put(`${MARKETER_API_END_POINT}/campaigns/edit`, form)
         : await axios.post(`${MARKETER_API_END_POINT}/campaigns/add`, form);
 
+      console.log("Submit response:", response.data);
       if (response.data.success) {
         fetchCampaigns();
         resetForm();
+      } else {
+        console.error("Submit failed:", response.data.message);
       }
     } catch (error) {
       console.error("Error submitting campaign:", error);
@@ -72,6 +87,7 @@ const CampaignManagement = () => {
   };
 
   const handleEdit = (campaign) => {
+    console.log("Editing campaign:", campaign);
     setEditMode(true);
     setCampaignId(campaign._id);
     setFormData({
@@ -84,14 +100,18 @@ const CampaignManagement = () => {
   };
 
   const handleDelete = async (id) => {
+    console.log("Deleting campaign with ID:", id);
     if (!window.confirm("Are you sure you want to delete this campaign?")) return;
 
     try {
       const response = await axios.delete(
         `${MARKETER_API_END_POINT}/campaigns/delete/${id}`
       );
+      console.log("Delete response:", response.data);
       if (response.data.success) {
         fetchCampaigns();
+      } else {
+        console.error("Delete failed:", response.data.message);
       }
     } catch (error) {
       console.error("Error deleting campaign:", error);
@@ -99,6 +119,7 @@ const CampaignManagement = () => {
   };
 
   const resetForm = () => {
+    console.log("Resetting form");
     setEditMode(false);
     setCampaignId(null);
     setFormData({ title: "", description: "", images: [], replaceImages: false });
