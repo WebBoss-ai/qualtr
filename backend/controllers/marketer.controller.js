@@ -560,7 +560,7 @@ export const deleteCampaign = async (req, res) => {
     try {
         const userId = req.id;
         const { campaignId } = req.params;
-
+console.log("campaignId kya hai:",campaignId)
         const user = await DigitalMarketer.findById(userId);
         if (!user) {
             return res.status(404).json({ message: 'User not found.', success: false });
