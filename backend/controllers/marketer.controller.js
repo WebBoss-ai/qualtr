@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { DigitalMarketer } from '../models/DigitalMarketer.js';
 import { uploadMarketerProfilePhoto, uploadCampaignImages, getObjectURL, deleteCampaignImage } from '../utils/aws.js';
+import mongoose from 'mongoose';
 
 export const register = async (req, res) => {
     try {
