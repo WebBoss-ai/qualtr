@@ -486,7 +486,7 @@ export const editCampaign = async (req, res) => {
         if (!campaignId || !mongoose.Types.ObjectId.isValid(campaignId)) {
             return res.status(400).json({ message: 'Valid campaign ID is required.', success: false });
         }
-        
+
         const user = await DigitalMarketer.findById(userId);
         if (!user) {
             console.error('User not found for userId:', userId); // Debugging: Log if user is not found
@@ -504,7 +504,7 @@ export const editCampaign = async (req, res) => {
         // Update title and description
         if (title) campaign.title = title;
         if (description) campaign.description = description;
-        
+
         // Log updated title and description
         console.log('Updated title:', campaign.title);
         console.log('Updated description:', campaign.description);
@@ -625,6 +625,9 @@ export const listAllCampaigns = async (req, res) => {
                         }
                     })
                 );
+
+                console.log('Campaign images:', campaign.images);
+                console.log('Image URLs before filtering:', imageUrls);
 
                 // Add campaign to allCampaigns
                 allCampaigns.push({
