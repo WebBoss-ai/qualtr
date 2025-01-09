@@ -63,6 +63,7 @@ const CampaignManagement = () => {
       form.append("description", formData.description);
       form.append("replaceImages", formData.replaceImages);
       if (editMode) form.append("campaignId", campaignId);
+      console.log("Campaign ID being sent:", campaignId);
       formData.images.forEach((image) => form.append("images", image));
 
       console.log("Submitting form to:", editMode
