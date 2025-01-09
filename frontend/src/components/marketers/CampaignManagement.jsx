@@ -8,14 +8,16 @@ const CampaignManagement = () => {
     title: "",
     description: "",
     images: [],
+    replaceImages: false,
   });
   const [editMode, setEditMode] = useState(false);
   const [campaignId, setCampaignId] = useState(null);
+  const [existingImages, setExistingImages] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const fetchCampaigns = async () => {
     try {
-      const response = await axios.get(`${MARKETER_API_END_POINT}/campaigns`); // Replace with your API endpoint
+      const response = await axios.get(`${MARKETER_API_END_POINT}/campaigns`);
       if (response.data.success) {
         setCampaigns(response.data.campaigns);
       }
@@ -29,12 +31,18 @@ const CampaignManagement = () => {
   }, []);
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const { name, value, type, checked } = e.target;
+    const newValue = type === "checkbox" ? checked : value;
+    setFormData({ ...formData, [name]: newValue });
   };
 
   const handleFileChange = (e) => {
     setFormData({ ...formData, images: Array.from(e.target.files) });
+  };
+
+  const handleImageRemove = (index) => {
+    const updatedImages = existingImages.filter((_, i) => i !== index);
+    setExistingImages(updatedImages);
   };
 
   const handleSubmit = async (e) => {
@@ -44,15 +52,13 @@ const CampaignManagement = () => {
       const form = new FormData();
       form.append("title", formData.title);
       form.append("description", formData.description);
+      form.append("replaceImages", formData.replaceImages);
+      if (editMode) form.append("campaignId", campaignId);
       formData.images.forEach((image) => form.append("images", image));
 
-      let response;
-      if (editMode) {
-        form.append("campaignId", campaignId);
-        response = await axios.put(`${MARKETER_API_END_POINT}/campaigns/edit`, form); // Replace with your API endpoint
-      } else {
-        response = await axios.post(`${MARKETER_API_END_POINT}/campaigns/add`, form); // Replace with your API endpoint
-      }
+      const response = editMode
+        ? await axios.put(`${MARKETER_API_END_POINT}/campaigns/edit`, form)
+        : await axios.post(`${MARKETER_API_END_POINT}/campaigns/add`, form);
 
       if (response.data.success) {
         fetchCampaigns();
@@ -71,15 +77,19 @@ const CampaignManagement = () => {
     setFormData({
       title: campaign.title,
       description: campaign.description,
-      images: [], // Keep it empty to allow uploading new images
+      images: [],
+      replaceImages: false,
     });
+    setExistingImages(campaign.images);
   };
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this campaign?")) return;
 
     try {
-      const response = await axios.delete(`${MARKETER_API_END_POINT}/campaigns/delete/${id}`); // Replace with your API endpoint
+      const response = await axios.delete(
+        `${MARKETER_API_END_POINT}/campaigns/delete/${id}`
+      );
       if (response.data.success) {
         fetchCampaigns();
       }
@@ -91,7 +101,8 @@ const CampaignManagement = () => {
   const resetForm = () => {
     setEditMode(false);
     setCampaignId(null);
-    setFormData({ title: "", description: "", images: [] });
+    setFormData({ title: "", description: "", images: [], replaceImages: false });
+    setExistingImages([]);
   };
 
   return (
@@ -121,8 +132,50 @@ const CampaignManagement = () => {
             required
           />
         </div>
+
+        {/* Existing Images */}
+        {editMode && existingImages.length > 0 && (
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-1">Existing Images</label>
+            <div className="flex flex-wrap gap-2">
+              {existingImages.map((image, index) => (
+                <div key={index} className="relative w-32 h-32">
+                  <img
+                    src={image.Location}
+                    alt={`Existing Image ${index + 1}`}
+                    className="w-full h-full object-cover rounded"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleImageRemove(index)}
+                    className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Replace Images Option */}
+        {editMode && (
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-1">
+              <input
+                type="checkbox"
+                name="replaceImages"
+                checked={formData.replaceImages}
+                onChange={handleInputChange}
+                className="mr-2"
+              />
+              Replace Existing Images
+            </label>
+          </div>
+        )}
+
         <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">Images</label>
+          <label className="block text-sm font-medium mb-1">New Images</label>
           <input
             type="file"
             multiple
@@ -130,6 +183,7 @@ const CampaignManagement = () => {
             className="w-full"
           />
         </div>
+
         <button
           type="submit"
           className="bg-blue-500 text-white px-4 py-2 rounded"

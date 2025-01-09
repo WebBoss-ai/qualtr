@@ -472,19 +472,22 @@ export const addCampaign = async (req, res) => {
 };
 export const editCampaign = async (req, res) => {
     try {
-        const userId = req.id;
-        const { campaignId, title, description } = req.body;
+        const userId = req.id; // User ID from authentication middleware
+        const { campaignId, title, description, replaceImages } = req.body; // 'replaceImages' indicates if existing images should be replaced
         const images = req.files; // Multer handles multiple file uploads
 
+        // Validate campaignId
         if (!campaignId) {
             return res.status(400).json({ message: 'Campaign ID is required.', success: false });
         }
 
+        // Find the user
         const user = await DigitalMarketer.findById(userId);
         if (!user) {
             return res.status(404).json({ message: 'User not found.', success: false });
         }
 
+        // Find the campaign
         const campaign = user.campaigns.id(campaignId);
         if (!campaign) {
             return res.status(404).json({ message: 'Campaign not found.', success: false });
@@ -494,12 +497,22 @@ export const editCampaign = async (req, res) => {
         if (title) campaign.title = title;
         if (description) campaign.description = description;
 
-        // Upload new images to S3 if provided
+        // Handle images
+        let imageUrls = [];
         if (images && images.length > 0) {
-            const uploadedImageKeys = await Promise.all(images.map((file) => uploadCampaignImages(file)));
-            campaign.images = [...campaign.images, ...uploadedImageKeys].slice(0, 10); // Limit to 10 images
+            const uploadResponses = await Promise.all(images.map((file) => uploadCampaignImages(file)));
+            imageUrls = uploadResponses.map((response) => response.Location);
+
+            if (replaceImages === 'true') {
+                // Replace existing images with new ones
+                campaign.images = imageUrls;
+            } else {
+                // Append new images to existing ones (limit to 10 total images)
+                campaign.images = [...campaign.images, ...imageUrls].slice(0, 10);
+            }
         }
 
+        // Save the updated user
         await user.save();
 
         return res.status(200).json({
@@ -508,7 +521,7 @@ export const editCampaign = async (req, res) => {
             campaigns: user.campaigns,
         });
     } catch (error) {
-        console.error(error);
+        console.error('Error editing campaign:', error);
         return res.status(500).json({ message: 'Internal server error.', success: false });
     }
 };
