@@ -559,7 +559,7 @@ export const editCampaign = async (req, res) => {
 export const deleteCampaign = async (req, res) => {
     try {
         const userId = req.id;
-        const { campaignId } = req.params;
+        const { campaignId } = req.body;
 
         // Debugging: Log the campaignId and userId to check what is being passed
         console.log("Received userId:", userId);

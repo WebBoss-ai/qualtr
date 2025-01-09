@@ -104,20 +104,24 @@ const CampaignManagement = () => {
 
     const handleDelete = async (id) => {
         if (!window.confirm("Are you sure you want to delete this campaign?")) return;
-
+    
         try {
             const response = await axios.delete(
-                `${MARKETER_API_END_POINT}/campaigns/delete/${id}`
+                `${MARKETER_API_END_POINT}/campaigns/delete/${id}`, // Passing id in URL
+                {
+                    data: { campaignId: id } // Pass campaignId in the request body
+                }
             );
+    
             if (response.data.success) {
-                fetchCampaigns();
+                fetchCampaigns(); // Refresh the campaigns after deletion
             } else {
                 console.error("Delete failed:", response.data.message);
             }
         } catch (error) {
             console.error("Error deleting campaign:", error);
         }
-    };
+    };    
 
     return (
         <div className="p-6 bg-gray-100 min-h-screen">
