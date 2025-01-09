@@ -560,15 +560,37 @@ export const deleteCampaign = async (req, res) => {
     try {
         const userId = req.id;
         const { campaignId } = req.params;
-console.log("campaignId kya hai:",campaignId)
+
+        // Debugging: Log the campaignId and userId to check what is being passed
+        console.log("Received userId:", userId);
+        console.log("Received campaignId:", campaignId);
+
         const user = await DigitalMarketer.findById(userId);
+
+        // Debugging: Log the user object to check if the user is found
         if (!user) {
+            console.log("User not found for ID:", userId);
             return res.status(404).json({ message: 'User not found.', success: false });
         }
 
-        user.campaigns = user.campaigns.filter((campaign) => campaign._id.toString() !== campaignId);
+        // Debugging: Log the user's campaigns before modification
+        console.log("User's campaigns before deletion:", user.campaigns);
+
+        user.campaigns = user.campaigns.filter((campaign) => {
+            const match = campaign._id.toString() !== campaignId;
+            if (!match) {
+                console.log("Campaign to delete found:", campaign);
+            }
+            return match;
+        });
+
+        // Debugging: Log the user's campaigns after modification
+        console.log("User's campaigns after deletion:", user.campaigns);
 
         await user.save();
+
+        // Debugging: Log the successful response
+        console.log("Campaign deleted successfully for userId:", userId);
 
         return res.status(200).json({
             message: 'Campaign deleted successfully.',
@@ -576,7 +598,8 @@ console.log("campaignId kya hai:",campaignId)
             campaigns: user.campaigns,
         });
     } catch (error) {
-        console.error(error);
+        // Debugging: Log any errors encountered during execution
+        console.error("Error during campaign deletion:", error);
         return res.status(500).json({ message: 'Internal server error.', success: false });
     }
 };
