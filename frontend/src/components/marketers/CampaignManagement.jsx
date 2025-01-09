@@ -47,16 +47,15 @@ const CampaignManagement = () => {
         setFormData({ ...formData, images: files });
     };
 
+    const [removedImages, setRemovedImages] = useState([]);
+
     const handleImageRemove = (index) => {
         console.log(`Removing image at index ${index}`);
-        const updatedImages = existingImages.filter((_, i) => i !== index);
-        setExistingImages(updatedImages);
-        setFormData({
-            ...formData,
-            images: updatedImages,
-        });
+        const removedImage = existingImages[index];
+        setRemovedImages([...removedImages, removedImage.Location]); // Track removed image URLs
+        setExistingImages(existingImages.filter((_, i) => i !== index)); // Remove locally
     };
-
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
         console.log("Form data before submit:", formData);
@@ -65,25 +64,21 @@ const CampaignManagement = () => {
             const form = new FormData();
             form.append("title", formData.title);
             form.append("description", formData.description);
-            form.append("replaceImages", formData.replaceImages);
+            form.append("replaceImages", formData.replaceImages.toString()); // Convert to string
             if (editMode) form.append("campaignId", campaignId);
-
-            // Add new images
             formData.images.forEach((image) => form.append("images", image));
-
-            // Send removed images
-            const removedImages = existingImages
-                .filter((img) => !formData.images.some((newImg) => newImg === img))
-                .map((img) => img.Location);
-            removedImages.forEach((image) => form.append("imagesToRemove", image));
-
-            console.log("Submitting form to:", editMode
-                ? `${MARKETER_API_END_POINT}/campaigns/edit`
-                : `${MARKETER_API_END_POINT}/campaigns/add`);
+            removedImages.forEach((image) => form.append("removedImages", image)); // Match backend key
+    
+            console.log(
+                "Submitting form to:",
+                editMode
+                    ? `${MARKETER_API_END_POINT}/campaigns/edit`
+                    : `${MARKETER_API_END_POINT}/campaigns/add`
+            );
             const response = editMode
                 ? await axios.put(`${MARKETER_API_END_POINT}/campaigns/edit`, form)
                 : await axios.post(`${MARKETER_API_END_POINT}/campaigns/add`, form);
-
+    
             console.log("Submit response:", response.data);
             if (response.data.success) {
                 fetchCampaigns();
@@ -97,6 +92,16 @@ const CampaignManagement = () => {
             setLoading(false);
         }
     };
+    
+    const resetForm = () => {
+        console.log("Resetting form");
+        setEditMode(false);
+        setCampaignId(null);
+        setFormData({ title: "", description: "", images: [], replaceImages: false });
+        setExistingImages([]);
+        setRemovedImages([]); // Reset removed images
+    };
+    
 
     const handleEdit = (campaign) => {
         console.log("Editing campaign:", campaign);
@@ -130,14 +135,6 @@ const CampaignManagement = () => {
         } catch (error) {
             console.error("Error deleting campaign:", error);
         }
-    };
-
-    const resetForm = () => {
-        console.log("Resetting form");
-        setEditMode(false);
-        setCampaignId(null);
-        setFormData({ title: "", description: "", images: [], replaceImages: false });
-        setExistingImages([]);
     };
 
     return (

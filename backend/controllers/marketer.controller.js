@@ -477,7 +477,7 @@ export const editCampaign = async (req, res) => {
         console.log("Request body:", req.body);
 
         const userId = req.id;
-        const { campaignId, title, description, replaceImages } = req.body;
+        const { campaignId, title, description, replaceImages, removedImages } = req.body;
         const images = req.files;
 
         if (!campaignId || !mongoose.Types.ObjectId.isValid(campaignId)) {
@@ -497,6 +497,15 @@ export const editCampaign = async (req, res) => {
         if (title) campaign.title = title;
         if (description) campaign.description = description;
 
+        // Remove specific images if provided
+        if (removedImages && Array.isArray(removedImages)) {
+            campaign.images = campaign.images.filter((img) => !removedImages.includes(img));
+
+            // Delete the images from S3
+            await Promise.all(removedImages.map((imgUrl) => deleteCampaignImage(imgUrl)));
+        }
+
+        // Handle new images
         let imageUrls = [];
         if (images && images.length > 0) {
             const uploadResponses = await Promise.all(images.map((file) => uploadCampaignImages(file)));
