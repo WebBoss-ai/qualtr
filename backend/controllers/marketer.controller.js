@@ -613,8 +613,15 @@ export const listAllCampaigns = async (req, res) => {
         for (const user of users) {
             for (const campaign of user.campaigns) {
                 const imageUrls = await Promise.all(
-                    campaign.images.map((imageKey) => getObjectURL(imageKey)) // Generate presigned URLs
-                );
+                    campaign.images.map(async (imageKey) => {
+                        try {
+                            return await getObjectURL(imageKey);
+                        } catch (error) {
+                            console.error(`Error generating URL for key ${imageKey}:`, error);
+                            return null; // Return null for missing keys
+                        }
+                    })
+                ).filter(Boolean); // Remove null entries
 
                 allCampaigns.push({
                     id: campaign._id,
