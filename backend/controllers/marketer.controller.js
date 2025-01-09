@@ -555,41 +555,46 @@ export const listAllCampaigns = async (req, res) => {
         // Fetch all users with their campaigns
         const users = await DigitalMarketer.find({}, 'campaigns'); // Only fetch campaigns field
 
-        const allCampaigns = [];
+        const allCampaigns = await Promise.all(
+            users.map(async (user) => {
+                const campaigns = user.campaigns || [];
+                return await Promise.all(
+                    campaigns.map(async (campaign) => {
+                        const imageKeys = campaign.images || []; // Ensure images is an array
 
-        for (const user of users) {
-            for (const campaign of user.campaigns || []) {
-                const imageKeys = campaign.images || []; // Ensure images is an array
+                        // Generate presigned URLs for all images
+                        const imageUrls = await Promise.all(
+                            imageKeys.map(async (imageKey) => {
+                                try {
+                                    const url = await getObjectURL(imageKey); // Generate presigned URL for the image
+                                    return url;
+                                } catch (error) {
+                                    console.error(`Error generating URL for image ${imageKey}:`, error);
+                                    return null; // Handle individual image errors gracefully
+                                }
+                            })
+                        );
 
-                // Generate presigned URLs for all images
-                const imageUrls = await Promise.all(
-                    imageKeys.map(async (imageKey) => {
-                        try {
-                            const url = await getObjectURL(imageKey); // Generate presigned URL for the image
-                            return url;
-                        } catch (error) {
-                            console.error(`Error generating URL for image ${imageKey}:`, error);
-                            return null; // Handle individual image errors gracefully
-                        }
+                        return {
+                            id: campaign._id,
+                            title: campaign.title,
+                            description: campaign.description,
+                            images: imageUrls.filter(Boolean), // Exclude null or failed URLs
+                            createdAt: campaign.createdAt,
+                            updatedAt: campaign.updatedAt,
+                        };
                     })
                 );
+            })
+        );
 
-                // Add campaign to allCampaigns array
-                allCampaigns.push({
-                    id: campaign._id,
-                    title: campaign.title,
-                    description: campaign.description,
-                    images: imageUrls.filter(Boolean), // Exclude null or failed URLs
-                    createdAt: campaign.createdAt,
-                    updatedAt: campaign.updatedAt,
-                });
-            }
-        }
+        // Flatten nested arrays of campaigns
+        const flattenedCampaigns = allCampaigns.flat();
 
         return res.status(200).json({
             message: 'All campaigns retrieved successfully.',
             success: true,
-            campaigns: allCampaigns,
+            campaigns: flattenedCampaigns,
         });
     } catch (error) {
         console.error('Error in listAllCampaigns:', error);
