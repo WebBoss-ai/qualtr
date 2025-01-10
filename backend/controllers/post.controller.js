@@ -12,16 +12,36 @@ export const createPost = async (req, res) => {
         const videos = req.files?.videos || [];
         const uploadedMedia = {};
 
-        // Upload files to S3
+        // Log the media received in the request
+        console.log("Received photos:", photos);
+        console.log("Received videos:", videos);
+
+        // Upload photos to S3
         if (photos.length) {
+            console.log(`Uploading ${photos.length} photos...`);
             uploadedMedia.photos = await Promise.all(
-                photos.map((file) => uploadPostMedia(file))
+                photos.map((file, index) => {
+                    console.log(`Uploading photo ${index + 1}:`, file.originalname);
+                    return uploadPostMedia(file);
+                })
             );
+            console.log("Photos uploaded:", uploadedMedia.photos);
+        } else {
+            console.log("No photos to upload.");
         }
+
+        // Upload videos to S3
         if (videos.length) {
+            console.log(`Uploading ${videos.length} videos...`);
             uploadedMedia.videos = await Promise.all(
-                videos.map((file) => uploadPostMedia(file))
+                videos.map((file, index) => {
+                    console.log(`Uploading video ${index + 1}:`, file.originalname);
+                    return uploadPostMedia(file);
+                })
             );
+            console.log("Videos uploaded:", uploadedMedia.videos);
+        } else {
+            console.log("No videos to upload.");
         }
 
         // Create the post
@@ -45,7 +65,7 @@ export const createPost = async (req, res) => {
             post: newPost,
         });
     } catch (error) {
-        console.error(error);
+        console.error("Error creating post:", error);
         return res.status(500).json({ message: 'Internal server error.', success: false });
     }
 };
