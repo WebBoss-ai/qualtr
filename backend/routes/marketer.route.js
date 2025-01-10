@@ -2,11 +2,16 @@ import express from 'express';
 import { register, login, updateProfile,addCampaign,listAllCampaigns,editEducation,updateExperiences,deleteExperience,updateEducation,deleteEducation, viewProfile, getAllProfiles, editExperience, editCampaign, deleteCampaign } from '../controllers/marketer.controller.js';
 import isAuthenticated from '../middlewares/isAuthenticated.js';
 import upload from "../middlewares/multer.js";
+import { createPost, getAllPosts } from '../controllers/post.controller.js';
 const router = express.Router();
 
 router.post('/register', register);
 router.post('/login', login);
 router.get('/profiles', getAllProfiles);
+
+router.get('/posts', getAllPosts);
+router.post('/posts',isAuthenticated, upload.array('images', 10), createPost);
+
 router.get('/profile/:id', viewProfile);
 router.post('/profile/update', isAuthenticated, upload.single('profilePhoto'), updateProfile);
 router.post('/profile/experiences', isAuthenticated, updateExperiences);

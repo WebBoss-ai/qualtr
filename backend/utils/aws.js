@@ -141,3 +141,43 @@ export async function deleteCampaignImage(imageUrl) {
     throw error;
   }
 }
+
+export async function uploadPostMedia(file, mediaType = 'images') {
+  const folderPath = mediaType === 'images' ? 'post_images' : 'post_videos'; // Dynamic folder path based on media type
+  const uploadParams = {
+    Bucket: "qualtr", // Replace with your actual bucket name
+    Key: `${folderPath}/${file.originalname}`, // Folder path for post media
+    Body: file.buffer, // File buffer from Multer
+    ContentType: file.mimetype || 'application/octet-stream',
+  };
+
+  try {
+    const command = new PutObjectCommand(uploadParams);
+    const response = await s3Client.send(command);
+    return {
+      Location: `https://${uploadParams.Bucket}.s3.${s3Client.config.region}.amazonaws.com/${uploadParams.Key}`,
+      ...response,
+    };
+  } catch (error) {
+    throw error;
+  }
+}
+export async function deletePostMedia(mediaUrl) {
+  try {
+    // Extract the Key from the media URL
+    const bucketName = "qualtr"; // Replace with your bucket name
+    const region = s3Client.config.region;
+    const key = mediaUrl.replace(`https://${bucketName}.s3.${region}.amazonaws.com/`, '');
+
+    const deleteParams = {
+      Bucket: bucketName,
+      Key: key,
+    };
+
+    const command = new DeleteObjectCommand(deleteParams);
+    const response = await s3Client.send(command);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+}

@@ -48,6 +48,7 @@ import ProfileDetails from './components/marketers/ProfileDetails'
 import MarketerUpdateProfile from './components/marketers/MarketerUpdateProfile'
 import ExperiencesPage from './components/marketers/ExperiencesPage'
 import CampaignManagement from './components/marketers/CampaignManagement'
+import PostsPage from './components/marketers/post/PostsPage'
 
 const appRouter = createBrowserRouter([
   {
@@ -217,6 +218,10 @@ const appRouter = createBrowserRouter([
   {
     path:"/marketer-profile/:id",
     element:<ProfileDetails /> 
+  },
+  {
+    path:"/posts",
+    element:<PostsPage /> 
   },
   {
     path:"/admin/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NmY4NTU2MzU4ZTZmMmI3YTVjOTM0ZGYiLCJpYXQiOjE3MzAxMTMzNzYsImV4cCI6MTczMjcwNTM3Nn0.n4DUTrEBP_InFG8UlQNuWLsl4xhlIopufmi0o5J5ZLQ",

@@ -625,8 +625,6 @@ export const listAllCampaigns = async (req, res) => {
         });
     }
 };
-
-
 // View individual profile
 export const viewProfile = async (req, res) => {
     try {
