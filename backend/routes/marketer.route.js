@@ -7,7 +7,7 @@ const router = express.Router();
 router.post('/register', register);
 router.post('/login', login);
 router.get('/profiles', getAllProfiles);
-router.get('/profile/:id', isAuthenticated, viewProfile);
+router.get('/profile/:id', viewProfile);
 router.post('/profile/update', isAuthenticated, upload.single('profilePhoto'), updateProfile);
 router.post('/profile/experiences', isAuthenticated, updateExperiences);
 router.post('/profile/education', isAuthenticated, updateEducation);
