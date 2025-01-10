@@ -69,6 +69,7 @@ const PostPage = () => {
                         <label>Photos (Max 10):</label>
                         <input
                             type="file"
+                            name='images'
                             accept="image/*"
                             multiple
                             onChange={(e) => {
