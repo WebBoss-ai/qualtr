@@ -7,7 +7,7 @@ const PostPage = () => {
     const [postCategory, setPostCategory] = useState('');
     const [postType, setPostType] = useState('');
     const [postText, setPostText] = useState('');
-    const [media, setMedia] = useState({ photos: [], videos: [] });
+    const [media, setMedia] = useState({ images: [], videos: [] });
     const [additionalData, setAdditionalData] = useState({});
     const [currentStep, setCurrentStep] = useState(1);
 
@@ -37,9 +37,9 @@ const PostPage = () => {
         formData.append('text', postText);
 
         // Append media files
-        for (let file of media.photos) {
+        for (let file of media.images) {
             console.log('Appending photo:', file.name);
-            formData.append('photos', file);
+            formData.append('images', file);
         }
         for (let file of media.videos) {
             console.log('Appending video:', file.name);
@@ -66,7 +66,7 @@ const PostPage = () => {
             case 'media':
                 return (
                     <>
-                        <label>Photos (Max 10):</label>
+                        <label>images (Max 10):</label>
                         <input
                             type="file"
                             name="images"
