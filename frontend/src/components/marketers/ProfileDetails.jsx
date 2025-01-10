@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import axios from 'axios'
 import { MARKETER_API_END_POINT } from '@/utils/constant'
-import { Briefcase, GraduationCap, MapPin, Mail, Phone, Globe, Linkedin, Edit, Calendar } from 'lucide-react'
+import { Briefcase, GraduationCap, MapPin, Mail, Phone, Globe, Linkedin, Edit, Calendar, CheckCircle } from 'lucide-react'
 import Navbar from '../shared/Navbar'
 import Footer from '../shared/Footer'
 
@@ -62,7 +62,7 @@ const ProfileDetails = () => {
                             <img
                                 src={profile.profilePhoto}
                                 alt={`${profile.fullname}'s Profile`}
-                                className="w-40 h-40 rounded-full border-4 border-white shadow-lg object-cover"
+                                className="w-40 h-40 rounded-full border-4 border-white object-cover"
                             />
                         )}
                     </div>
@@ -73,12 +73,17 @@ const ProfileDetails = () => {
                     </div>
                 </div>
 
-                <div className="mt-12 flex flex-col lg:flex-row gap-6">
+                <div className="mt-12 flex flex-col lg:flex-row gap-12">
                     {/* Main Content */}
                     <div className="lg:w-2/3">
                         <div className="mb-6">
-                            <h1 className="text-2xl font-semibold text-gray-900">{profile.fullname}</h1>
-                            <h2 className="text-lg text-gray-600 mt-1">{profile.agencyName}</h2>
+                            <h1 className="text-2xl font-semibold mt-12 text-gray-900 flex items-center">
+                                {profile.fullname}
+                                {profile.isVerified && (
+                                    <CheckCircle size={20} className="text-blue-500 ml-2" />
+                                )}
+                            </h1>
+                            <h2 className="text-lg font-light text-gray-600 mt-1">{profile.agencyName}</h2>
                             <div className="flex items-center mt-2 text-sm text-gray-500">
                                 <MapPin size={16} className="mr-1" />
                                 <span>{profile.location}</span>
@@ -92,21 +97,27 @@ const ProfileDetails = () => {
                         </div>
 
                         <div className="mb-8">
-                            <h3 className="text-base font-semibold text-gray-900 mb-3">Skills</h3>
-                            <div className="flex flex-wrap gap-2">
-                                {profile.skills
-                                    ?.split(",") // Split the string into an array of skills
-                                    .map((skill, index) => (
-                                        <span
-                                            key={index}
-                                            className="px-3 py-1 bg-gray-50 border border-gray-200 rounded-full text-sm text-gray-600"
-                                        >
-                                            {skill.trim()} {/* Trim to remove extra whitespace */}
-                                        </span>
-                                    ))}
-                            </div>
+                            {profile.skills?.length ? (
+                                <>
+                                    <h3 className="text-base font-semibold text-gray-900 mb-3">Skills</h3>
+                                    <div className="flex flex-wrap gap-2">
+                                        {profile.skills[0]
+                                            .split(",")
+                                            .map(skill => skill.trim())
+                                            .map((skill, index) => (
+                                                <span
+                                                    key={index}
+                                                    className="px-3 py-1 bg-gray-50 border border-gray-400 rounded-[6px] text-sm text-gray-600"
+                                                >
+                                                    {skill}
+                                                </span>
+                                            ))}
+                                    </div>
+                                </>
+                            ) : (
+                                <p className="text-gray-500">No skills available.</p>
+                            )}
                         </div>
-
 
                         <div className="space-y-4">
                             <h3 className="text-base font-semibold text-gray-900">Contact Information</h3>
@@ -134,7 +145,7 @@ const ProfileDetails = () => {
                     {/* Sidebar */}
                     <div className="lg:w-1/3">
                         <div className="mb-8">
-                            <h3 className="text-base font-semibold text-gray-900 mb-4 flex items-center">
+                            <h3 className="text-base mt-12 font-semibold text-gray-900 mb-4 flex items-center">
                                 <Briefcase size={18} className="mr-2" />
                                 Experience
                             </h3>
