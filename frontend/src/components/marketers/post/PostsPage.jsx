@@ -69,17 +69,17 @@ const PostPage = () => {
                         <label>Photos (Max 10):</label>
                         <input
                             type="file"
-                            name='images'
-                            accept="image/*"
+                            name="images"
+                            accept="image/*,video/*"
                             multiple
                             onChange={(e) => {
-                                console.log('Photos selected:', e.target.files);
                                 setMedia((prev) => ({
                                     ...prev,
-                                    photos: [...prev.photos, ...e.target.files],
+                                    images: [...prev.images, ...e.target.files],
                                 }));
                             }}
                         />
+
                         <label>Videos (Max 5):</label>
                         <input
                             type="file"
