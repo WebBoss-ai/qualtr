@@ -7,9 +7,10 @@ export const createPost = async (req, res) => {
         const { category, text, event, occasion, jobOpening, poll, document } = req.body;
         const userId = req.id; // Assuming user ID is available from middleware
 
-        // Media files uploaded via Multer
-        const photos = req.files?.photos || [];
-        const videos = req.files?.videos || [];
+        const files = req.files || []; // Multer will handle all uploaded files here
+        const photos = files.filter((file) => file.mimetype.startsWith('image/'));
+        const videos = files.filter((file) => file.mimetype.startsWith('video/'));
+
         const uploadedMedia = {};
 
         // Log the media received in the request
