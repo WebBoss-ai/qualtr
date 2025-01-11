@@ -121,60 +121,64 @@ export const deletePost = async (req, res) => {
 // Get all posts
 export const getAllPosts = async (req, res) => {
     try {
-        console.log("Fetching posts..."); // Debugging statement for start of fetching
-        const posts = await Post.find()
-            .populate('author', 'profile.fullname profile.profilePicture')
-            .sort({ createdAt: -1 });
-        
-        console.log("Posts fetched successfully:", posts); // Log posts after they are fetched
-
-        const postsWithMediaUrls = posts.map(post => {
-            console.log("Processing post:", post._id); // Log the current post being processed
-
-            if (post.media) {
-                if (post.media.photos?.length > 0) {
-                    console.log("Found photos for post:", post._id); // Log if photos are present
-                    post.media.photos = post.media.photos
-                        .filter(photo => photo && photo._id)
-                        .map(photo => {
-                            console.log("Generating photo URL for photo:", photo._id); // Log photo ID before generating URL
-                            return {
-                                ...photo,
-                                url: generatePostImageUrl(photo._id),
-                            };
-                        });
-                    console.log("Photos after URL generation:", post.media.photos); // Log photos after URL generation
-                }
+      console.log("Fetching posts...");
+      const posts = await Post.find()
+        .populate('author', 'profile.fullname profile.profilePicture')
+        .sort({ createdAt: -1 });
   
-                if (post.media.videos?.length > 0) {
-                    console.log("Found videos for post:", post._id); // Log if videos are present
-                    post.media.videos = post.media.videos
-                        .filter(video => video && video._id)
-                        .map(video => {
-                            console.log("Generating video URL for video:", video._id); // Log video ID before generating URL
-                            return {
-                                ...video,
-                                url: generatePostVideoUrl(video._id),
-                            };
-                        });
-                    console.log("Videos after URL generation:", post.media.videos); // Log videos after URL generation
-                }
-            }
-            return post;
-        });
-
-        console.log("Posts with media URLs processed:", postsWithMediaUrls); // Log posts after processing media URLs
-
-        return res.status(200).json({
-            message: 'Posts retrieved successfully.',
-            success: true,
-            posts: postsWithMediaUrls,
-        });
+      console.log("Posts fetched successfully:", posts);
+  
+      const postsWithMediaUrls = posts.map(post => {
+        console.log("Processing post:", post._id);
+  
+        if (post.media) {
+          // Process photos
+          if (post.media.photos?.length > 0) {
+            console.log("Found photos for post:", post._id);
+            post.media.photos = post.media.photos
+              .filter(photo => photo && photo.url) // Ensure `photo.url` exists
+              .map(photo => {
+                const s3Key = photo.url.split("amazonaws.com/")[1]; // Extract S3 key from URL
+                console.log("Generating signed URL for photo key:", s3Key);
+                return {
+                  ...photo,
+                  url: generatePostImageUrl(s3Key), // Generate signed URL for photo
+                };
+              });
+            console.log("Photos after URL generation:", post.media.photos);
+          }
+  
+          // Process videos
+          if (post.media.videos?.length > 0) {
+            console.log("Found videos for post:", post._id);
+            post.media.videos = post.media.videos
+              .filter(video => video && video.url) // Ensure `video.url` exists
+              .map(video => {
+                const s3Key = video.url.split("amazonaws.com/")[1]; // Extract S3 key from URL
+                console.log("Generating signed URL for video key:", s3Key);
+                return {
+                  ...video,
+                  url: generatePostVideoUrl(s3Key), // Generate signed URL for video
+                };
+              });
+            console.log("Videos after URL generation:", post.media.videos);
+          }
+        }
+        return post;
+      });
+  
+      console.log("Posts with media URLs processed:", postsWithMediaUrls);
+  
+      return res.status(200).json({
+        message: 'Posts retrieved successfully.',
+        success: true,
+        posts: postsWithMediaUrls,
+      });
     } catch (error) {
-        console.error('Error retrieving posts:', error); // Log the error if any occurs
-        return res.status(500).json({
-            message: 'Internal server error.',
-            success: false,
-        });
+      console.error('Error retrieving posts:', error);
+      return res.status(500).json({
+        message: 'Internal server error.',
+        success: false,
+      });
     }
-};
+  };  
