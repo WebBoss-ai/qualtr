@@ -142,32 +142,6 @@ export async function deleteCampaignImage(imageUrl) {
   }
 }
 
-export async function uploadPostMedia(file, mediaType = 'images') {
-  const folderPath = mediaType === 'images' ? 'post_images' : 'post_videos'; // Dynamic folder path based on media type
-  const bucketName = "qualtr"; // Replace with your actual bucket name
-
-  // Resolve the region dynamically
-  const region = await resolveRegion();
-
-  const uploadParams = {
-    Bucket: bucketName,
-    Key: `${folderPath}/${file.originalname}`, // Folder path for post media
-    Body: file.buffer, // File buffer from Multer
-    ContentType: file.mimetype || 'application/octet-stream',
-  };
-
-  try {
-    const command = new PutObjectCommand(uploadParams);
-    const response = await s3Client.send(command);
-    return {
-      url: `https://${bucketName}.s3.${region}.amazonaws.com/${uploadParams.Key}`,
-      ...response,
-    };
-  } catch (error) {
-    throw error;
-  }
-}
-
 export async function deletePostMedia(mediaUrl) {
   try {
     // Extract the Key from the media URL
@@ -188,40 +162,56 @@ export async function deletePostMedia(mediaUrl) {
   }
 }
 
-export async function generatePostImageUrl(photoId) {
-  const bucketName = "qualtr"; // Replace with your bucket name
-  const folderPath = "post_images";
-
-  if (!photoId || typeof photoId !== "string") {
-    throw new Error(`Invalid photoId: ${photoId}`);
-  }
-
-  // Resolve the region dynamically
-  const region = await resolveRegion();
-
-  return `https://${bucketName}.s3.${region}.amazonaws.com/${folderPath}/${photoId}.png`;
-}
 async function resolveRegion() {
   const runtimeConfig = s3Client.config;
   if (!runtimeConfig.region) {
     throw new Error("Region is missing from runtimeConfig");
   }
-
-  if (typeof runtimeConfig.region === "string") {
-    return runtimeConfig.region;
-  }
-
-  // If region is a function, resolve it
-  return await runtimeConfig.region();
+  return typeof runtimeConfig.region === "string"
+    ? runtimeConfig.region
+    : await runtimeConfig.region();
 }
-export function generatePostVideoUrl(videoId) {
+
+
+export async function uploadPostMedia(file, mediaType = 'images') {
+  const folderPath = mediaType === 'images' ? 'post_images' : 'post_videos';
   const bucketName = "qualtr";
-  const region = s3Client.config.region;
-  const folderPath = "post_videos";
+  const region = await resolveRegion();
 
-  if (!videoId || typeof videoId !== "string") {
-    throw new Error(`Invalid videoId: ${videoId}`);
+  const uniqueFileName = `${Date.now()}-${file.originalname}`; // Ensure unique file names
+  const uploadParams = {
+    Bucket: bucketName,
+    Key: `${folderPath}/${uniqueFileName}`, // Save unique file name in Key
+    Body: file.buffer,
+    ContentType: file.mimetype || 'application/octet-stream',
+  };
+
+  try {
+    const command = new PutObjectCommand(uploadParams);
+    await s3Client.send(command);
+    return {
+      url: `https://${bucketName}.s3.${region}.amazonaws.com/${uploadParams.Key}`,
+      key: uploadParams.Key, // Return Key for database
+    };
+  } catch (error) {
+    throw error;
   }
+}
 
-  return `https://${bucketName}.s3.${region}.amazonaws.com/${folderPath}/${videoId}.mp4`;
+export async function generatePostImageUrl(key) {
+  if (!key || typeof key !== "string") {
+    throw new Error(`Invalid key: ${key}`);
+  }
+  const bucketName = "qualtr";
+  const region = await resolveRegion();
+  return `https://${bucketName}.s3.${region}.amazonaws.com/${key}`;
+}
+
+export async function generatePostVideoUrl(key) {
+  if (!key || typeof key !== "string") {
+    throw new Error(`Invalid key: ${key}`);
+  }
+  const bucketName = "qualtr";
+  const region = await resolveRegion();
+  return `https://${bucketName}.s3.${region}.amazonaws.com/${key}`;
 }

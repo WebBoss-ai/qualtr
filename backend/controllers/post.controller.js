@@ -4,96 +4,57 @@ import { uploadPostMedia, deletePostMedia, generatePostImageUrl, generatePostVid
 // Create a new post
 export const createPost = async (req, res) => {
     try {
-        const { category, text, event, occasion, jobOpening, poll, document } = req.body;
-        const userId = req.id; // Assuming user ID is available from middleware
-        const files = req.files || []; // Multer handles all uploaded files
-
-        const uploadedMedia = {
-            photos: [],
-            videos: [],
-        };
-
-        // Filter files into photos and videos
-        const photos = files.filter((file) => file.mimetype.startsWith('image/'));
-        const videos = files.filter((file) => file.mimetype.startsWith('video/'));
-
-        // Upload photos
-        if (photos.length) {
-            try {
-                uploadedMedia.photos = await Promise.all(
-                    photos.map(async (file) => {
-                        const uploadResult = await uploadPostMedia(file); // Should return { url, metadata }
-                        return {
-                            url: uploadResult.url,
-                            metadata: uploadResult.metadata,
-                        };
-                    })
-                );
-            } catch (error) {
-                console.error("Error uploading photos:", error);
-                return res
-                    .status(500)
-                    .json({ message: "Photo upload failed.", success: false });
-            }
-        }        
-
-        // Upload videos
-        if (videos.length) {
-            try {
-                uploadedMedia.videos = await Promise.all(
-                    videos.map(async (file) => {
-                        const uploadResult = await uploadPostMedia(file);
-                        return {
-                            url: uploadResult.url,
-                            metadata: uploadResult.metadata,
-                        };
-                    })
-                );
-            } catch (error) {
-                console.error("Error uploading videos:", error);
-                return res
-                    .status(500)
-                    .json({ message: "Video upload failed.", success: false });
-            }
-        }
-
-        // Parse optional fields safely
-        const parseField = (field) => {
-            try {
-                if (typeof field === 'string') {
-                    return JSON.parse(field);
-                }
-                return field; // Return as is if already an object or undefined
-            } catch (error) {
-                console.error(`Error parsing field:`, error);
-                return undefined; // Handle invalid JSON gracefully
-            }
-        };
-
-        const newPost = new Post({
-            author: userId,
-            category,
-            text,
-            media: uploadedMedia,
-            event: parseField(event),
-            occasion: parseField(occasion),
-            jobOpening: parseField(jobOpening),
-            poll: parseField(poll),
-            document: parseField(document),
-        });
-
-        await newPost.save();
-
-        return res.status(201).json({
-            message: "Post created successfully.",
-            success: true,
-            post: newPost,
-        });
+      const { category, text, event, occasion, jobOpening, poll, document } = req.body;
+      const userId = req.id;
+      const files = req.files || [];
+  
+      const uploadedMedia = {
+        photos: [],
+        videos: [],
+      };
+  
+      const photos = files.filter((file) => file.mimetype.startsWith('image/'));
+      const videos = files.filter((file) => file.mimetype.startsWith('video/'));
+  
+      // Upload photos
+      if (photos.length) {
+        uploadedMedia.photos = await Promise.all(
+          photos.map(async (file) => {
+            const { url, key } = await uploadPostMedia(file);
+            return { url, key }; // Save Key for accurate URL generation
+          })
+        );
+      }
+  
+      // Upload videos
+      if (videos.length) {
+        uploadedMedia.videos = await Promise.all(
+          videos.map(async (file) => {
+            const { url, key } = await uploadPostMedia(file, 'videos');
+            return { url, key };
+          })
+        );
+      }
+  
+      const newPost = new Post({
+        author: userId,
+        category,
+        text,
+        media: uploadedMedia,
+        event: event ? JSON.parse(event) : undefined,
+        occasion: occasion ? JSON.parse(occasion) : undefined,
+        jobOpening: jobOpening ? JSON.parse(jobOpening) : undefined,
+        poll: poll ? JSON.parse(poll) : undefined,
+        document: document ? JSON.parse(document) : undefined,
+      });
+  
+      await newPost.save();
+      return res.status(201).json({ message: "Post created successfully.", success: true, post: newPost });
     } catch (error) {
-        console.error("Error creating post:", error);
-        return res.status(500).json({ message: "Internal server error.", success: false });
+      console.error("Error creating post:", error);
+      return res.status(500).json({ message: "Internal server error.", success: false });
     }
-};
+  };  
 
 // Edit a post
 export const editPost = async (req, res) => {
@@ -160,42 +121,33 @@ export const deletePost = async (req, res) => {
 // Get all posts
 export const getAllPosts = async (req, res) => {
     try {
-        const posts = await Post.find()
-            .populate('author', 'profile.fullname profile.profilePicture') // Populate author's fullname and profile picture
-            .sort({ createdAt: -1 });
-
-        // Add AWS S3 media URLs dynamically using utility functions
-        const postsWithMediaUrls = posts.map((post) => {
-            if (post.media) {
-                // Generate photo URLs
-                if (post.media.photos && post.media.photos.length > 0) {
-                    post.media.photos = post.media.photos.map((photo) => ({
-                        ...photo,
-                        url: generatePostImageUrl(photo._id),
-                    }));
-                }
-
-                // Generate video URLs
-                if (post.media.videos && post.media.videos.length > 0) {
-                    post.media.videos = post.media.videos.map((video) => ({
-                        ...video,
-                        url: generatePostVideoUrl(video._id),
-                    }));
-                }
-            }
-            return post;
-        });
-
-        return res.status(200).json({
-            message: 'Posts retrieved successfully.',
-            success: true,
-            posts: postsWithMediaUrls,
-        });
+      const posts = await Post.find()
+        .populate('author', 'profile.fullname profile.profilePicture')
+        .sort({ createdAt: -1 });
+  
+      const postsWithMediaUrls = posts.map((post) => {
+        if (post.media) {
+          if (post.media.photos?.length) {
+            post.media.photos = post.media.photos.map((photo) => ({
+              ...photo,
+              url: generatePostImageUrl(photo.key), // Use Key from database
+            }));
+          }
+  
+          if (post.media.videos?.length) {
+            post.media.videos = post.media.videos.map((video) => ({
+              ...video,
+              url: generatePostVideoUrl(video.key), // Use Key from database
+            }));
+          }
+        }
+        return post;
+      });
+  
+      return res.status(200).json({ message: 'Posts retrieved successfully.', success: true, posts: postsWithMediaUrls });
     } catch (error) {
-        console.error('Error retrieving posts:', error);
-        return res.status(500).json({
-            message: 'Internal server error.',
-            success: false,
-        });
+      console.error('Error retrieving posts:', error);
+      return res.status(500).json({ message: 'Internal server error.', success: false });
     }
-};
+  };
+  
