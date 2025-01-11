@@ -72,7 +72,8 @@ const digitalMarketerSchema = new mongoose.Schema({
         skills: [{ type: String }],
         location: { type: String },
         profilePhoto: { type: String, default: '' },
-    },
+        suggested: { type: Boolean, default: false },
+    }, 
     isProfileComplete: {
         type: Boolean,
         default: false,

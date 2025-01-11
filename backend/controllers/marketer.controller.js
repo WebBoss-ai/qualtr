@@ -683,3 +683,29 @@ export const getAllProfiles = async (req, res) => {
         });
     }
 };
+
+export const getRandomSuggestedProfiles = async (req, res) => {
+    try {
+        const users = await DigitalMarketer.find({ 'profile.suggested': true }).select('-password');
+        const shuffledUsers = users.sort(() => 0.5 - Math.random());
+        const randomProfiles = shuffledUsers.slice(0, 5);
+        
+        return res.status(200).json({
+            message: 'Suggested profiles retrieved successfully.',
+            success: true,
+            profiles: randomProfiles.map(user => ({
+                id: user._id,
+                fullname: user.profile.fullname,
+                agencyName: user.profile.agencyName,
+                location: user.profile.location,
+                profilePhoto: user.profile.profilePhoto,
+            }))
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: 'Internal server error.',
+            success: false
+        });
+    }
+};

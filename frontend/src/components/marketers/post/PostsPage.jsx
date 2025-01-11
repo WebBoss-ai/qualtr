@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { MARKETER_API_END_POINT } from "@/utils/constant";
+import RandomSuggestedProfiles from '../RandomSuggestedProfiles';
 
 const PostPage = () => {
     const [posts, setPosts] = useState([]);
@@ -493,7 +494,7 @@ const PostPage = () => {
                     <p>No posts available</p>
                 )}
             </div>
-
+        <RandomSuggestedProfiles/>
         </div>
     );
 };
