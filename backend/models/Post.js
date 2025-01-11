@@ -21,8 +21,8 @@ const postSchema = new mongoose.Schema({
         maxlength: 2000, // Limit for text length
     },
     media: {
-        photos: { type: [String], validate: [arrayLimit, '{PATH} exceeds the limit of 10'] },
-        videos: { type: [String], validate: [arrayLimit, '{PATH} exceeds the limit of 5'] },
+        photos: { type: [String], metadata: Object, validate: [arrayLimit, '{PATH} exceeds the limit of 10'] },
+        videos: { type: [String], metadata: Object, validate: [arrayLimit, '{PATH} exceeds the limit of 5'] },
     },
     event: {
         title: { type: String },
