@@ -324,7 +324,6 @@ const PostPage = () => {
                     <button onClick={() => setCurrentStep(2)}>Next</button>
                 </>
             )}
-
             {currentStep === 2 && (
                 <>
                     <h2>Select Post Type</h2>
@@ -347,7 +346,6 @@ const PostPage = () => {
                     <button onClick={() => setCurrentStep(3)}>Next</button>
                 </>
             )}
-
             {currentStep === 3 && (
                 <form onSubmit={handleSubmit}>
                     <h2>Create Post</h2>
@@ -365,14 +363,91 @@ const PostPage = () => {
                     <button type="submit">Create Post</button>
                 </form>
             )}
-
             <div>
                 <h2>All Posts</h2>
                 {posts.length > 0 ? (
                     posts.map((post) => (
                         <div key={post._id}>
-                            <h3>{post.category}</h3>
-                            <p>{post.text}</p>
+                            {post.category && <h3>{post.category}</h3>}
+                            {post.text && <p>{post.text}</p>}
+                            {post.author && post.author.profile && post.author.profile.fullname && (
+                                <p>Author: {post.author.profile.fullname}</p>
+                            )}
+                            {post.author && post.author.profile && post.author.profile.profilePhoto && (
+                                <div>
+                                    <img
+                                        src={post.author.profile.profilePhoto}
+                                        alt={post.author.profile.fullname}
+                                        style={{ width: '50px', height: '50px', borderRadius: '50%' }}
+                                    />
+                                </div>
+                            )}
+                            {post.media && post.media.photos && post.media.photos.length > 0 && (
+                                <div>
+                                    <h4>Photos:</h4>
+                                    {post.media.photos.map((photo, index) => (
+                                        <img key={index} src={photo.url} alt={`Photo ${index + 1}`} style={{ width: '100px', height: '100px' }} />
+                                    ))}
+                                </div>
+                            )}
+                            {post.media && post.media.videos && post.media.videos.length > 0 && (
+                                <div>
+                                    <h4>Videos:</h4>
+                                    {post.media.videos.map((video, index) => (
+                                        <video key={index} width="300" controls>
+                                            <source src={video.url} type="video/mp4" />
+                                            Your browser does not support the video tag.
+                                        </video>
+                                    ))}
+                                </div>
+                            )}
+                            {post.event && post.event.title && (
+                                <div>
+                                    <h4>Event:</h4>
+                                    <p>{post.event.title}</p>
+                                    {post.event.description && <p>{post.event.description}</p>}
+                                    {post.event.date && <p>{new Date(post.event.date).toLocaleDateString()}</p>}
+                                    {post.event.location && <p>{post.event.location}</p>}
+                                </div>
+                            )}
+                            {post.occasion && post.occasion.title && (
+                                <div>
+                                    <h4>Occasion:</h4>
+                                    <p>{post.occasion.title}</p>
+                                    {post.occasion.description && <p>{post.occasion.description}</p>}
+                                    {post.occasion.date && <p>{new Date(post.occasion.date).toLocaleDateString()}</p>}
+                                </div>
+                            )}
+                            {post.jobOpening && post.jobOpening.title && (
+                                <div>
+                                    <h4>Job Opening:</h4>
+                                    <p>{post.jobOpening.title}</p>
+                                    {post.jobOpening.description && <p>{post.jobOpening.description}</p>}
+                                    {post.jobOpening.location && <p>{post.jobOpening.location}</p>}
+                                    {post.jobOpening.salaryRange && <p>{post.jobOpening.salaryRange}</p>}
+                                </div>
+                            )}
+                            {post.poll && post.poll.question && (
+                                <div>
+                                    <h4>Poll:</h4>
+                                    <p>{post.poll.question}</p>
+                                    {post.poll.options && post.poll.options.length > 0 && (
+                                        <ul>
+                                            {post.poll.options.map((option, index) => (
+                                                <li key={index}>{option}</li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                    {post.poll.endDate && <p>Ends on: {new Date(post.poll.endDate).toLocaleDateString()}</p>}
+                                </div>
+                            )}
+                            {post.document && post.document.name && (
+                                <div>
+                                    <h4>Document:</h4>
+                                    <p>{post.document.name}</p>
+                                    {post.document.url && <a href={post.document.url} target="_blank" rel="noopener noreferrer">Download</a>}
+                                </div>
+                            )}
                         </div>
                     ))
                 ) : (

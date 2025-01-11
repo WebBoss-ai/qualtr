@@ -158,7 +158,7 @@ export const deletePost = async (req, res) => {
 export const getAllPosts = async (req, res) => {
     try {
         const posts = await Post.find()
-            .populate('author', 'profile.fullname') // Populate author's fullname
+            .populate('author', 'profile.fullname', 'profile.profilePicture') // Populate author's fullname
             .sort({ createdAt: -1 });
 
         return res.status(200).json({
