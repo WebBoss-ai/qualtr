@@ -30,11 +30,11 @@ const PostPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         console.log('Form submission started...');
-        
+
         const formData = new FormData();
         formData.append('category', postCategory);
         formData.append('text', postText);
-        
+
         // Append media files (photos and videos)
         for (let file of media.images) {
             console.log('Appending photo:', file.name);
@@ -44,7 +44,7 @@ const PostPage = () => {
             console.log('Appending video:', file.name);
             formData.append('videos', file);
         }
-    
+
         // Append additional fields
         if (additionalData.event) {
             console.log('Appending event:', additionalData.event);
@@ -53,14 +53,14 @@ const PostPage = () => {
             formData.append('event[date]', additionalData.event.date || '');
             formData.append('event[location]', additionalData.event.location || '');
         }
-    
+
         if (additionalData.occasion) {
             console.log('Appending occasion:', additionalData.occasion);
             formData.append('occasion[title]', additionalData.occasion.title || '');
             formData.append('occasion[description]', additionalData.occasion.description || '');
             formData.append('occasion[date]', additionalData.occasion.date || '');
         }
-    
+
         if (additionalData.jobOpening) {
             console.log('Appending jobOpening:', additionalData.jobOpening);
             formData.append('jobOpening[title]', additionalData.jobOpening.title || '');
@@ -68,7 +68,7 @@ const PostPage = () => {
             formData.append('jobOpening[location]', additionalData.jobOpening.location || '');
             formData.append('jobOpening[salaryRange]', additionalData.jobOpening.salaryRange || '');
         }
-    
+
         if (additionalData.poll) {
             console.log('Appending poll:', additionalData.poll);
             formData.append('poll[question]', additionalData.poll.question || '');
@@ -77,13 +77,13 @@ const PostPage = () => {
             });
             formData.append('poll[endDate]', additionalData.poll.endDate || '');
         }
-    
+
         if (additionalData.document) {
             console.log('Appending document:', additionalData.document);
             formData.append('document[name]', additionalData.document.name || '');
             formData.append('document[url]', additionalData.document.url || '');
         }
-    
+
         try {
             const response = await axios.post(`${MARKETER_API_END_POINT}/posts`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
@@ -93,7 +93,7 @@ const PostPage = () => {
         } catch (error) {
             console.error('Failed to create post:', error);
         }
-    };    
+    };
 
     const renderPostTypeFields = () => {
         switch (postType) {
@@ -402,29 +402,30 @@ const PostPage = () => {
                 {posts.length > 0 ? (
                     posts.map((post) => (
                         <div key={post._id}>
-                            {post.category && <h3>{post.category}</h3>}
+                            {post.category && <h3>Category: {post.category}</h3>}
                             {post.text && <p>{post.text}</p>}
-                            {post.author && post.author.profile && post.author.profile.fullname && (
-                                <p>Author: {post.author.profile.fullname}</p>
+                            {post.author?.profile?.fullname && <p>Author: {post.author.profile.fullname}</p>}
+                            {post.author?.profile?.profilePhoto && (
+                                <img
+                                    src={post.author.profile.profilePhoto}
+                                    alt={post.author.profile.fullname}
+                                    style={{ width: '50px', height: '50px', borderRadius: '50%' }}
+                                />
                             )}
-                            {post.author && post.author.profile && post.author.profile.profilePhoto && (
-                                <div>
-                                    <img
-                                        src={post.author.profile.profilePhoto}
-                                        alt={post.author.profile.fullname}
-                                        style={{ width: '50px', height: '50px', borderRadius: '50%' }}
-                                    />
-                                </div>
-                            )}
-                            {post.media && post.media.photos && post.media.photos.length > 0 && (
+                            {post.media?.photos?.length > 0 && (
                                 <div>
                                     <h4>Photos:</h4>
                                     {post.media.photos.map((photo, index) => (
-                                        <img key={index} src={photo.url} alt={`Photo ${index + 1}`} style={{ width: '100px', height: '100px' }} />
+                                        <img
+                                            key={index}
+                                            src={photo.url}
+                                            alt={`Photo ${index + 1}`}
+                                            style={{ width: '100px', height: '100px' }}
+                                        />
                                     ))}
                                 </div>
                             )}
-                            {post.media && post.media.videos && post.media.videos.length > 0 && (
+                            {post.media?.videos?.length > 0 && (
                                 <div>
                                     <h4>Videos:</h4>
                                     {post.media.videos.map((video, index) => (
@@ -435,37 +436,37 @@ const PostPage = () => {
                                     ))}
                                 </div>
                             )}
-                            {post.event && post.event.title && (
+                            {post.event && (
                                 <div>
                                     <h4>Event:</h4>
-                                    <p>{post.event.title}</p>
-                                    {post.event.description && <p>{post.event.description}</p>}
-                                    {post.event.date && <p>{new Date(post.event.date).toLocaleDateString()}</p>}
-                                    {post.event.location && <p>{post.event.location}</p>}
+                                    <p>Title: {post.event.title}</p>
+                                    {post.event.description && <p>Description: {post.event.description}</p>}
+                                    {post.event.date && <p>Date: {new Date(post.event.date).toLocaleDateString()}</p>}
+                                    {post.event.location && <p>Location: {post.event.location}</p>}
                                 </div>
                             )}
-                            {post.occasion && post.occasion.title && (
+                            {post.occasion && (
                                 <div>
                                     <h4>Occasion:</h4>
-                                    <p>{post.occasion.title}</p>
-                                    {post.occasion.description && <p>{post.occasion.description}</p>}
-                                    {post.occasion.date && <p>{new Date(post.occasion.date).toLocaleDateString()}</p>}
+                                    <p>Title: {post.occasion.title}</p>
+                                    {post.occasion.description && <p>Description: {post.occasion.description}</p>}
+                                    {post.occasion.date && <p>Date: {new Date(post.occasion.date).toLocaleDateString()}</p>}
                                 </div>
                             )}
-                            {post.jobOpening && post.jobOpening.title && (
+                            {post.jobOpening && (
                                 <div>
                                     <h4>Job Opening:</h4>
-                                    <p>{post.jobOpening.title}</p>
-                                    {post.jobOpening.description && <p>{post.jobOpening.description}</p>}
-                                    {post.jobOpening.location && <p>{post.jobOpening.location}</p>}
-                                    {post.jobOpening.salaryRange && <p>{post.jobOpening.salaryRange}</p>}
+                                    <p>Title: {post.jobOpening.title}</p>
+                                    {post.jobOpening.description && <p>Description: {post.jobOpening.description}</p>}
+                                    {post.jobOpening.location && <p>Location: {post.jobOpening.location}</p>}
+                                    {post.jobOpening.salaryRange && <p>Salary Range: {post.jobOpening.salaryRange}</p>}
                                 </div>
                             )}
-                            {post.poll && post.poll.question && (
+                            {post.poll && (
                                 <div>
                                     <h4>Poll:</h4>
-                                    <p>{post.poll.question}</p>
-                                    {post.poll.options && post.poll.options.length > 0 && (
+                                    <p>Question: {post.poll.question}</p>
+                                    {post.poll.options?.length > 0 && (
                                         <ul>
                                             {post.poll.options.map((option, index) => (
                                                 <li key={index}>{option}</li>
@@ -475,11 +476,15 @@ const PostPage = () => {
                                     {post.poll.endDate && <p>Ends on: {new Date(post.poll.endDate).toLocaleDateString()}</p>}
                                 </div>
                             )}
-                            {post.document && post.document.name && (
+                            {post.document && (
                                 <div>
                                     <h4>Document:</h4>
-                                    <p>{post.document.name}</p>
-                                    {post.document.url && <a href={post.document.url} target="_blank" rel="noopener noreferrer">Download</a>}
+                                    <p>Name: {post.document.name}</p>
+                                    {post.document.url && (
+                                        <a href={post.document.url} target="_blank" rel="noopener noreferrer">
+                                            Download
+                                        </a>
+                                    )}
                                 </div>
                             )}
                         </div>
@@ -488,6 +493,7 @@ const PostPage = () => {
                     <p>No posts available</p>
                 )}
             </div>
+
         </div>
     );
 };

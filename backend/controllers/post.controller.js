@@ -161,16 +161,45 @@ export const deletePost = async (req, res) => {
 export const getAllPosts = async (req, res) => {
     try {
         const posts = await Post.find()
-            .populate('author', 'profile.fullname profile.profilePicture') // Populate author's fullname
+            .populate('author', 'profile.fullname profile.profilePicture') // Populate author's fullname and profile picture
             .sort({ createdAt: -1 });
+
+        // Add AWS S3 media URLs dynamically if not already stored
+        const postsWithMediaUrls = posts.map((post) => {
+            if (post.media) {
+                // Generate photo URLs
+                if (post.media.photos && post.media.photos.length > 0) {
+                    post.media.photos = post.media.photos.map((photo) => {
+                        return {
+                            ...photo,
+                            url: `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/post_images/${photo._id}.png`,
+                        };
+                    });
+                }
+
+                // Generate video URLs
+                if (post.media.videos && post.media.videos.length > 0) {
+                    post.media.videos = post.media.videos.map((video) => {
+                        return {
+                            ...video,
+                            url: `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/post_videos/${video._id}.mp4`,
+                        };
+                    });
+                }
+            }
+            return post;
+        });
 
         return res.status(200).json({
             message: 'Posts retrieved successfully.',
             success: true,
-            posts,
+            posts: postsWithMediaUrls,
         });
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: 'Internal server error.', success: false });
+        console.error("Error retrieving posts:", error);
+        return res.status(500).json({
+            message: 'Internal server error.',
+            success: false,
+        });
     }
 };
