@@ -60,10 +60,13 @@ export const createPost = async (req, res) => {
         // Parse optional fields safely
         const parseField = (field) => {
             try {
-                return field ? JSON.parse(field) : undefined;
+                if (typeof field === 'string') {
+                    return JSON.parse(field);
+                }
+                return field; // Return as is if already an object or undefined
             } catch (error) {
-                console.error(`Error parsing field ${field}:`, error);
-                return undefined;
+                console.error(`Error parsing field:`, error);
+                return undefined; // Handle invalid JSON gracefully
             }
         };
 
