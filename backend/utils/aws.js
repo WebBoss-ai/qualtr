@@ -209,12 +209,12 @@ export async function generatePostImageUrl(key) {
 
   try {
     // Debugging: Log S3 key construction
-    const s3Key = `post_images/${key}`;
+    const s3Key = key; // Use the key as is, without adding 'post_images/'
     console.log(`Generated S3 key for image: ${s3Key}`);
 
     const command = new GetObjectCommand({
       Bucket: "qualtr",
-      Key: s3Key, // Ensure the full S3 key is used
+      Key: s3Key, // Use the correct S3 key
     });
 
     console.log("S3 command prepared:", command); // Debugging: Log the command
