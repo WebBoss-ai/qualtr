@@ -6,68 +6,77 @@ export const createPost = async (req, res) => {
     try {
         const { category, text, event, occasion, jobOpening, poll, document } = req.body;
         const userId = req.id; // Assuming user ID is available from middleware
+        const files = req.files || []; // Multer handles all uploaded files
 
-        const files = req.files || []; // Multer will handle all uploaded files here
+        const uploadedMedia = {
+            photos: [],
+            videos: [],
+        };
+
+        // Filter files into photos and videos
         const photos = files.filter((file) => file.mimetype.startsWith('image/'));
         const videos = files.filter((file) => file.mimetype.startsWith('video/'));
 
-        const uploadedMedia = {};
-
-        // Log the media received in the request
-        console.log("Received photos:", photos);
-        console.log("Received videos:", videos);
-
-        // Upload photos to S3
+        // Upload photos
         if (photos.length) {
-            console.log(`Uploading ${photos.length} photos...`);
-            uploadedMedia.photos = await Promise.all(
-                photos.map((file, index) => {
-                    console.log(`Uploading photo ${index + 1}:`, file.originalname);
-                    return uploadPostMedia(file);
-                })
-            );
-            console.log("Photos uploaded:", uploadedMedia.photos);
-        } else {
-            console.log("No photos to upload.");
+            try {
+                uploadedMedia.photos = await Promise.all(
+                    photos.map((file) => uploadPostMedia(file))
+                );
+            } catch (error) {
+                console.error("Error uploading photos:", error);
+                return res
+                    .status(500)
+                    .json({ message: "Photo upload failed.", success: false });
+            }
         }
 
-        // Upload videos to S3
+        // Upload videos
         if (videos.length) {
-            console.log(`Uploading ${videos.length} videos...`);
-            uploadedMedia.videos = await Promise.all(
-                videos.map((file, index) => {
-                    console.log(`Uploading video ${index + 1}:`, file.originalname);
-                    return uploadPostMedia(file);
-                })
-            );
-            console.log("Videos uploaded:", uploadedMedia.videos);
-        } else {
-            console.log("No videos to upload.");
+            try {
+                uploadedMedia.videos = await Promise.all(
+                    videos.map((file) => uploadPostMedia(file))
+                );
+            } catch (error) {
+                console.error("Error uploading videos:", error);
+                return res
+                    .status(500)
+                    .json({ message: "Video upload failed.", success: false });
+            }
         }
 
-        // Create the post
+        // Parse optional fields safely
+        const parseField = (field) => {
+            try {
+                return field ? JSON.parse(field) : undefined;
+            } catch (error) {
+                console.error(`Error parsing field ${field}:`, error);
+                return undefined;
+            }
+        };
+
         const newPost = new Post({
             author: userId,
             category,
             text,
             media: uploadedMedia,
-            event: event ? JSON.parse(event) : undefined,
-            occasion: occasion ? JSON.parse(occasion) : undefined,
-            jobOpening: jobOpening ? JSON.parse(jobOpening) : undefined,
-            poll: poll ? JSON.parse(poll) : undefined,
-            document: document ? JSON.parse(document) : undefined,
+            event: parseField(event),
+            occasion: parseField(occasion),
+            jobOpening: parseField(jobOpening),
+            poll: parseField(poll),
+            document: parseField(document),
         });
 
         await newPost.save();
 
         return res.status(201).json({
-            message: 'Post created successfully.',
+            message: "Post created successfully.",
             success: true,
             post: newPost,
         });
     } catch (error) {
         console.error("Error creating post:", error);
-        return res.status(500).json({ message: 'Internal server error.', success: false });
+        return res.status(500).json({ message: "Internal server error.", success: false });
     }
 };
 
