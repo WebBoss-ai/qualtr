@@ -155,13 +155,14 @@ export async function uploadPostMedia(file, mediaType = 'images') {
     const command = new PutObjectCommand(uploadParams);
     const response = await s3Client.send(command);
     return {
-      Location: `https://${uploadParams.Bucket}.s3.${s3Client.config.region}.amazonaws.com/${uploadParams.Key}`,
+      url: `https://${uploadParams.Bucket}.s3.${s3Client.config.region}.amazonaws.com/${uploadParams.Key}`,
       ...response,
     };
   } catch (error) {
     throw error;
   }
 }
+
 export async function deletePostMedia(mediaUrl) {
   try {
     // Extract the Key from the media URL
