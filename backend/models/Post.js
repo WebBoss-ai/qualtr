@@ -21,8 +21,35 @@ const postSchema = new mongoose.Schema({
         maxlength: 2000, // Limit for text length
     },
     media: {
-        photos: { type: [String], metadata: Object, validate: [arrayLimit, '{PATH} exceeds the limit of 10'] },
-        videos: { type: [String], metadata: Object, validate: [arrayLimit, '{PATH} exceeds the limit of 5'] },
+        photos: { 
+            type: [
+                {
+                    url: { type: String, required: true }, // The photo URL
+                    metadata: {
+                        size: { type: Number }, // File size in bytes
+                        format: { type: String }, // Format of the image (e.g., jpg, png)
+                        dimensions: { // Dimensions of the image
+                            width: { type: Number },
+                            height: { type: Number },
+                        },
+                    },
+                }
+            ],
+            validate: [arrayLimit, '{PATH} exceeds the limit of 10'], // Max 10 photos
+        },
+        videos: { 
+            type: [
+                {
+                    url: { type: String, required: true }, // The video URL
+                    metadata: {
+                        duration: { type: Number }, // Duration in seconds
+                        resolution: { type: String }, // Resolution (e.g., 1080p)
+                        format: { type: String }, // Format (e.g., mp4)
+                    },
+                }
+            ],
+            validate: [arrayLimit, '{PATH} exceeds the limit of 5'], // Max 5 videos
+        },
     },
     event: {
         title: { type: String },
