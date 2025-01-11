@@ -30,12 +30,12 @@ const PostPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         console.log('Form submission started...');
-
+    
         const formData = new FormData();
         formData.append('category', postCategory);
         formData.append('type', postType);
         formData.append('text', postText);
-
+    
         // Append media files
         for (let file of media.images) {
             console.log('Appending photo:', file.name);
@@ -45,11 +45,33 @@ const PostPage = () => {
             console.log('Appending video:', file.name);
             formData.append('videos', file);
         }
-
-        // Append additional data
-        console.log('Appending additional data:', additionalData);
-        formData.append('additionalData', JSON.stringify(additionalData));
-
+    
+        // Append additional data fields explicitly
+        if (additionalData.event) {
+            console.log('Appending event:', additionalData.event);
+            formData.append('event', additionalData.event);
+        }
+    
+        if (additionalData.occasion) {
+            console.log('Appending occasion:', additionalData.occasion);
+            formData.append('occasion', additionalData.occasion);
+        }
+    
+        if (additionalData.jobOpening) {
+            console.log('Appending jobOpening:', additionalData.jobOpening);
+            formData.append('jobOpening', additionalData.jobOpening);
+        }
+    
+        if (additionalData.poll) {
+            console.log('Appending poll:', additionalData.poll);
+            formData.append('poll', JSON.stringify(additionalData.poll)); // If it's an object
+        }
+    
+        if (additionalData.document) {
+            console.log('Appending document:', additionalData.document);
+            formData.append('document', additionalData.document);
+        }
+    
         try {
             const response = await axios.post(`${MARKETER_API_END_POINT}/posts`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
