@@ -21,7 +21,13 @@ export const createPost = async (req, res) => {
         if (photos.length) {
             try {
                 uploadedMedia.photos = await Promise.all(
-                    photos.map((file) => uploadPostMedia(file))
+                    photos.map(async (file) => {
+                        const uploadResult = await uploadPostMedia(file); // Should return { url, metadata }
+                        return {
+                            url: uploadResult.url,
+                            metadata: uploadResult.metadata,
+                        };
+                    })
                 );
             } catch (error) {
                 console.error("Error uploading photos:", error);
@@ -29,13 +35,19 @@ export const createPost = async (req, res) => {
                     .status(500)
                     .json({ message: "Photo upload failed.", success: false });
             }
-        }
+        }        
 
         // Upload videos
         if (videos.length) {
             try {
                 uploadedMedia.videos = await Promise.all(
-                    videos.map((file) => uploadPostMedia(file))
+                    videos.map(async (file) => {
+                        const uploadResult = await uploadPostMedia(file);
+                        return {
+                            url: uploadResult.url,
+                            metadata: uploadResult.metadata,
+                        };
+                    })
                 );
             } catch (error) {
                 console.error("Error uploading videos:", error);
