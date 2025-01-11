@@ -36,16 +36,21 @@ export const createPost = async (req, res) => {
         );
       }
   
+      // Check if fields are strings before parsing
+      const parseField = (field) => {
+        return typeof field === 'string' ? JSON.parse(field) : field;
+      };
+  
       const newPost = new Post({
         author: userId,
         category,
         text,
         media: uploadedMedia,
-        event: event ? JSON.parse(event) : undefined,
-        occasion: occasion ? JSON.parse(occasion) : undefined,
-        jobOpening: jobOpening ? JSON.parse(jobOpening) : undefined,
-        poll: poll ? JSON.parse(poll) : undefined,
-        document: document ? JSON.parse(document) : undefined,
+        event: event ? parseField(event) : undefined,
+        occasion: occasion ? parseField(occasion) : undefined,
+        jobOpening: jobOpening ? parseField(jobOpening) : undefined,
+        poll: poll ? parseField(poll) : undefined,
+        document: document ? parseField(document) : undefined,
       });
   
       await newPost.save();
