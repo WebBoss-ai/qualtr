@@ -199,40 +199,67 @@ export async function uploadPostMedia(file, mediaType = 'images') {
 }
 
 export async function generatePostImageUrl(key) {
+  // Debugging: Log input key
+  console.log(`Received key for image URL generation: ${key}`);
+
   if (!key || typeof key !== "string") {
+    console.error(`Invalid key provided: ${key}`); // Debugging: Invalid key
     throw new Error(`Invalid key: ${key}`);
   }
 
   try {
+    // Debugging: Log S3 key construction
+    const s3Key = `post_images/${key}`;
+    console.log(`Generated S3 key for image: ${s3Key}`);
+
     const command = new GetObjectCommand({
       Bucket: "qualtr",
-      Key: `post_images/${key}`, // Ensure the full S3 key is used
+      Key: s3Key, // Ensure the full S3 key is used
     });
 
+    console.log("S3 command prepared:", command); // Debugging: Log the command
+
     const url = await getSignedUrl(s3Client, command, { expiresIn: 900 }); // 15 minutes expiration
+
+    // Debugging: Log the generated URL
+    console.log(`Generated signed URL for image: ${url}`);
+    
     return url;
   } catch (error) {
-    console.error(`Error generating signed URL for image key: ${key}`, error);
+    console.error(`Error generating signed URL for image key: ${key}`, error); // Debugging: Log error
     throw error;
   }
 }
 
 export async function generatePostVideoUrl(key) {
+  // Debugging: Log input key
+  console.log(`Received key for video URL generation: ${key}`);
+
   if (!key || typeof key !== "string") {
+    console.error(`Invalid key provided: ${key}`); // Debugging: Invalid key
     throw new Error(`Invalid key: ${key}`);
   }
 
   try {
+    // Debugging: Log S3 key construction
+    const s3Key = `post_videos/${key}`;
+    console.log(`Generated S3 key for video: ${s3Key}`);
+
     const command = new GetObjectCommand({
       Bucket: "qualtr",
-      Key: `post_videos/${key}`, // Change folder path for videos if needed
+      Key: s3Key, // Change folder path for videos if needed
     });
 
+    console.log("S3 command prepared:", command); // Debugging: Log the command
+
     const url = await getSignedUrl(s3Client, command, { expiresIn: 900 }); // 15 minutes expiration
+
+    // Debugging: Log the generated URL
+    console.log(`Generated signed URL for video: ${url}`);
+
     return url;
   } catch (error) {
-    console.error(`Error generating signed URL for video key: ${key}`, error);
+    console.error(`Error generating signed URL for video key: ${key}`, error); // Debugging: Log error
     throw error;
   }
 }
-
