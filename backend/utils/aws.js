@@ -200,18 +200,52 @@ export async function uploadPostMedia(file, mediaType = 'images') {
 
 export async function generatePostImageUrl(key) {
   if (!key || typeof key !== "string") {
+    console.error(`Invalid key provided: ${key}`); // Debugging invalid key input
     throw new Error(`Invalid key: ${key}`);
   }
-  const bucketName = "qualtr";
-  const region = await resolveRegion();
-  return `https://${bucketName}.s3.${region}.amazonaws.com/${key}`;
+
+  try {
+    console.log(`Generating signed URL for image with key: ${key}`); // Debugging: log key before generating URL
+
+    const command = new GetObjectCommand({
+      Bucket: "qualtr",
+      Key: key,
+    });
+
+    console.log("S3 command prepared:", command); // Log the command to ensure it's correct
+
+    const url = await getSignedUrl(s3Client, command, { expiresIn: 900 }); // 15 minutes expiration
+    console.log(`Generated signed URL for image: ${url}`); // Debugging: log the generated URL
+
+    return url;
+  } catch (error) {
+    console.error(`Error generating signed URL for image key: ${key}`, error); // Log the error details
+    throw error;
+  }
 }
 
 export async function generatePostVideoUrl(key) {
   if (!key || typeof key !== "string") {
+    console.error(`Invalid key provided: ${key}`); // Debugging invalid key input
     throw new Error(`Invalid key: ${key}`);
   }
-  const bucketName = "qualtr";
-  const region = await resolveRegion();
-  return `https://${bucketName}.s3.${region}.amazonaws.com/${key}`;
+
+  try {
+    console.log(`Generating signed URL for video with key: ${key}`); // Debugging: log key before generating URL
+
+    const command = new GetObjectCommand({
+      Bucket: "qualtr",
+      Key: key,
+    });
+
+    console.log("S3 command prepared:", command); // Log the command to ensure it's correct
+
+    const url = await getSignedUrl(s3Client, command, { expiresIn: 900 }); // 15 minutes expiration
+    console.log(`Generated signed URL for video: ${url}`); // Debugging: log the generated URL
+
+    return url;
+  } catch (error) {
+    console.error(`Error generating signed URL for video key: ${key}`, error); // Log the error details
+    throw error;
+  }
 }
