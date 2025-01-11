@@ -36,18 +36,13 @@ const PostPage = () => {
         formData.append('text', postText);
         
         // Append media files (photos and videos)
-        if (media.images.length > 0) {
-            for (let file of media.images) {
-                console.log('Appending photo:', file.name);
-                formData.append('media[photos]', file);
-            }
+        for (let file of media.images) {
+            console.log('Appending photo:', file.name);
+            formData.append('images', file);
         }
-    
-        if (media.videos.length > 0) {
-            for (let file of media.videos) {
-                console.log('Appending video:', file.name);
-                formData.append('media[videos]', file);
-            }
+        for (let file of media.videos) {
+            console.log('Appending video:', file.name);
+            formData.append('videos', file);
         }
     
         // Append additional fields
