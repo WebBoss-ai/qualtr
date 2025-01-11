@@ -1,5 +1,5 @@
 import { Post } from '../models/Post.js';
-import { uploadPostMedia, deletePostMedia } from '../utils/aws.js'; // Helper functions for AWS S3
+import { uploadPostMedia, deletePostMedia, generatePostImageUrl, generatePostVideoUrl } from '../utils/aws.js'; // Helper functions for AWS S3
 
 // Create a new post
 export const createPost = async (req, res) => {
@@ -164,27 +164,23 @@ export const getAllPosts = async (req, res) => {
             .populate('author', 'profile.fullname profile.profilePicture') // Populate author's fullname and profile picture
             .sort({ createdAt: -1 });
 
-        // Add AWS S3 media URLs dynamically if not already stored
+        // Add AWS S3 media URLs dynamically using utility functions
         const postsWithMediaUrls = posts.map((post) => {
             if (post.media) {
                 // Generate photo URLs
                 if (post.media.photos && post.media.photos.length > 0) {
-                    post.media.photos = post.media.photos.map((photo) => {
-                        return {
-                            ...photo,
-                            url: `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/post_images/${photo._id}.png`,
-                        };
-                    });
+                    post.media.photos = post.media.photos.map((photo) => ({
+                        ...photo,
+                        url: generatePostImageUrl(photo._id),
+                    }));
                 }
 
                 // Generate video URLs
                 if (post.media.videos && post.media.videos.length > 0) {
-                    post.media.videos = post.media.videos.map((video) => {
-                        return {
-                            ...video,
-                            url: `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/post_videos/${video._id}.mp4`,
-                        };
-                    });
+                    post.media.videos = post.media.videos.map((video) => ({
+                        ...video,
+                        url: generatePostVideoUrl(video._id),
+                    }));
                 }
             }
             return post;
@@ -196,7 +192,7 @@ export const getAllPosts = async (req, res) => {
             posts: postsWithMediaUrls,
         });
     } catch (error) {
-        console.error("Error retrieving posts:", error);
+        console.error('Error retrieving posts:', error);
         return res.status(500).json({
             message: 'Internal server error.',
             success: false,

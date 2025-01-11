@@ -182,3 +182,26 @@ export async function deletePostMedia(mediaUrl) {
     throw error;
   }
 }
+
+export function generatePostImageUrl(photoId) {
+  const bucketName = "qualtr"; // Replace with your bucket name
+  const region = s3Client.config.region;
+  const folderPath = "post_images";
+
+  if (!photoId || typeof photoId !== "string") {
+    throw new Error(`Invalid photoId: ${photoId}`);
+  }
+
+  return `https://${bucketName}.s3.${region}.amazonaws.com/${folderPath}/${photoId}.png`;
+}
+export function generatePostVideoUrl(videoId) {
+  const bucketName = "qualtr";
+  const region = s3Client.config.region;
+  const folderPath = "post_videos";
+
+  if (!videoId || typeof videoId !== "string") {
+    throw new Error(`Invalid videoId: ${videoId}`);
+  }
+
+  return `https://${bucketName}.s3.${region}.amazonaws.com/${folderPath}/${videoId}.mp4`;
+}
