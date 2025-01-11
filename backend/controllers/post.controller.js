@@ -121,53 +121,44 @@ export const deletePost = async (req, res) => {
 // Get all posts
 export const getAllPosts = async (req, res) => {
     try {
-      console.log("Fetching posts...");
       const posts = await Post.find()
         .populate('author', 'profile.fullname profile.profilePicture')
         .sort({ createdAt: -1 });
   
-      console.log("Posts fetched successfully:", posts);
+      const postsWithMediaUrls = await Promise.all(
+        posts.map(async post => {
+          if (post.media) {
+            if (post.media.photos?.length > 0) {
+              post.media.photos = await Promise.all(
+                post.media.photos
+                  .filter(photo => photo && photo.url)
+                  .map(async photo => {
+                    const s3Key = photo.url.split("amazonaws.com/")[1];
+                    return {
+                      ...photo,
+                      url: await generatePostImageUrl(s3Key),
+                    };
+                  })
+              );
+            }
   
-      const postsWithMediaUrls = posts.map(post => {
-        console.log("Processing post:", post._id);
-  
-        if (post.media) {
-          // Process photos
-          if (post.media.photos?.length > 0) {
-            console.log("Found photos for post:", post._id);
-            post.media.photos = post.media.photos
-              .filter(photo => photo && photo.url) // Ensure `photo.url` exists
-              .map(photo => {
-                const s3Key = photo.url.split("amazonaws.com/")[1]; // Extract S3 key from URL
-                console.log("Generating signed URL for photo key:", s3Key);
-                return {
-                  ...photo,
-                  url: generatePostImageUrl(s3Key), // Generate signed URL for photo
-                };
-              });
-            console.log("Photos after URL generation:", post.media.photos);
+            if (post.media.videos?.length > 0) {
+              post.media.videos = await Promise.all(
+                post.media.videos
+                  .filter(video => video && video.url)
+                  .map(async video => {
+                    const s3Key = video.url.split("amazonaws.com/")[1];
+                    return {
+                      ...video,
+                      url: await generatePostVideoUrl(s3Key),
+                    };
+                  })
+              );
+            }
           }
-  
-          // Process videos
-          if (post.media.videos?.length > 0) {
-            console.log("Found videos for post:", post._id);
-            post.media.videos = post.media.videos
-              .filter(video => video && video.url) // Ensure `video.url` exists
-              .map(video => {
-                const s3Key = video.url.split("amazonaws.com/")[1]; // Extract S3 key from URL
-                console.log("Generating signed URL for video key:", s3Key);
-                return {
-                  ...video,
-                  url: generatePostVideoUrl(s3Key), // Generate signed URL for video
-                };
-              });
-            console.log("Videos after URL generation:", post.media.videos);
-          }
-        }
-        return post;
-      });
-  
-      console.log("Posts with media URLs processed:", postsWithMediaUrls);
+          return post;
+        })
+      );
   
       return res.status(200).json({
         message: 'Posts retrieved successfully.',
