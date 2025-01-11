@@ -122,40 +122,27 @@ export const deletePost = async (req, res) => {
 export const getAllPosts = async (req, res) => {
     try {
       const posts = await Post.find()
-        .populate('author', 'profile.fullname profile.profilePicture') // Populate author's fullname and profile picture
+        .populate('author', 'profile.fullname profile.profilePicture')
         .sort({ createdAt: -1 });
   
-      // Add AWS S3 media URLs dynamically using utility functions
-      const postsWithMediaUrls = posts.map((post) => {
+      const postsWithMediaUrls = posts.map(post => {
         if (post.media) {
-          // Generate photo URLs
-          if (post.media.photos && post.media.photos.length > 0) {
-            post.media.photos = post.media.photos.map((photo) => {
-              if (photo && photo._id) {
-                return {
-                  ...photo,
-                  url: generatePostImageUrl(photo._id), // Pass only valid IDs
-                };
-              } else {
-                console.warn('Invalid photo:', photo); // Log invalid photo
-                return photo; // Keep it as is or exclude based on your requirements
-              }
-            });
+          if (post.media.photos?.length > 0) {
+            post.media.photos = post.media.photos
+              .filter(photo => photo && photo._id)
+              .map(photo => ({
+                ...photo,
+                url: generatePostImageUrl(photo._id),
+              }));
           }
   
-          // Generate video URLs
-          if (post.media.videos && post.media.videos.length > 0) {
-            post.media.videos = post.media.videos.map((video) => {
-              if (video && video._id) {
-                return {
-                  ...video,
-                  url: generatePostVideoUrl(video._id), // Pass only valid IDs
-                };
-              } else {
-                console.warn('Invalid video:', video); // Log invalid video
-                return video; // Keep it as is or exclude based on your requirements
-              }
-            });
+          if (post.media.videos?.length > 0) {
+            post.media.videos = post.media.videos
+              .filter(video => video && video._id)
+              .map(video => ({
+                ...video,
+                url: generatePostVideoUrl(video._id),
+              }));
           }
         }
         return post;
@@ -173,5 +160,5 @@ export const getAllPosts = async (req, res) => {
         success: false,
       });
     }
-};  
+};
   
