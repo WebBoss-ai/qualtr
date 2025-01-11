@@ -30,46 +30,63 @@ const PostPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         console.log('Form submission started...');
-    
+        
         const formData = new FormData();
         formData.append('category', postCategory);
-        formData.append('type', postType);
         formData.append('text', postText);
-    
-        // Append media files
-        for (let file of media.images) {
-            console.log('Appending photo:', file.name);
-            formData.append('images', file);
-        }
-        for (let file of media.videos) {
-            console.log('Appending video:', file.name);
-            formData.append('videos', file);
+        
+        // Append media files (photos and videos)
+        if (media.images.length > 0) {
+            for (let file of media.images) {
+                console.log('Appending photo:', file.name);
+                formData.append('media[photos]', file);
+            }
         }
     
-        // Append additional data fields explicitly
+        if (media.videos.length > 0) {
+            for (let file of media.videos) {
+                console.log('Appending video:', file.name);
+                formData.append('media[videos]', file);
+            }
+        }
+    
+        // Append additional fields
         if (additionalData.event) {
             console.log('Appending event:', additionalData.event);
-            formData.append('event', additionalData.event);
+            formData.append('event[title]', additionalData.event.title || '');
+            formData.append('event[description]', additionalData.event.description || '');
+            formData.append('event[date]', additionalData.event.date || '');
+            formData.append('event[location]', additionalData.event.location || '');
         }
     
         if (additionalData.occasion) {
             console.log('Appending occasion:', additionalData.occasion);
-            formData.append('occasion', additionalData.occasion);
+            formData.append('occasion[title]', additionalData.occasion.title || '');
+            formData.append('occasion[description]', additionalData.occasion.description || '');
+            formData.append('occasion[date]', additionalData.occasion.date || '');
         }
     
         if (additionalData.jobOpening) {
             console.log('Appending jobOpening:', additionalData.jobOpening);
-            formData.append('jobOpening', additionalData.jobOpening);
+            formData.append('jobOpening[title]', additionalData.jobOpening.title || '');
+            formData.append('jobOpening[description]', additionalData.jobOpening.description || '');
+            formData.append('jobOpening[location]', additionalData.jobOpening.location || '');
+            formData.append('jobOpening[salaryRange]', additionalData.jobOpening.salaryRange || '');
         }
     
         if (additionalData.poll) {
             console.log('Appending poll:', additionalData.poll);
-            formData.append('poll', JSON.stringify(additionalData.poll)); // If it's an object
+            formData.append('poll[question]', additionalData.poll.question || '');
+            additionalData.poll.options.forEach((option, index) => {
+                formData.append(`poll[options][${index}]`, option);
+            });
+            formData.append('poll[endDate]', additionalData.poll.endDate || '');
         }
     
         if (additionalData.document) {
             console.log('Appending document:', additionalData.document);
-            formData.append('document', additionalData.document);
+            formData.append('document[name]', additionalData.document.name || '');
+            formData.append('document[url]', additionalData.document.url || '');
         }
     
         try {
@@ -81,7 +98,7 @@ const PostPage = () => {
         } catch (error) {
             console.error('Failed to create post:', error);
         }
-    };
+    };    
 
     const renderPostTypeFields = () => {
         switch (postType) {
