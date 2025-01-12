@@ -686,14 +686,31 @@ export const getAllProfiles = async (req, res) => {
 
 export const getRandomSuggestedProfiles = async (req, res) => {
     try {
+        console.log("Fetching suggested profiles...");
+
+        // Fetch users with 'profile.suggested' set to true
         const users = await DigitalMarketer.find({ 'profile.suggested': true }).select('-password');
-        const shuffledUsers = users.sort(() => 0.5 - Math.random());
-        const randomProfiles = shuffledUsers.slice(0, 5);
-        
+        console.log(`Total suggested profiles found: ${users.length}`);
+
+        let profiles;
+        if (users.length <= 5) {
+            // If there are 5 or fewer profiles, return all without randomizing
+            console.log("Number of profiles is less than or equal to 5. Returning all profiles.");
+            profiles = users;
+        } else {
+            // If more than 5 profiles, shuffle and select 5
+            console.log("Number of profiles is more than 5. Randomizing profiles...");
+            const shuffledUsers = users.sort(() => 0.5 - Math.random());
+            profiles = shuffledUsers.slice(0, 5);
+        }
+
+        console.log(`Number of profiles being returned: ${profiles.length}`);
+
+        // Format the response
         return res.status(200).json({
             message: 'Suggested profiles retrieved successfully.',
             success: true,
-            profiles: randomProfiles.map(user => ({
+            profiles: profiles.map(user => ({
                 id: user._id,
                 fullname: user.profile.fullname,
                 agencyName: user.profile.agencyName,
@@ -702,7 +719,7 @@ export const getRandomSuggestedProfiles = async (req, res) => {
             }))
         });
     } catch (error) {
-        console.error(error);
+        console.error("Error fetching suggested profiles:", error);
         return res.status(500).json({
             message: 'Internal server error.',
             success: false
