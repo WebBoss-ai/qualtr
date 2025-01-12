@@ -11,7 +11,7 @@ const RandomSuggestedProfiles = () => {
     useEffect(() => {
         const fetchProfiles = async () => {
             try {
-                const response = await axios.get(`${MARKETER_API_END_POINT}/profiles/random-suggested`);
+                const response = await axios.get(`${MARKETER_API_END_POINT}/profile/random-suggested`);
                 setProfiles(response.data.profiles || []); // Ensure it's always an array
             } catch (error) {
                 setError('Failed to fetch profiles.');
