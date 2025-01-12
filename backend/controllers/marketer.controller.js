@@ -743,3 +743,56 @@ export const getRandomSuggestedProfiles = async (req, res) => {
         });
     }
 };
+
+export const getAllProfilesAdmin = async (req, res) => {
+    try {
+        const users = await DigitalMarketer.find().select('-password'); // Exclude sensitive info
+
+        return res.status(200).json({
+            message: 'All profiles retrieved successfully.',
+            success: true,
+            profiles: users.map(user => ({
+                id: user._id,
+                fullname: user.profile.fullname,
+                agencyName: user.profile.agencyName,
+                location: user.profile.location,
+                suggested: user.profile.suggested,
+            })),
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: 'Internal server error.',
+            success: false,
+        });
+    }
+};
+
+export const updateSuggestedStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const user = await DigitalMarketer.findById(id);
+
+        if (!user) {
+            return res.status(404).json({
+                message: 'Profile not found.',
+                success: false,
+            });
+        }
+
+        user.profile.suggested = !user.profile.suggested; // Toggle the status
+        await user.save();
+
+        return res.status(200).json({
+            message: 'Suggested status updated successfully.',
+            success: true,
+            suggested: user.profile.suggested,
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: 'Internal server error.',
+            success: false,
+        });
+    }
+};

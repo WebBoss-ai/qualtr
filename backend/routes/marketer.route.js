@@ -1,5 +1,5 @@
 import express from 'express';
-import { register, login, updateProfile,addCampaign,listAllCampaigns,editEducation,updateExperiences,deleteExperience,updateEducation,deleteEducation, viewProfile, getAllProfiles, editExperience, editCampaign, deleteCampaign, getRandomSuggestedProfiles } from '../controllers/marketer.controller.js';
+import { register, login, updateProfile,addCampaign,listAllCampaigns,editEducation,updateExperiences,deleteExperience,updateEducation,deleteEducation, viewProfile, getAllProfiles, editExperience, editCampaign, deleteCampaign, getRandomSuggestedProfiles, getAllProfilesAdmin, updateSuggestedStatus } from '../controllers/marketer.controller.js';
 import isAuthenticated from '../middlewares/isAuthenticated.js';
 import upload from "../middlewares/multer.js";
 import { createPost, getAllPosts } from '../controllers/post.controller.js';
@@ -12,6 +12,10 @@ router.get('/profiles', getAllProfiles);
 router.get('/posts', getAllPosts);
 router.post('/posts',isAuthenticated, upload.array('images', 10), createPost);
 router.get('/profile/:id', viewProfile);
+
+router.get('/admin/profiles', getAllProfilesAdmin);
+router.put('/admin/profiles/:id/suggested', updateSuggestedStatus)
+
 router.get('/random-suggested', getRandomSuggestedProfiles);
 router.post('/profile/update', isAuthenticated, upload.single('profilePhoto'), updateProfile);
 router.post('/profile/experiences', isAuthenticated, updateExperiences);
