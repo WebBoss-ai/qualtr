@@ -1,6 +1,7 @@
 // components/RandomSuggestedProfiles.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { MARKETER_API_END_POINT } from "@/utils/constant";
 
 const RandomSuggestedProfiles = () => {
     const [profiles, setProfiles] = useState([]); // Initialize as an empty array
@@ -10,7 +11,7 @@ const RandomSuggestedProfiles = () => {
     useEffect(() => {
         const fetchProfiles = async () => {
             try {
-                const response = await axios.get('/api/profiles/random-suggested');
+                const response = await axios.get(`${MARKETER_API_END_POINT}/profiles/random-suggested`);
                 setProfiles(response.data.profiles || []); // Ensure it's always an array
             } catch (error) {
                 setError('Failed to fetch profiles.');
