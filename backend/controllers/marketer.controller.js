@@ -690,6 +690,14 @@ export const getRandomSuggestedProfiles = async (req, res) => {
 
         // Fetch users with 'profile.suggested' set to true
         const users = await DigitalMarketer.find({ 'profile.suggested': true }).select('-password');
+        if (!users || !Array.isArray(users)) {
+            console.error("No suggested profiles found or invalid data format.");
+            return res.status(404).json({
+                message: 'No suggested profiles found.',
+                success: false,
+            });
+        }
+
         console.log(`Total suggested profiles found: ${users.length}`);
 
         let profiles;
@@ -700,8 +708,7 @@ export const getRandomSuggestedProfiles = async (req, res) => {
         } else {
             // If more than 5 profiles, shuffle and select 5
             console.log("Number of profiles is more than 5. Randomizing profiles...");
-            const shuffledUsers = users.sort(() => 0.5 - Math.random());
-            profiles = shuffledUsers.slice(0, 5);
+            profiles = users.sort(() => 0.5 - Math.random()).slice(0, 5);
         }
 
         console.log(`Number of profiles being returned: ${profiles.length}`);
@@ -712,17 +719,27 @@ export const getRandomSuggestedProfiles = async (req, res) => {
             success: true,
             profiles: profiles.map(user => ({
                 id: user._id,
-                fullname: user.profile.fullname,
-                agencyName: user.profile.agencyName,
-                location: user.profile.location,
-                profilePhoto: user.profile.profilePhoto,
-            }))
+                fullname: user.profile?.fullname || 'N/A',
+                agencyName: user.profile?.agencyName || 'N/A',
+                location: user.profile?.location || 'N/A',
+                profilePhoto: user.profile?.profilePhoto || 'default.jpg',
+            })),
         });
     } catch (error) {
         console.error("Error fetching suggested profiles:", error);
+
+        // Handle CastError specifically
+        if (error.name === 'CastError') {
+            return res.status(400).json({
+                message: `Invalid ID format: ${error.stringValue}`,
+                success: false,
+            });
+        }
+
+        // Generic server error
         return res.status(500).json({
             message: 'Internal server error.',
-            success: false
+            success: false,
         });
     }
 };

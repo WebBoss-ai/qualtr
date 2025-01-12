@@ -10,13 +10,20 @@ const RandomSuggestedProfiles = () => {
 
     useEffect(() => {
         const fetchProfiles = async () => {
+            console.log("Fetching random suggested profiles...");
             try {
                 const response = await axios.get(`${MARKETER_API_END_POINT}/profile/random-suggested`);
-                setProfiles(response.data.profiles || []); // Ensure it's always an array
-            } catch (error) {
+                console.log("API response:", response.data);
+
+                // Ensure it's always an array
+                setProfiles(response.data.profiles || []);
+                console.log(`Fetched ${response.data.profiles?.length || 0} profiles.`);
+            } catch (err) {
+                console.error("Error fetching profiles:", err);
                 setError('Failed to fetch profiles.');
             } finally {
                 setLoading(false);
+                console.log("Fetching profiles complete. Loading state set to false.");
             }
         };
 
@@ -24,12 +31,16 @@ const RandomSuggestedProfiles = () => {
     }, []);
 
     if (loading) {
+        console.log("Component is in loading state...");
         return <p>Loading...</p>;
     }
 
     if (error) {
+        console.log("Error occurred:", error);
         return <p>{error}</p>;
     }
+
+    console.log(`Rendering ${profiles.length} profiles...`);
 
     return (
         <div className="profiles-container">
