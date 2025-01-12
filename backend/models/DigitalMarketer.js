@@ -81,6 +81,8 @@ const digitalMarketerSchema = new mongoose.Schema({
     experiences: [experienceSchema],
     education: [educationSchema],
     campaigns: [campaignSchema], // Embedding campaigns in the digital marketer schema
+    followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'DigitalMarketer' }], // List of followers
+    following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'DigitalMarketer' }], // List of following
 }, { timestamps: true });
 
 export const DigitalMarketer = mongoose.model('DigitalMarketer', digitalMarketerSchema);

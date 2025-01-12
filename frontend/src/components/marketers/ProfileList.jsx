@@ -24,6 +24,28 @@ const ProfileList = () => {
         fetchProfiles();
     }, []);
 
+    const handleFollow = async (id) => {
+        try {
+            await axios.post(
+                `${MARKETER_API_END_POINT}/profiles/follow`,
+                {
+                    userId: localStorage.getItem('userId'),
+                    followId: id
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}` // JWT token for follow API
+                    }
+                }
+            );
+            setProfiles(profiles.map(profile =>
+                profile.id === id ? { ...profile, isFollowing: true } : profile
+            ));
+        } catch (error) {
+            console.error('Error following user:', error);
+        }
+    };
+
     const handleProfileClick = (id) => {
         navigate(`/marketer-profile/${id}`); // Navigate to individual profile
     };
@@ -35,6 +57,9 @@ const ProfileList = () => {
                 {profiles.map(profile => (
                     <li key={profile.id} onClick={() => handleProfileClick(profile.id)}>
                         {profile.fullname} - {profile.agencyName} ({profile.location})
+                        <button onClick={() => handleFollow(profile.id)}>
+                            {profile.isFollowing ? 'Following' : 'Follow'}
+                        </button>
                     </li>
                 ))}
             </ul>

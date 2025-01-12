@@ -672,7 +672,9 @@ export const getAllProfiles = async (req, res) => {
                 id: user._id,
                 fullname: user.profile.fullname,
                 agencyName: user.profile.agencyName,
-                location: user.profile.location
+                location: user.profile.location,
+                followers: user.followers.length, // Count followers
+                following: user.following.length, // Count following
             }))
         });
     } catch (error) {
@@ -787,6 +789,74 @@ export const updateSuggestedStatus = async (req, res) => {
             message: 'Suggested status updated successfully.',
             success: true,
             suggested: user.profile.suggested,
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: 'Internal server error.',
+            success: false,
+        });
+    }
+};
+
+export const followUser = async (req, res) => {
+    try {
+        const { userId, followId } = req.body; // Logged-in user and the user to be followed
+
+        const user = await DigitalMarketer.findById(userId);
+        const followUser = await DigitalMarketer.findById(followId);
+
+        if (!user || !followUser) {
+            return res.status(404).json({
+                message: 'User not found.',
+                success: false,
+            });
+        }
+
+        // Add to following and followers if not already added
+        if (!user.following.includes(followId)) {
+            user.following.push(followId);
+            followUser.followers.push(userId);
+
+            await user.save();
+            await followUser.save();
+        }
+
+        return res.status(200).json({
+            message: 'User followed successfully.',
+            success: true,
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: 'Internal server error.',
+            success: false,
+        });
+    }
+};
+
+export const getFollowers = async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+        const user = await DigitalMarketer.findById(userId).populate('followers', 'profile.fullname profile.agencyName profile.location');
+
+        if (!user) {
+            return res.status(404).json({
+                message: 'User not found.',
+                success: false,
+            });
+        }
+
+        return res.status(200).json({
+            message: 'Followers retrieved successfully.',
+            success: true,
+            followers: user.followers.map(follower => ({
+                id: follower._id,
+                fullname: follower.profile.fullname,
+                agencyName: follower.profile.agencyName,
+                location: follower.profile.location,
+            })),
         });
     } catch (error) {
         console.error(error);
