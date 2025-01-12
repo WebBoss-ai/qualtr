@@ -12,7 +12,7 @@ const RandomSuggestedProfiles = () => {
         const fetchProfiles = async () => {
             console.log("Fetching random suggested profiles...");
             try {
-                const response = await axios.get(`${MARKETER_API_END_POINT}/profile/random-suggested`);
+                const response = await axios.get(`${MARKETER_API_END_POINT}/random-suggested`);
                 console.log("API response:", response.data);
 
                 // Ensure it's always an array

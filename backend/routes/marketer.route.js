@@ -12,7 +12,7 @@ router.get('/profiles', getAllProfiles);
 router.get('/posts', getAllPosts);
 router.post('/posts',isAuthenticated, upload.array('images', 10), createPost);
 router.get('/profile/:id', viewProfile);
-router.get('/profile/random-suggested', getRandomSuggestedProfiles);
+router.get('/random-suggested', getRandomSuggestedProfiles);
 router.post('/profile/update', isAuthenticated, upload.single('profilePhoto'), updateProfile);
 router.post('/profile/experiences', isAuthenticated, updateExperiences);
 router.post('/profile/education', isAuthenticated, updateEducation);
