@@ -663,7 +663,7 @@ export const viewProfile = async (req, res) => {
 // Get all profiles
 export const getAllProfiles = async (req, res) => {
     try {
-        const loggedInUserId = req.user.id; // Assuming the user ID is available in req.user
+        const loggedInUserId = req.id; // Assuming the user ID is available in req.user
         const users = await DigitalMarketer.find().select('-password'); // Exclude password from response
 
         return res.status(200).json({
