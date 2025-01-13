@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MARKETER_API_END_POINT } from '@/utils/constant';
 import axios from 'axios';
+import { MARKETER_API_END_POINT } from '@/utils/constant';
 
 const ProfileList = () => {
     const [profiles, setProfiles] = useState([]);
@@ -29,36 +29,23 @@ const ProfileList = () => {
     }, []);
 
     const handleFollow = async (id) => {
-        console.log(`Attempting to follow profile with ID: ${id}`); // Debugging statement
         try {
             const token = localStorage.getItem('token');
             const userId = localStorage.getItem('userId');
-            console.log("Token:", token); // Debugging statement
-            console.log("User ID:", userId); // Debugging statement
-            const response = await axios.post(
+            await axios.post(
                 `${MARKETER_API_END_POINT}/profiles/follow`,
+                { userId, followId: id },
                 {
-                    userId: userId,
-                    followId: id
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}` // JWT token for follow API
-                    }
+                    headers: { Authorization: `Bearer ${token}` },
                 }
             );
-            console.log("Follow API response:", response.data); // Debugging statement
+
             setProfiles(profiles.map(profile =>
                 profile.id === id ? { ...profile, isFollowing: true } : profile
             ));
         } catch (error) {
-            console.error('Error following user:', error); // Debugging statement
+            console.error('Error following user:', error);
         }
-    };
-
-    const handleProfileClick = (id) => {
-        console.log(`Navigating to profile with ID: ${id}`); // Debugging statement
-        navigate(`/marketer-profile/${id}`); // Navigate to individual profile
     };
 
     return (
@@ -66,13 +53,9 @@ const ProfileList = () => {
             <h1>All Profiles</h1>
             <ul>
                 {profiles.map(profile => (
-                    <li key={profile.id} onClick={() => handleProfileClick(profile.id)}>
+                    <li key={profile.id}>
                         {profile.fullname} - {profile.agencyName} ({profile.location})
-                        <button onClick={(e) => {
-                            e.stopPropagation(); // Prevent parent click event
-                            console.log(`Follow button clicked for profile ID: ${profile.id}`); // Debugging statement
-                            handleFollow(profile.id);
-                        }}>
+                        <button onClick={() => handleFollow(profile.id)}>
                             {profile.isFollowing ? 'Following' : 'Follow'}
                         </button>
                     </li>

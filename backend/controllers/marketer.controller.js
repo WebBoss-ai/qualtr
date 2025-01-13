@@ -663,7 +663,28 @@ export const viewProfile = async (req, res) => {
 // Get all profiles
 export const getAllProfiles = async (req, res) => {
     try {
-        const users = await DigitalMarketer.find().select('-password'); // Exclude password from response
+        const { userId } = req.body;
+        if (!userId) {
+            return res.status(400).json({
+                message: 'User ID is required.',
+                success: false,
+            });
+        }
+
+        const users = await DigitalMarketer.find()
+            .select('-password')
+            .populate('followers following', '_id');
+
+        const loggedInUser = await DigitalMarketer.findById(userId).populate('following', '_id');
+
+        if (!loggedInUser) {
+            return res.status(404).json({
+                message: 'Logged-in user not found.',
+                success: false,
+            });
+        }
+
+        const followingSet = new Set(loggedInUser.following.map(following => following._id.toString()));
 
         return res.status(200).json({
             message: 'All profiles retrieved successfully.',
@@ -673,15 +694,16 @@ export const getAllProfiles = async (req, res) => {
                 fullname: user.profile.fullname,
                 agencyName: user.profile.agencyName,
                 location: user.profile.location,
-                followers: user.followers.length, // Count followers
-                following: user.following.length, // Count following
-            }))
+                followers: user.followers.length,
+                following: user.following.length,
+                isFollowing: followingSet.has(user._id.toString()),
+            })),
         });
     } catch (error) {
-        console.error(error);
+        console.error('Error fetching profiles:', error);
         return res.status(500).json({
             message: 'Internal server error.',
-            success: false
+            success: false,
         });
     }
 };
@@ -805,40 +827,41 @@ export const followUser = async (req, res) => {
 
         if (!userId || !followId) {
             return res.status(400).json({
-                message: 'Invalid request. User IDs are required.',
+                message: 'User IDs are required.',
                 success: false,
             });
         }
 
-        const user = await DigitalMarketer.findById(userId);
-        const followUser = await DigitalMarketer.findById(followId);
+        const [user, followUser] = await Promise.all([
+            DigitalMarketer.findById(userId),
+            DigitalMarketer.findById(followId),
+        ]);
 
         if (!user || !followUser) {
             return res.status(404).json({
-                message: 'User not found.',
+                message: 'One or both users not found.',
                 success: false,
             });
         }
 
-        // Use atomic operations to update both documents
-        const userUpdate = DigitalMarketer.updateOne(
-            { _id: userId },
-            { $addToSet: { following: followId } }
-        );
+        if (user.following.includes(followId)) {
+            return res.status(400).json({
+                message: 'Already following this user.',
+                success: false,
+            });
+        }
 
-        const followUserUpdate = DigitalMarketer.updateOne(
-            { _id: followId },
-            { $addToSet: { followers: userId } }
-        );
+        user.following.push(followId);
+        followUser.followers.push(userId);
 
-        await Promise.all([userUpdate, followUserUpdate]);
+        await Promise.all([user.save(), followUser.save()]);
 
         return res.status(200).json({
-            message: 'User followed successfully.',
+            message: 'Followed user successfully.',
             success: true,
         });
     } catch (error) {
-        console.error('Error in followUser:', error);
+        console.error('Error following user:', error);
         return res.status(500).json({
             message: 'Internal server error.',
             success: false,
