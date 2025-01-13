@@ -663,6 +663,7 @@ export const viewProfile = async (req, res) => {
 // Get all profiles
 export const getAllProfiles = async (req, res) => {
     try {
+        const loggedInUserId = req.user.id; // Assuming the user ID is available in req.user
         const users = await DigitalMarketer.find().select('-password'); // Exclude password from response
 
         return res.status(200).json({
@@ -675,6 +676,7 @@ export const getAllProfiles = async (req, res) => {
                 location: user.profile.location,
                 followers: user.followers.length, // Count followers
                 following: user.following.length, // Count following
+                isFollowing: user.followers.includes(loggedInUserId) // Check if logged-in user is following
             }))
         });
     } catch (error) {

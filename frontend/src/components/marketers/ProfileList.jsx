@@ -1,27 +1,51 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MARKETER_API_END_POINT } from '@/utils/constant';
+import { useSelector } from 'react-redux';
 import axios from 'axios';
+import { MARKETER_API_END_POINT } from '@/utils/constant';
+
+const LoginModal = ({ isOpen, onClose }) => {
+    if (!isOpen) return null;
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+                <h2 className="text-lg font-semibold mb-4">You need to log in</h2>
+                <p className="text-gray-600 mb-6">Please log in to follow profiles or view details.</p>
+                <div className="flex justify-end">
+                    <button
+                        className="bg-blue-500 text-white px-4 py-2 rounded-lg mr-2"
+                        onClick={() => (window.location.href = '/marketer/login')}
+                    >
+                        Login
+                    </button>
+                    <button className="bg-gray-200 px-4 py-2 rounded-lg" onClick={onClose}>
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
 
 const ProfileList = () => {
     const [profiles, setProfiles] = useState([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const navigate = useNavigate();
+    const { user } = useSelector((store) => store.auth); // Fetch authentication state
 
     useEffect(() => {
         const fetchProfiles = async () => {
-            console.log("Fetching profiles..."); // Debugging statement
             try {
                 const token = localStorage.getItem('token');
-                console.log("Token:", token); // Debugging statement
                 const response = await axios.get(`${MARKETER_API_END_POINT}/profiles`, {
                     headers: {
-                        Authorization: `Bearer ${token}` // Add JWT token
-                    }
+                        Authorization: `Bearer ${token}`,
+                    },
                 });
-                console.log("Profiles fetched successfully:", response.data.profiles); // Debugging statement
                 setProfiles(response.data.profiles);
             } catch (error) {
-                console.error('Error fetching profiles:', error); // Debugging statement
+                console.error('Error fetching profiles:', error);
             }
         };
 
@@ -29,55 +53,69 @@ const ProfileList = () => {
     }, []);
 
     const handleFollow = async (id) => {
-        console.log(`Attempting to follow profile with ID: ${id}`); // Debugging statement
+        if (!user) {
+            setIsModalOpen(true);
+            return;
+        }
+
         try {
             const token = localStorage.getItem('token');
             const userId = localStorage.getItem('userId');
-            console.log("Token:", token); // Debugging statement
-            console.log("User ID:", userId); // Debugging statement
             const response = await axios.post(
                 `${MARKETER_API_END_POINT}/profiles/follow`,
-                {
-                    userId: userId,
-                    followId: id
-                },
+                { userId, followId: id },
                 {
                     headers: {
-                        Authorization: `Bearer ${token}` // JWT token for follow API
-                    }
+                        Authorization: `Bearer ${token}`,
+                    },
                 }
             );
-            console.log("Follow API response:", response.data); // Debugging statement
-            setProfiles(profiles.map(profile =>
-                profile.id === id ? { ...profile, isFollowing: true } : profile
-            ));
+            setProfiles(
+                profiles.map((profile) =>
+                    profile.id === id
+                        ? {
+                              ...profile,
+                              isFollowing: true,
+                              followers: profile.followers + 1,
+                          }
+                        : profile
+                )
+            );
         } catch (error) {
-            console.error('Error following user:', error); // Debugging statement
+            console.error('Error following user:', error);
         }
     };
 
     const handleProfileClick = (id) => {
-        console.log(`Navigating to profile with ID: ${id}`); // Debugging statement
-        navigate(`/marketer-profile/${id}`); // Navigate to individual profile
+        if (!user) {
+            setIsModalOpen(true);
+            return;
+        }
+        navigate(`/marketer-profile/${id}`);
     };
 
     return (
         <div>
             <h1>All Profiles</h1>
             <ul>
-                {profiles.map(profile => (
+                {profiles.map((profile) => (
                     <li key={profile.id} onClick={() => handleProfileClick(profile.id)}>
-                        {profile.fullname} - {profile.agencyName} ({profile.location})
-                        <button onClick={(e) => {
-                            e.stopPropagation(); // Prevent parent click event
-                            console.log(`Follow button clicked for profile ID: ${profile.id}`); // Debugging statement
-                            handleFollow(profile.id);
-                        }}>
+                        <div>
+                            <strong>{profile.fullname}</strong> - {profile.agencyName} ({profile.location})
+                        </div>
+                        <div>Followers: {profile.followers}</div>
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleFollow(profile.id);
+                            }}
+                        >
                             {profile.isFollowing ? 'Following' : 'Follow'}
                         </button>
                     </li>
                 ))}
             </ul>
+            <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
         </div>
     );
 };
