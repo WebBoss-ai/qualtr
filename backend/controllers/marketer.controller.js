@@ -801,7 +801,14 @@ export const updateSuggestedStatus = async (req, res) => {
 
 export const followUser = async (req, res) => {
     try {
-        const { userId, followId } = req.body; // Logged-in user and the user to be followed
+        const { userId, followId } = req.body;
+
+        if (!userId || !followId) {
+            return res.status(400).json({
+                message: 'Invalid request. User IDs are required.',
+                success: false,
+            });
+        }
 
         const user = await DigitalMarketer.findById(userId);
         const followUser = await DigitalMarketer.findById(followId);
@@ -813,21 +820,25 @@ export const followUser = async (req, res) => {
             });
         }
 
-        // Add to following and followers if not already added
-        if (!user.following.includes(followId)) {
-            user.following.push(followId);
-            followUser.followers.push(userId);
+        // Use atomic operations to update both documents
+        const userUpdate = DigitalMarketer.updateOne(
+            { _id: userId },
+            { $addToSet: { following: followId } }
+        );
 
-            await user.save();
-            await followUser.save();
-        }
+        const followUserUpdate = DigitalMarketer.updateOne(
+            { _id: followId },
+            { $addToSet: { followers: userId } }
+        );
+
+        await Promise.all([userUpdate, followUserUpdate]);
 
         return res.status(200).json({
             message: 'User followed successfully.',
             success: true,
         });
     } catch (error) {
-        console.error(error);
+        console.error('Error in followUser:', error);
         return res.status(500).json({
             message: 'Internal server error.',
             success: false,
