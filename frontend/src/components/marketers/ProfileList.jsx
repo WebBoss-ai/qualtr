@@ -9,15 +9,19 @@ const ProfileList = () => {
 
     useEffect(() => {
         const fetchProfiles = async () => {
+            console.log("Fetching profiles..."); // Debugging statement
             try {
+                const token = localStorage.getItem('token');
+                console.log("Token:", token); // Debugging statement
                 const response = await axios.get(`${MARKETER_API_END_POINT}/profiles`, {
                     headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}` // Add JWT token
+                        Authorization: `Bearer ${token}` // Add JWT token
                     }
                 });
+                console.log("Profiles fetched successfully:", response.data.profiles); // Debugging statement
                 setProfiles(response.data.profiles);
             } catch (error) {
-                console.error('Error fetching profiles:', error);
+                console.error('Error fetching profiles:', error); // Debugging statement
             }
         };
 
@@ -25,28 +29,35 @@ const ProfileList = () => {
     }, []);
 
     const handleFollow = async (id) => {
+        console.log(`Attempting to follow profile with ID: ${id}`); // Debugging statement
         try {
-            await axios.post(
+            const token = localStorage.getItem('token');
+            const userId = localStorage.getItem('userId');
+            console.log("Token:", token); // Debugging statement
+            console.log("User ID:", userId); // Debugging statement
+            const response = await axios.post(
                 `${MARKETER_API_END_POINT}/profiles/follow`,
                 {
-                    userId: localStorage.getItem('userId'),
+                    userId: userId,
                     followId: id
                 },
                 {
                     headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}` // JWT token for follow API
+                        Authorization: `Bearer ${token}` // JWT token for follow API
                     }
                 }
             );
+            console.log("Follow API response:", response.data); // Debugging statement
             setProfiles(profiles.map(profile =>
                 profile.id === id ? { ...profile, isFollowing: true } : profile
             ));
         } catch (error) {
-            console.error('Error following user:', error);
+            console.error('Error following user:', error); // Debugging statement
         }
     };
 
     const handleProfileClick = (id) => {
+        console.log(`Navigating to profile with ID: ${id}`); // Debugging statement
         navigate(`/marketer-profile/${id}`); // Navigate to individual profile
     };
 
@@ -57,7 +68,11 @@ const ProfileList = () => {
                 {profiles.map(profile => (
                     <li key={profile.id} onClick={() => handleProfileClick(profile.id)}>
                         {profile.fullname} - {profile.agencyName} ({profile.location})
-                        <button onClick={() => handleFollow(profile.id)}>
+                        <button onClick={(e) => {
+                            e.stopPropagation(); // Prevent parent click event
+                            console.log(`Follow button clicked for profile ID: ${profile.id}`); // Debugging statement
+                            handleFollow(profile.id);
+                        }}>
                             {profile.isFollowing ? 'Following' : 'Follow'}
                         </button>
                     </li>

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { MARKETER_API_END_POINT } from '@/utils/constant';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';  // Replace useHistory with useNavigate
+import { useNavigate } from 'react-router-dom';
 
 const MarketerLogin = () => {
   const [formData, setFormData] = useState({
@@ -11,7 +11,7 @@ const MarketerLogin = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();  // Initialize useNavigate for redirection
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,11 +23,15 @@ const MarketerLogin = () => {
     setIsLoading(true);
     try {
       const res = await axios.post(`${MARKETER_API_END_POINT}/login`, formData);
+      
+      // Store token and user ID in localStorage
       localStorage.setItem('token', res.data.token);
+      localStorage.setItem('userId', res.data._id);
+
       alert('Login successful');
       
-      // Redirect to the profile update page after successful login
-      navigate('/marketer-profile/update');  // Use navigate to redirect
+      // Redirect to the profile update page
+      navigate('/marketer-profile/update');
     } catch (error) {
       alert('Login failed. Please try again.');
     } finally {
