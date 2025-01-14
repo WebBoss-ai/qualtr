@@ -663,35 +663,37 @@ export const viewProfile = async (req, res) => {
 // Get all profiles
 export const getAllProfiles = async (req, res) => {
     try {
-        const loggedInUserId = req.id; // Will be null for non-authenticated users
-        const users = await DigitalMarketer.find().select('-password'); // Exclude password
+        const { fullname, location, agencyName } = req.query;
+        const filters = {};
 
-        return res.status(200).json({
-            message: 'All profiles retrieved successfully.',
-            success: true,
-            profiles: await Promise.all(users.map(async (user) => {
-                const profilePhotoURL = user.profile.profilePhoto
-                    ? await getObjectURL(user.profile.profilePhoto) // Generate a presigned URL for the profile photo
-                    : null;
+        if (fullname) filters['profile.fullname'] = { $regex: fullname, $options: 'i' };
+        if (location) filters['profile.location'] = { $regex: location, $options: 'i' };
+        if (agencyName) filters['profile.agencyName'] = { $regex: agencyName, $options: 'i' };
 
-                return {
-                    id: user._id,
-                    fullname: user.profile.fullname,
-                    agencyName: user.profile.agencyName,
-                    location: user.profile.location,
-                    followers: user.followers.length, // Count followers
-                    following: user.following.length, // Count following
-                    isFollowing: loggedInUserId ? user.followers.includes(loggedInUserId) : false, // Check if logged-in user is following
-                    profilePhoto: profilePhotoURL, // Include profile photo URL
-                };
-            })),
-        });
+        const loggedInUserId = req.id;
+        const users = await DigitalMarketer.find(filters).select('-password');
+
+        const profiles = await Promise.all(users.map(async (user) => {
+            const profilePhotoURL = user.profile.profilePhoto
+                ? await getObjectURL(user.profile.profilePhoto)
+                : null;
+
+            return {
+                id: user._id,
+                fullname: user.profile.fullname,
+                agencyName: user.profile.agencyName,
+                location: user.profile.location,
+                followers: user.followers.length,
+                following: user.following.length,
+                isFollowing: loggedInUserId ? user.followers.includes(loggedInUserId) : false,
+                profilePhoto: profilePhotoURL,
+            };
+        }));
+
+        res.status(200).json({ success: true, message: 'Profiles retrieved successfully.', profiles });
     } catch (error) {
         console.error(error);
-        return res.status(500).json({
-            message: 'Internal server error.',
-            success: false,
-        });
+        res.status(500).json({ success: false, message: 'Internal server error.' });
     }
 };
 

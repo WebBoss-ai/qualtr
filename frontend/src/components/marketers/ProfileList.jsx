@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { MARKETER_API_END_POINT } from '@/utils/constant';
 import TrendingPosts from './post/TrendingPosts';
+import debounce from 'lodash.debounce';
 
 const LoginModal = ({ isOpen, onClose }) => {
     if (!isOpen) return null;
@@ -28,11 +29,75 @@ const LoginModal = ({ isOpen, onClose }) => {
     );
 };
 
+const AdvancedSearch = ({ onSearch }) => {
+    const [filters, setFilters] = useState({
+        fullname: '',
+        location: '',
+        agencyName: '',
+    });
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFilters((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+        onSearch({ ...filters, [name]: value });
+    };
+
+    return (
+        <div className="p-4 bg-gray-100 rounded-lg mb-6">
+            <h3 className="text-lg font-semibold mb-2">Advanced Search</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <input
+                    type="text"
+                    name="fullname"
+                    placeholder="Full Name"
+                    value={filters.fullname}
+                    onChange={handleInputChange}
+                    className="p-2 border rounded"
+                />
+                <input
+                    type="text"
+                    name="location"
+                    placeholder="Location"
+                    value={filters.location}
+                    onChange={handleInputChange}
+                    className="p-2 border rounded"
+                />
+                <input
+                    type="text"
+                    name="agencyName"
+                    placeholder="Agency Name"
+                    value={filters.agencyName}
+                    onChange={handleInputChange}
+                    className="p-2 border rounded"
+                />
+            </div>
+        </div>
+    );
+};
+
 const ProfileList = () => {
     const [profiles, setProfiles] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [user, setUser] = useState(null); // Authentication state
     const navigate = useNavigate();
+
+    const fetchProfiles = async (filters = {}) => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) return;
+
+            const response = await axios.get(`${MARKETER_API_END_POINT}/profiles`, {
+                headers: { Authorization: `Bearer ${token}` },
+                params: filters,
+            });
+            setProfiles(response.data.profiles);
+        } catch (error) {
+            console.error('Error fetching profiles:', error.response?.data || error.message);
+        }
+    };
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -42,25 +107,15 @@ const ProfileList = () => {
             setUser({ id: userId, token });
         }
 
-        const fetchProfiles = async () => {
-            try {
-                if (!token) {
-                    return;
-                }
-
-                const response = await axios.get(`${MARKETER_API_END_POINT}/profiles`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                setProfiles(response.data.profiles);
-            } catch (error) {
-                console.error('Error fetching profiles:', error.response?.data || error.message);
-            }
-        };
-
         fetchProfiles();
     }, []);
+
+    const handleSearch = useCallback(
+        debounce((filters) => {
+            fetchProfiles(filters);
+        }, 300),
+        [] // Empty dependency array ensures the debounce function is stable
+    );
 
     const handleFollow = async (id) => {
         if (!user) {
@@ -69,7 +124,7 @@ const ProfileList = () => {
         }
 
         try {
-            const response = await axios.post(
+            await axios.post(
                 `${MARKETER_API_END_POINT}/profiles/follow`,
                 { userId: user.id, followId: id },
                 { headers: { Authorization: `Bearer ${user.token}` } }
@@ -104,6 +159,7 @@ const ProfileList = () => {
     return (
         <div>
             <h1>All Profiles</h1>
+            <AdvancedSearch onSearch={handleSearch} />
             <ul>
                 {profiles.map((profile) => (
                     <li key={profile.id} onClick={() => handleProfileClick(profile.id)}>
@@ -117,8 +173,9 @@ const ProfileList = () => {
                             )}
                         </div>
                         <div>
-                            <strong>{profile.fullname}</strong> - {profile.agencyName} ({profile.location})
+                            <strong>{profile.fullname}</strong> - {profile.agencyName}
                         </div>
+                        <p>{profile.location}</p>
                         <div>Followers: {profile.followers}</div>
                         <button
                             disabled={profile.isFollowing}
