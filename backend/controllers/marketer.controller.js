@@ -669,7 +669,10 @@ export const getAllProfiles = async (req, res) => {
         return res.status(200).json({
             message: 'All profiles retrieved successfully.',
             success: true,
-            profiles: users.map(user => {
+            profiles: await Promise.all(users.map(async (user) => {
+                const profilePhotoURL = user.profile.profilePhoto
+                    ? await getObjectURL(user.profile.profilePhoto) // Generate a presigned URL for the profile photo
+                    : null;
 
                 return {
                     id: user._id,
@@ -679,8 +682,9 @@ export const getAllProfiles = async (req, res) => {
                     followers: user.followers.length, // Count followers
                     following: user.following.length, // Count following
                     isFollowing: loggedInUserId ? user.followers.includes(loggedInUserId) : false, // Check if logged-in user is following
+                    profilePhoto: profilePhotoURL, // Include profile photo URL
                 };
-            }),
+            })),
         });
     } catch (error) {
         console.error(error);
