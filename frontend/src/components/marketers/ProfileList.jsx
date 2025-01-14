@@ -34,17 +34,16 @@ const ProfileList = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Fetch user details from localStorage
         const token = localStorage.getItem('token');
         const userId = localStorage.getItem('userId');
 
         if (token && userId) {
             setUser({ id: userId, token });
+            console.log('User authenticated:', { userId, token });
         } else {
             console.warn('User not authenticated. Token or userId missing.');
         }
 
-        // Fetch profiles
         const fetchProfiles = async () => {
             try {
                 if (!token) {
@@ -57,6 +56,7 @@ const ProfileList = () => {
                         Authorization: `Bearer ${token}`,
                     },
                 });
+                console.log('Fetched profiles:', response.data.profiles);
                 setProfiles(response.data.profiles);
             } catch (error) {
                 console.error('Error fetching profiles:', error.response?.data || error.message);
@@ -71,29 +71,34 @@ const ProfileList = () => {
             setIsModalOpen(true);
             return;
         }
-    
+
+        console.log(`Attempting to follow user with ID: ${id}`);
         try {
             const response = await axios.post(
                 `${MARKETER_API_END_POINT}/profiles/follow`,
                 { userId: user.id, followId: id },
                 { headers: { Authorization: `Bearer ${user.token}` } }
             );
-    
+
+            console.log(`Successfully followed user with ID: ${id}`, response.data);
+
             setProfiles((prevProfiles) =>
-                prevProfiles.map((profile) =>
-                    profile.id === id
-                        ? {
-                              ...profile,
-                              isFollowing: true,
-                              followers: profile.followers + 1,
-                          }
-                        : profile
-                )
+                prevProfiles.map((profile) => {
+                    if (profile.id === id) {
+                        console.log(`Updating profile with ID: ${id}`, { ...profile, isFollowing: true });
+                        return {
+                            ...profile,
+                            isFollowing: true,
+                            followers: profile.followers + 1,
+                        };
+                    }
+                    return profile;
+                })
             );
         } catch (error) {
             console.error('Error following user:', error.response?.data || error.message);
         }
-    };    
+    };
 
     const handleProfileClick = (id) => {
         if (!user) {
@@ -101,6 +106,7 @@ const ProfileList = () => {
             return;
         }
 
+        console.log(`Navigating to profile with ID: ${id}`);
         navigate(`/marketer-profile/${id}`);
     };
 
@@ -114,6 +120,7 @@ const ProfileList = () => {
                             <strong>{profile.fullname}</strong> - {profile.agencyName} ({profile.location})
                         </div>
                         <div>Followers: {profile.followers}</div>
+                        <div>isFollowing: {profile.isFollowing ? 'Yes' : 'No'}</div>
                         <button
                             disabled={profile.isFollowing}
                             onClick={(e) => {
