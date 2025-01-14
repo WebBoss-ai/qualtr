@@ -34,7 +34,7 @@ const ProfileList = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Check for user in localStorage on component mount
+        // Fetch user details from localStorage
         const token = localStorage.getItem('token');
         const userId = localStorage.getItem('userId');
 
@@ -52,13 +52,11 @@ const ProfileList = () => {
                     return;
                 }
 
-                console.log('Fetching profiles with token:', token);
                 const response = await axios.get(`${MARKETER_API_END_POINT}/profiles`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 });
-                console.log('Profiles fetched successfully:', response.data);
                 setProfiles(response.data.profiles);
             } catch (error) {
                 console.error('Error fetching profiles:', error.response?.data || error.message);
@@ -70,13 +68,11 @@ const ProfileList = () => {
 
     const handleFollow = async (id) => {
         if (!user) {
-            console.warn('User is not authenticated. Showing login modal.');
             setIsModalOpen(true);
             return;
         }
 
         try {
-            console.log('Following user with token:', user.token, 'userId:', user.id, 'followId:', id);
             const response = await axios.post(
                 `${MARKETER_API_END_POINT}/profiles/follow`,
                 { userId: user.id, followId: id },
@@ -86,7 +82,6 @@ const ProfileList = () => {
                     },
                 }
             );
-            console.log('Follow successful:', response.data);
 
             setProfiles(
                 profiles.map((profile) =>
@@ -106,12 +101,10 @@ const ProfileList = () => {
 
     const handleProfileClick = (id) => {
         if (!user) {
-            console.warn('User is not authenticated. Showing login modal.');
             setIsModalOpen(true);
             return;
         }
 
-        console.log('Navigating to profile page for id:', id);
         navigate(`/marketer-profile/${id}`);
     };
 
@@ -126,10 +119,14 @@ const ProfileList = () => {
                         </div>
                         <div>Followers: {profile.followers}</div>
                         <button
+                            disabled={profile.isFollowing}
                             onClick={(e) => {
                                 e.stopPropagation();
                                 handleFollow(profile.id);
                             }}
+                            className={`px-4 py-2 rounded-lg ${
+                                profile.isFollowing ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 text-white'
+                            }`}
                         >
                             {profile.isFollowing ? 'Following' : 'Follow'}
                         </button>
