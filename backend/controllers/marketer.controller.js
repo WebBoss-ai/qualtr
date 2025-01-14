@@ -663,8 +663,8 @@ export const viewProfile = async (req, res) => {
 // Get all profiles
 export const getAllProfiles = async (req, res) => {
     try {
-        const loggedInUserId = req.id; // Assuming the user ID is available in req.user
-        const users = await DigitalMarketer.find().select('-password'); // Exclude password from response
+        const loggedInUserId = req.id; // Assuming the user ID is available in req
+        const users = await DigitalMarketer.find().select('-password'); // Exclude password
 
         return res.status(200).json({
             message: 'All profiles retrieved successfully.',
@@ -676,14 +676,14 @@ export const getAllProfiles = async (req, res) => {
                 location: user.profile.location,
                 followers: user.followers.length, // Count followers
                 following: user.following.length, // Count following
-                isFollowing: user.followers.includes(loggedInUserId) // Check if logged-in user is following
-            }))
+                isFollowing: user.followers.includes(loggedInUserId), // Check if logged-in user is following
+            })),
         });
     } catch (error) {
         console.error(error);
         return res.status(500).json({
             message: 'Internal server error.',
-            success: false
+            success: false,
         });
     }
 };

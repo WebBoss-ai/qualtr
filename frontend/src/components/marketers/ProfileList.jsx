@@ -71,20 +71,16 @@ const ProfileList = () => {
             setIsModalOpen(true);
             return;
         }
-
+    
         try {
             const response = await axios.post(
                 `${MARKETER_API_END_POINT}/profiles/follow`,
                 { userId: user.id, followId: id },
-                {
-                    headers: {
-                        Authorization: `Bearer ${user.token}`,
-                    },
-                }
+                { headers: { Authorization: `Bearer ${user.token}` } }
             );
-
-            setProfiles(
-                profiles.map((profile) =>
+    
+            setProfiles((prevProfiles) =>
+                prevProfiles.map((profile) =>
                     profile.id === id
                         ? {
                               ...profile,
@@ -97,7 +93,7 @@ const ProfileList = () => {
         } catch (error) {
             console.error('Error following user:', error.response?.data || error.message);
         }
-    };
+    };    
 
     const handleProfileClick = (id) => {
         if (!user) {
