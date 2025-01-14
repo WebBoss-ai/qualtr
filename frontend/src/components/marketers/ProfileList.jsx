@@ -46,11 +46,6 @@ const ProfileList = () => {
 
         const fetchProfiles = async () => {
             try {
-                if (!token) {
-                    console.warn('No token found. Skipping profile fetch.');
-                    return;
-                }
-
                 const response = await axios.get(`${MARKETER_API_END_POINT}/profiles`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -117,6 +112,7 @@ const ProfileList = () => {
                 {profiles.map((profile) => (
                     <li key={profile.id} onClick={() => handleProfileClick(profile.id)}>
                         <div>
+                            <img src={profile.profilePhoto} alt={profile.fullname} className="w-16 h-16 rounded-full" />
                             <strong>{profile.fullname}</strong> - {profile.agencyName} ({profile.location})
                         </div>
                         <div>Followers: {profile.followers}</div>
@@ -133,6 +129,23 @@ const ProfileList = () => {
                         >
                             {profile.isFollowing ? 'Following' : 'Follow'}
                         </button>
+                        <div>
+                            <h3>Recent Posts</h3>
+                            <ul>
+                                {profile.posts.map((post) => (
+                                    <li key={post.id}>
+                                        <div>{post.content}</div>
+                                        {post.media && post.media.length > 0 && (
+                                            <div>
+                                                {post.media.map((media, idx) => (
+                                                    <img key={idx} src={media.url} alt={`Post Media ${idx}`} className="w-full" />
+                                                ))}
+                                            </div>
+                                        )}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
                     </li>
                 ))}
             </ul>

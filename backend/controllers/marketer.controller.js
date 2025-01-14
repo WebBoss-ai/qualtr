@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import { DigitalMarketer } from '../models/DigitalMarketer.js';
 import { uploadMarketerProfilePhoto, uploadCampaignImages, getObjectURL, getObjectURL2, deleteCampaignImage } from '../utils/aws.js';
 import mongoose from 'mongoose';
+import { Post } from '../models/Post.js';
 
 export const register = async (req, res) => {
     try {
@@ -666,21 +667,40 @@ export const getAllProfiles = async (req, res) => {
         const loggedInUserId = req.id; // Will be null for non-authenticated users
         const users = await DigitalMarketer.find().select('-password'); // Exclude password
 
+        const profiles = await Promise.all(users.map(async (user) => {
+            // Get profile photo URL
+            const profilePhotoURL = user.profile.profilePhoto
+                ? await getObjectURL(user.profile.profilePhoto) // Assume you have a function to generate URL
+                : null;
+
+            // Get 10 random posts for the user
+            const posts = await Post.find({ author: user._id })
+                .populate('author', 'profile.fullname profile.profilePicture')
+                .sort({ createdAt: -1 }); // Sort by latest post
+            
+            const randomPosts = posts.sort(() => 0.5 - Math.random()).slice(0, 10); // Randomly select 10 posts
+
+            return {
+                id: user._id,
+                fullname: user.profile.fullname,
+                agencyName: user.profile.agencyName,
+                location: user.profile.location,
+                profilePhoto: profilePhotoURL,
+                followers: user.followers.length,
+                following: user.following.length,
+                isFollowing: loggedInUserId ? user.followers.includes(loggedInUserId) : false,
+                posts: randomPosts.map(post => ({
+                    id: post._id,
+                    content: post.content,
+                    media: post.media, // Include media if available
+                })),
+            };
+        }));
+
         return res.status(200).json({
             message: 'All profiles retrieved successfully.',
             success: true,
-            profiles: users.map(user => {
-
-                return {
-                    id: user._id,
-                    fullname: user.profile.fullname,
-                    agencyName: user.profile.agencyName,
-                    location: user.profile.location,
-                    followers: user.followers.length, // Count followers
-                    following: user.following.length, // Count following
-                    isFollowing: loggedInUserId ? user.followers.includes(loggedInUserId) : false, // Check if logged-in user is following
-                };
-            }),
+            profiles,
         });
     } catch (error) {
         console.error(error);
