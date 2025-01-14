@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { MARKETER_API_END_POINT } from '@/utils/constant';
 
@@ -31,15 +30,25 @@ const LoginModal = ({ isOpen, onClose }) => {
 const ProfileList = () => {
     const [profiles, setProfiles] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [user, setUser] = useState(null); // Authentication state
     const navigate = useNavigate();
-    const { user } = useSelector((store) => store.auth); // Fetch authentication state
 
     useEffect(() => {
+        // Check for user in localStorage on component mount
+        const token = localStorage.getItem('token');
+        const userId = localStorage.getItem('userId');
+
+        if (token && userId) {
+            setUser({ id: userId, token });
+        } else {
+            console.warn('User not authenticated. Token or userId missing.');
+        }
+
+        // Fetch profiles
         const fetchProfiles = async () => {
             try {
-                const token = localStorage.getItem('token');
                 if (!token) {
-                    console.warn('No token found in localStorage.');
+                    console.warn('No token found. Skipping profile fetch.');
                     return;
                 }
 
@@ -67,21 +76,13 @@ const ProfileList = () => {
         }
 
         try {
-            const token = localStorage.getItem('token');
-            const userId = localStorage.getItem('userId');
-
-            if (!token || !userId) {
-                console.error('Missing token or userId in localStorage.');
-                return;
-            }
-
-            console.log('Following user with token:', token, 'userId:', userId, 'followId:', id);
+            console.log('Following user with token:', user.token, 'userId:', user.id, 'followId:', id);
             const response = await axios.post(
                 `${MARKETER_API_END_POINT}/profiles/follow`,
-                { userId, followId: id },
+                { userId: user.id, followId: id },
                 {
                     headers: {
-                        Authorization: `Bearer ${token}`,
+                        Authorization: `Bearer ${user.token}`,
                     },
                 }
             );
