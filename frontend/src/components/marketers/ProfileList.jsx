@@ -29,9 +29,15 @@ const LoginModal = ({ isOpen, onClose }) => {
 
 const ProfileList = () => {
     const [profiles, setProfiles] = useState([]);
+    const [posts, setPosts] = useState([]); // Store all posts
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [user, setUser] = useState(null); // Authentication state
     const navigate = useNavigate();
+
+    // Function to shuffle posts
+    const shufflePosts = (posts) => {
+        return posts.sort(() => Math.random() - 0.5);
+    };
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -58,6 +64,7 @@ const ProfileList = () => {
                 });
                 console.log('Fetched profiles:', response.data.profiles);
                 setProfiles(response.data.profiles);
+                setPosts(response.data.posts); // Store posts globally
             } catch (error) {
                 console.error('Error fetching profiles:', error.response?.data || error.message);
             }
@@ -136,16 +143,14 @@ const ProfileList = () => {
                                 e.stopPropagation();
                                 handleFollow(profile.id);
                             }}
-                            className={`px-4 py-2 rounded-lg ${
-                                profile.isFollowing ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 text-white'
-                            }`}
+                            className={`px-4 py-2 rounded-lg ${profile.isFollowing ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 text-white'}`}
                         >
                             {profile.isFollowing ? 'Following' : 'Follow'}
                         </button>
                         <div>
                             <h3>Posts:</h3>
                             {profile.posts && profile.posts.length > 0 ? (
-                                profile.posts.map((post) => (
+                                shufflePosts(profile.posts).map((post) => (
                                     <div key={post._id}>
                                         {post.text && <p>{post.text}</p>}
                                         {post.category && <p>Category: {post.category}</p>}
