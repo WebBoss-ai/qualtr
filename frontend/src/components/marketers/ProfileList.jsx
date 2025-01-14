@@ -40,15 +40,11 @@ const ProfileList = () => {
 
         if (token && userId) {
             setUser({ id: userId, token });
-            console.log('User authenticated:', { userId, token });
-        } else {
-            console.warn('User not authenticated. Token or userId missing.');
         }
 
         const fetchProfiles = async () => {
             try {
                 if (!token) {
-                    console.warn('No token found. Skipping profile fetch.');
                     return;
                 }
 
@@ -57,7 +53,6 @@ const ProfileList = () => {
                         Authorization: `Bearer ${token}`,
                     },
                 });
-                console.log('Fetched profiles:', response.data.profiles);
                 setProfiles(response.data.profiles);
             } catch (error) {
                 console.error('Error fetching profiles:', error.response?.data || error.message);
@@ -73,7 +68,6 @@ const ProfileList = () => {
             return;
         }
 
-        console.log(`Attempting to follow user with ID: ${id}`);
         try {
             const response = await axios.post(
                 `${MARKETER_API_END_POINT}/profiles/follow`,
@@ -81,12 +75,9 @@ const ProfileList = () => {
                 { headers: { Authorization: `Bearer ${user.token}` } }
             );
 
-            console.log(`Successfully followed user with ID: ${id}`, response.data);
-
             setProfiles((prevProfiles) =>
                 prevProfiles.map((profile) => {
                     if (profile.id === id) {
-                        console.log(`Updating profile with ID: ${id}`, { ...profile, isFollowing: true });
                         return {
                             ...profile,
                             isFollowing: true,
@@ -107,7 +98,6 @@ const ProfileList = () => {
             return;
         }
 
-        console.log(`Navigating to profile with ID: ${id}`);
         navigate(`/marketer-profile/${id}`);
     };
 
@@ -121,16 +111,13 @@ const ProfileList = () => {
                             <strong>{profile.fullname}</strong> - {profile.agencyName} ({profile.location})
                         </div>
                         <div>Followers: {profile.followers}</div>
-                        <div>isFollowing: {profile.isFollowing ? 'Yes' : 'No'}</div>
                         <button
                             disabled={profile.isFollowing}
                             onClick={(e) => {
                                 e.stopPropagation();
                                 handleFollow(profile.id);
                             }}
-                            className={`px-4 py-2 rounded-lg ${
-                                profile.isFollowing ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 text-white'
-                            }`}
+                            className={`px-4 py-2 rounded-lg ${profile.isFollowing ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 text-white'}`}
                         >
                             {profile.isFollowing ? 'Following' : 'Follow'}
                         </button>
@@ -138,8 +125,7 @@ const ProfileList = () => {
                 ))}
             </ul>
             <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-
-            <TrendingPosts/>
+            <TrendingPosts />
         </div>
     );
 };

@@ -26,14 +26,12 @@ const TrendingPosts = () => {
       <div>
         {posts.map((post) => (
           <div key={post._id}>
-            <h3>{post.title}</h3>
-            <p>{post.author?.profile?.fullname}</p>
-            {post.media.photos.map((photo, index) => (
-              <img key={index} src={photo.url} alt={`Photo ${index + 1}`} />
-            ))}
-            {post.media.videos.map((video, index) => (
-              <video key={index} src={video.url} controls />
-            ))}
+            <h3>{post.text}</h3>
+            <p>
+              <a href={post.profileLink}>{post.author?.profile?.fullname}</a> {/* Profile link */}
+            </p>
+            <p>{post.author?.profile?.agencyName}</p>
+            <p>Posted: {post.timeAgo}</p> {/* Time ago */}
           </div>
         ))}
       </div>

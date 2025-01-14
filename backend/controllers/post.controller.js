@@ -1,5 +1,6 @@
 import { Post } from '../models/Post.js';
 import { uploadPostMedia, deletePostMedia, generatePostImageUrl, generatePostVideoUrl } from '../utils/aws.js'; // Helper functions for AWS S3
+import moment from 'moment'; // Add moment to handle time formatting
 
 // Create a new post
 export const createPost = async (req, res) => {
@@ -177,63 +178,41 @@ export const getAllPosts = async (req, res) => {
         success: false,
       });
     }
-  };  
+};  
 
 export const getTrendingPosts = async (req, res) => {
-    try {
-        const trendingPosts = await Post.find({ trending: true })
-            .populate('author', 'profile.fullname profile.profilePicture');
+  try {
+    const trendingPosts = await Post.find({ trending: true })
+      .populate('author', 'profile.fullname profile.agencyName profile.profilePicture');
 
-        // Shuffle the posts array
-        const shuffledPosts = trendingPosts.sort(() => Math.random() - 0.5);
+    // Shuffle the posts array
+    const shuffledPosts = trendingPosts.sort(() => Math.random() - 0.5);
 
-        const postsWithMediaUrls = await Promise.all(
-            shuffledPosts.map(async (post) => {
-                if (post.media) {
-                    if (post.media.photos?.length > 0) {
-                        post.media.photos = await Promise.all(
-                            post.media.photos
-                                .filter((photo) => photo && photo.url)
-                                .map(async (photo) => {
-                                    const s3Key = photo.url.split('amazonaws.com/')[1];
-                                    return {
-                                        ...photo,
-                                        url: await generatePostImageUrl(s3Key),
-                                    };
-                                })
-                        );
-                    }
+    const postsWithMediaUrls = await Promise.all(
+      shuffledPosts.map(async (post) => {
+        // Format the time posted
+        const timeAgo = moment(post.createdAt).fromNow();
 
-                    if (post.media.videos?.length > 0) {
-                        post.media.videos = await Promise.all(
-                            post.media.videos
-                                .filter((video) => video && video.url)
-                                .map(async (video) => {
-                                    const s3Key = video.url.split('amazonaws.com/')[1];
-                                    return {
-                                        ...video,
-                                        url: await generatePostVideoUrl(s3Key),
-                                    };
-                                })
-                        );
-                    }
-                }
-                return post;
-            })
-        );
+        return {
+          ...post.toObject(),
+          timeAgo, // Adding formatted time
+          profileLink: `/profile/${post.author._id}`, // Link to author's profile
+        };
+      })
+    );
 
-        return res.status(200).json({
-            message: 'Trending posts retrieved successfully.',
-            success: true,
-            posts: postsWithMediaUrls,
-        });
-    } catch (error) {
-        console.error('Error retrieving trending posts:', error);
-        return res.status(500).json({
-            message: 'Internal server error.',
-            success: false,
-        });
-    }
+    return res.status(200).json({
+      message: 'Trending posts retrieved successfully.',
+      success: true,
+      posts: postsWithMediaUrls,
+    });
+  } catch (error) {
+    console.error('Error retrieving trending posts:', error);
+    return res.status(500).json({
+      message: 'Internal server error.',
+      success: false,
+    });
+  }
 };
 
 export const toggleTrendingStatus = async (req, res) => {
