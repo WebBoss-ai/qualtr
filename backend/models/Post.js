@@ -92,5 +92,26 @@ function arrayLimitPollOptions(val) {
     return val.length <= 4;
 }
 
+const commentSchema = new mongoose.Schema(
+    {
+      user: { type: mongoose.Schema.Types.ObjectId, ref: 'DigitalMarketer', required: true },
+      text: { type: String, required: true },
+      replies: [
+        {
+          user: { type: mongoose.Schema.Types.ObjectId, ref: 'DigitalMarketer', required: true },
+          text: { type: String, required: true },
+          taggedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'DigitalMarketer' }],
+        },
+      ],
+      taggedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'DigitalMarketer' }],
+    },
+    { timestamps: true }
+);
+  
+postSchema.add({
+    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'DigitalMarketer' }], // Array of users who liked the post
+    comments: [commentSchema], // Nested comments
+});
+
 export const Post = mongoose.model('Post', postSchema);
 export default Post;

@@ -2,7 +2,7 @@ import express from 'express';
 import { register, login, updateProfile,addCampaign,listAllCampaigns, followUser, editEducation,updateExperiences,deleteExperience,updateEducation,deleteEducation, viewProfile, getAllProfiles, editExperience, editCampaign, deleteCampaign, getRandomSuggestedProfiles, getAllProfilesAdmin, updateSuggestedStatus } from '../controllers/marketer.controller.js';
 import isAuthenticated from '../middlewares/isAuthenticated.js';
 import upload from "../middlewares/multer.js";
-import { createPost, getAllPosts, getPostById, getTrendingPosts, toggleTrendingStatus } from '../controllers/post.controller.js';
+import { addComment, createPost, getAllPosts, getPostById, getTrendingPosts, replyToComment, toggleLike, toggleTrendingStatus } from '../controllers/post.controller.js';
 import isAuthenticated2 from '../middlewares/isAuthenticated2.js';
 const router = express.Router();
 
@@ -16,7 +16,9 @@ router.post('/posts',isAuthenticated, upload.array('images', 10), createPost);
 router.get('/posts/trending', getTrendingPosts);
 router.post('/posts/toggle-trending', toggleTrendingStatus);
 
-
+router.post('/posts/:postId/like', isAuthenticated, toggleLike);
+router.post('/posts/:postId/comment',isAuthenticated, addComment);
+router.post('/posts/:postId/comment/:commentId/reply',isAuthenticated, replyToComment);
 
 router.get('/profile/:id', viewProfile);
 

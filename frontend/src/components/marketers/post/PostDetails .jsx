@@ -8,12 +8,53 @@ const PostDetails = () => {
     const [post, setPost] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [userId, setUserId] = useState(null); // State to store userId
+    const [likes, setLikes] = useState([]);
+    const [comments, setComments] = useState([]);
+    const [newComment, setNewComment] = useState('');
+    const [reply, setReply] = useState({ commentId: null, text: '' });
+
+    const toggleLike = async () => {
+        try {
+            const response = await axios.post(`${MARKETER_API_END_POINT}/posts/${post._id}/like`);
+            setLikes(response.data.likes);
+        } catch (error) {
+            console.error('Error toggling like:', error);
+        }
+    };
+
+    const addComment = async () => {
+        try {
+            const response = await axios.post(`${MARKETER_API_END_POINT}/posts/${post._id}/comment`, { text: newComment });
+            setComments(response.data.post.comments);
+            setNewComment('');
+        } catch (error) {
+            console.error('Error adding comment:', error);
+        }
+    };
+
+    const replyToComment = async (commentId) => {
+        try {
+            const response = await axios.post(`${MARKETER_API_END_POINT}/posts/${post._id}/comment/${commentId}/reply`, {
+                text: reply.text,
+            });
+            setComments(response.data.post.comments);
+            setReply({ commentId: null, text: '' });
+        } catch (error) {
+            console.error('Error replying to comment:', error);
+        }
+    };
 
     useEffect(() => {
         const fetchPost = async () => {
+            const storedUserId = localStorage.getItem('userId'); // Retrieve userId from localStorage
+            setUserId(storedUserId);
             try {
                 const response = await axios.get(`${MARKETER_API_END_POINT}/post/${id}`);
-                setPost(response.data.post);
+                const fetchedPost = response.data.post;
+                setPost(fetchedPost);
+                setLikes(fetchedPost.likes || []);
+                setComments(fetchedPost.comments || []);
             } catch (err) {
                 setError(err.response?.data?.message || 'Error fetching post details');
             } finally {
@@ -126,8 +167,50 @@ const PostDetails = () => {
                     </a>
                 </div>
             )}
+
+            <div>
+                <button onClick={toggleLike}>
+                    {likes.includes(userId) ? 'Unlike' : 'Like'} ({likes.length})
+                </button>
+
+                <div>
+                    <h3>Comments</h3>
+                    <ul>
+                        {comments.map((comment) => (
+                            <li key={comment._id}>
+                                <p>{comment.text}</p>
+                                <button onClick={() => setReply({ commentId: comment._id, text: '' })}>Reply</button>
+
+                                {comment.replies.map((reply) => (
+                                    <p key={reply._id} style={{ marginLeft: '20px' }}>
+                                        {reply.text}
+                                    </p>
+                                ))}
+
+                                {reply.commentId === comment._id && (
+                                    <div>
+                                        <input
+                                            value={reply.text}
+                                            onChange={(e) => setReply({ ...reply, text: e.target.value })}
+                                        />
+                                        <button onClick={() => replyToComment(comment._id)}>Submit</button>
+                                    </div>
+                                )}
+                            </li>
+                        ))}
+                    </ul>
+
+                    <input
+                        value={newComment}
+                        onChange={(e) => setNewComment(e.target.value)}
+                        placeholder="Add a comment"
+                    />
+                    <button onClick={addComment}>Comment</button>
+                </div>
+            </div>
         </div>
     );
+
 };
 
 export default PostDetails;

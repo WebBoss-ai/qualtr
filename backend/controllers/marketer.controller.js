@@ -699,48 +699,45 @@ export const getAllProfiles = async (req, res) => {
 
 export const getRandomSuggestedProfiles = async (req, res) => {
     try {
-        console.log("Fetching suggested profiles...");
-
         // Fetch users with 'profile.suggested' set to true
         const users = await DigitalMarketer.find({ 'profile.suggested': true }).select('-password');
         if (!users || !Array.isArray(users)) {
-            console.error("No suggested profiles found or invalid data format.");
             return res.status(404).json({
                 message: 'No suggested profiles found.',
                 success: false,
             });
         }
 
-        console.log(`Total suggested profiles found: ${users.length}`);
-
-        let profiles;
+        let selectedUsers;
         if (users.length <= 5) {
             // If there are 5 or fewer profiles, return all without randomizing
-            console.log("Number of profiles is less than or equal to 5. Returning all profiles.");
-            profiles = users;
+            selectedUsers = users;
         } else {
             // If more than 5 profiles, shuffle and select 5
-            console.log("Number of profiles is more than 5. Randomizing profiles...");
-            profiles = users.sort(() => 0.5 - Math.random()).slice(0, 5);
+            selectedUsers = users.sort(() => 0.5 - Math.random()).slice(0, 5);
         }
 
-        console.log(`Number of profiles being returned: ${profiles.length}`);
+        // Format the response with profile photo logic
+        const profiles = await Promise.all(selectedUsers.map(async (user) => {
+            const profilePhotoURL = user.profile?.profilePhoto
+                ? await getObjectURL(user.profile.profilePhoto)
+                : 'default.jpg'; // Fallback to default photo if none exists
 
-        // Format the response
-        return res.status(200).json({
-            message: 'Suggested profiles retrieved successfully.',
-            success: true,
-            profiles: profiles.map(user => ({
+            return {
                 id: user._id,
                 fullname: user.profile?.fullname || 'N/A',
                 agencyName: user.profile?.agencyName || 'N/A',
                 location: user.profile?.location || 'N/A',
-                profilePhoto: user.profile?.profilePhoto || 'default.jpg',
-            })),
+                profilePhoto: profilePhotoURL,
+            };
+        }));
+
+        return res.status(200).json({
+            message: 'Suggested profiles retrieved successfully.',
+            success: true,
+            profiles,
         });
     } catch (error) {
-        console.error("Error fetching suggested profiles:", error);
-
         // Handle CastError specifically
         if (error.name === 'CastError') {
             return res.status(400).json({

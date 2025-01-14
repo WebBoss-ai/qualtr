@@ -303,3 +303,82 @@ export const toggleTrendingStatus = async (req, res) => {
     });
   }
 };
+
+export const toggleLike = async (req, res) => {
+  const { postId } = req.params;
+  const userId = req.id;
+
+  try {
+    const post = await Post.findById(postId);
+
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+
+    const isLiked = post.likes.includes(userId);
+
+    if (isLiked) {
+      post.likes = post.likes.filter((like) => like.toString() !== userId);
+    } else {
+      post.likes.push(userId);
+    }
+
+    await post.save();
+
+    res.status(200).json({
+      success: true,
+      message: isLiked ? 'Like removed' : 'Post liked',
+      likesCount: post.likes.length,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
+
+export const addComment = async (req, res) => {
+  const { postId } = req.params;
+  const { text, taggedUsers } = req.body;
+  const userId = req.id;
+
+  try {
+    const post = await Post.findById(postId);
+
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+
+    post.comments.push({ user: userId, text, taggedUsers });
+    await post.save();
+
+    res.status(200).json({ success: true, message: 'Comment added', post });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
+
+export const replyToComment = async (req, res) => {
+  const { postId, commentId } = req.params;
+  const { text, taggedUsers } = req.body;
+  const userId = req.id;
+
+  try {
+    const post = await Post.findById(postId);
+
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+
+    const comment = post.comments.id(commentId);
+
+    if (!comment) {
+      return res.status(404).json({ message: 'Comment not found' });
+    }
+
+    comment.replies.push({ user: userId, text, taggedUsers });
+    await post.save();
+
+    res.status(200).json({ success: true, message: 'Reply added', post });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};

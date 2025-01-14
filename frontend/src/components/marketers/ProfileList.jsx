@@ -66,7 +66,7 @@ const AdvancedSearch = ({ onSearch, isExpanded, onToggle }) => {
             <input
               type="text"
               name="fullname"
-              placeholder="Search by name, agency, or location"
+              placeholder="Search by name, tag, or location"
               value={filters.fullname}
               onChange={handleInputChange}
               className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200 transition-all"
@@ -99,7 +99,7 @@ const AdvancedSearch = ({ onSearch, isExpanded, onToggle }) => {
               <input
                 type="text"
                 name="agencyName"
-                placeholder="Agency name"
+                placeholder="Tag"
                 value={filters.agencyName}
                 onChange={handleInputChange}
                 className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200 transition-all"
