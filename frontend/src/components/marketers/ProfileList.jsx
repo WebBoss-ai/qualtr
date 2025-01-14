@@ -46,6 +46,11 @@ const ProfileList = () => {
 
         const fetchProfiles = async () => {
             try {
+                if (!token) {
+                    console.warn('No token found. Skipping profile fetch.');
+                    return;
+                }
+
                 const response = await axios.get(`${MARKETER_API_END_POINT}/profiles`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -112,8 +117,16 @@ const ProfileList = () => {
                 {profiles.map((profile) => (
                     <li key={profile.id} onClick={() => handleProfileClick(profile.id)}>
                         <div>
-                            <img src={profile.profilePhoto} alt={profile.fullname} className="w-16 h-16 rounded-full" />
                             <strong>{profile.fullname}</strong> - {profile.agencyName} ({profile.location})
+                            <div>
+                                {profile.profilePhoto && (
+                                    <img
+                                        src={profile.profilePhoto}
+                                        alt={profile.fullname}
+                                        style={{ width: '50px', height: '50px', borderRadius: '50%' }}
+                                    />
+                                )}
+                            </div>
                         </div>
                         <div>Followers: {profile.followers}</div>
                         <div>isFollowing: {profile.isFollowing ? 'Yes' : 'No'}</div>
@@ -130,21 +143,34 @@ const ProfileList = () => {
                             {profile.isFollowing ? 'Following' : 'Follow'}
                         </button>
                         <div>
-                            <h3>Recent Posts</h3>
-                            <ul>
-                                {profile.posts.map((post) => (
-                                    <li key={post.id}>
-                                        <div>{post.content}</div>
-                                        {post.media && post.media.length > 0 && (
+                            <h3>Posts:</h3>
+                            {profile.posts && profile.posts.length > 0 ? (
+                                profile.posts.map((post) => (
+                                    <div key={post._id}>
+                                        {post.text && <p>{post.text}</p>}
+                                        {post.category && <p>Category: {post.category}</p>}
+                                        {post.media?.photos?.length > 0 && (
                                             <div>
-                                                {post.media.map((media, idx) => (
-                                                    <img key={idx} src={media.url} alt={`Post Media ${idx}`} className="w-full" />
+                                                {post.media.photos.map((photo, index) => (
+                                                    <img key={index} src={photo.url} alt={`Photo ${index + 1}`} style={{ width: '100px', height: '100px' }} />
                                                 ))}
                                             </div>
                                         )}
-                                    </li>
-                                ))}
-                            </ul>
+                                        {post.media?.videos?.length > 0 && (
+                                            <div>
+                                                {post.media.videos.map((video, index) => (
+                                                    <video key={index} width="300" controls>
+                                                        <source src={video.url} type="video/mp4" />
+                                                        Your browser does not support the video tag.
+                                                    </video>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                ))
+                            ) : (
+                                <p>No posts available</p>
+                            )}
                         </div>
                     </li>
                 ))}
