@@ -181,56 +181,58 @@ export const getAllPosts = async (req, res) => {
 
 export const getTrendingPosts = async (req, res) => {
     try {
-      const trendingPosts = await Post.find({ trending: true })
-        .populate('author', 'profile.fullname profile.profilePicture')
-        .sort(() => Math.random() - 0.5); // Random sorting
-  
-      const postsWithMediaUrls = await Promise.all(
-        trendingPosts.map(async (post) => {
-          if (post.media) {
-            if (post.media.photos?.length > 0) {
-              post.media.photos = await Promise.all(
-                post.media.photos
-                  .filter((photo) => photo && photo.url)
-                  .map(async (photo) => {
-                    const s3Key = photo.url.split('amazonaws.com/')[1];
-                    return {
-                      ...photo,
-                      url: await generatePostImageUrl(s3Key),
-                    };
-                  })
-              );
-            }
-  
-            if (post.media.videos?.length > 0) {
-              post.media.videos = await Promise.all(
-                post.media.videos
-                  .filter((video) => video && video.url)
-                  .map(async (video) => {
-                    const s3Key = video.url.split('amazonaws.com/')[1];
-                    return {
-                      ...video,
-                      url: await generatePostVideoUrl(s3Key),
-                    };
-                  })
-              );
-            }
-          }
-          return post;
-        })
-      );
-  
-      return res.status(200).json({
-        message: 'Trending posts retrieved successfully.',
-        success: true,
-        posts: postsWithMediaUrls,
-      });
+        const trendingPosts = await Post.find({ trending: true })
+            .populate('author', 'profile.fullname profile.profilePicture');
+
+        // Shuffle the posts array
+        const shuffledPosts = trendingPosts.sort(() => Math.random() - 0.5);
+
+        const postsWithMediaUrls = await Promise.all(
+            shuffledPosts.map(async (post) => {
+                if (post.media) {
+                    if (post.media.photos?.length > 0) {
+                        post.media.photos = await Promise.all(
+                            post.media.photos
+                                .filter((photo) => photo && photo.url)
+                                .map(async (photo) => {
+                                    const s3Key = photo.url.split('amazonaws.com/')[1];
+                                    return {
+                                        ...photo,
+                                        url: await generatePostImageUrl(s3Key),
+                                    };
+                                })
+                        );
+                    }
+
+                    if (post.media.videos?.length > 0) {
+                        post.media.videos = await Promise.all(
+                            post.media.videos
+                                .filter((video) => video && video.url)
+                                .map(async (video) => {
+                                    const s3Key = video.url.split('amazonaws.com/')[1];
+                                    return {
+                                        ...video,
+                                        url: await generatePostVideoUrl(s3Key),
+                                    };
+                                })
+                        );
+                    }
+                }
+                return post;
+            })
+        );
+
+        return res.status(200).json({
+            message: 'Trending posts retrieved successfully.',
+            success: true,
+            posts: postsWithMediaUrls,
+        });
     } catch (error) {
-      console.error('Error retrieving trending posts:', error);
-      return res.status(500).json({
-        message: 'Internal server error.',
-        success: false,
-      });
+        console.error('Error retrieving trending posts:', error);
+        return res.status(500).json({
+            message: 'Internal server error.',
+            success: false,
+        });
     }
 };
 
