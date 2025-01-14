@@ -669,15 +669,20 @@ export const getAllProfiles = async (req, res) => {
         return res.status(200).json({
             message: 'All profiles retrieved successfully.',
             success: true,
-            profiles: users.map(user => ({
-                id: user._id,
-                fullname: user.profile.fullname,
-                agencyName: user.profile.agencyName,
-                location: user.profile.location,
-                followers: user.followers.length, // Count followers
-                following: user.following.length, // Count following
-                isFollowing: user.followers.includes(loggedInUserId), // Check if logged-in user is following
-            })),
+            profiles: users.map(user => {
+                console.log('Logged-in User ID:', loggedInUserId); // Log the logged-in user ID
+                console.log('User Profile ID:', user._id); // Log the user profile ID
+
+                return {
+                    id: user._id,
+                    fullname: user.profile.fullname,
+                    agencyName: user.profile.agencyName,
+                    location: user.profile.location,
+                    followers: user.followers.length, // Count followers
+                    following: user.following.length, // Count following
+                    isFollowing: user.followers.includes(loggedInUserId), // Check if logged-in user is following
+                };
+            }),
         });
     } catch (error) {
         console.error(error);
