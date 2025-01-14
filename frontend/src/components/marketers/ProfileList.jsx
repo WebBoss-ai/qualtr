@@ -38,14 +38,21 @@ const ProfileList = () => {
         const fetchProfiles = async () => {
             try {
                 const token = localStorage.getItem('token');
+                if (!token) {
+                    console.warn('No token found in localStorage.');
+                    return;
+                }
+
+                console.log('Fetching profiles with token:', token);
                 const response = await axios.get(`${MARKETER_API_END_POINT}/profiles`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 });
+                console.log('Profiles fetched successfully:', response.data);
                 setProfiles(response.data.profiles);
             } catch (error) {
-                console.error('Error fetching profiles:', error);
+                console.error('Error fetching profiles:', error.response?.data || error.message);
             }
         };
 
@@ -54,6 +61,7 @@ const ProfileList = () => {
 
     const handleFollow = async (id) => {
         if (!user) {
+            console.warn('User is not authenticated. Showing login modal.');
             setIsModalOpen(true);
             return;
         }
@@ -61,6 +69,13 @@ const ProfileList = () => {
         try {
             const token = localStorage.getItem('token');
             const userId = localStorage.getItem('userId');
+
+            if (!token || !userId) {
+                console.error('Missing token or userId in localStorage.');
+                return;
+            }
+
+            console.log('Following user with token:', token, 'userId:', userId, 'followId:', id);
             const response = await axios.post(
                 `${MARKETER_API_END_POINT}/profiles/follow`,
                 { userId, followId: id },
@@ -70,6 +85,8 @@ const ProfileList = () => {
                     },
                 }
             );
+            console.log('Follow successful:', response.data);
+
             setProfiles(
                 profiles.map((profile) =>
                     profile.id === id
@@ -82,15 +99,18 @@ const ProfileList = () => {
                 )
             );
         } catch (error) {
-            console.error('Error following user:', error);
+            console.error('Error following user:', error.response?.data || error.message);
         }
     };
 
     const handleProfileClick = (id) => {
         if (!user) {
+            console.warn('User is not authenticated. Showing login modal.');
             setIsModalOpen(true);
             return;
         }
+
+        console.log('Navigating to profile page for id:', id);
         navigate(`/marketer-profile/${id}`);
     };
 
