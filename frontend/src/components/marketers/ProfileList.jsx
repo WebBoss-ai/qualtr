@@ -29,15 +29,9 @@ const LoginModal = ({ isOpen, onClose }) => {
 
 const ProfileList = () => {
     const [profiles, setProfiles] = useState([]);
-    const [posts, setPosts] = useState([]); // Store all posts
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [user, setUser] = useState(null); // Authentication state
     const navigate = useNavigate();
-
-    // Function to shuffle posts
-    const shufflePosts = (posts) => {
-        return posts.sort(() => Math.random() - 0.5);
-    };
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -64,7 +58,6 @@ const ProfileList = () => {
                 });
                 console.log('Fetched profiles:', response.data.profiles);
                 setProfiles(response.data.profiles);
-                setPosts(response.data.posts); // Store posts globally
             } catch (error) {
                 console.error('Error fetching profiles:', error.response?.data || error.message);
             }
@@ -125,15 +118,6 @@ const ProfileList = () => {
                     <li key={profile.id} onClick={() => handleProfileClick(profile.id)}>
                         <div>
                             <strong>{profile.fullname}</strong> - {profile.agencyName} ({profile.location})
-                            <div>
-                                {profile.profilePhoto && (
-                                    <img
-                                        src={profile.profilePhoto}
-                                        alt={profile.fullname}
-                                        style={{ width: '50px', height: '50px', borderRadius: '50%' }}
-                                    />
-                                )}
-                            </div>
                         </div>
                         <div>Followers: {profile.followers}</div>
                         <div>isFollowing: {profile.isFollowing ? 'Yes' : 'No'}</div>
@@ -143,40 +127,12 @@ const ProfileList = () => {
                                 e.stopPropagation();
                                 handleFollow(profile.id);
                             }}
-                            className={`px-4 py-2 rounded-lg ${profile.isFollowing ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 text-white'}`}
+                            className={`px-4 py-2 rounded-lg ${
+                                profile.isFollowing ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 text-white'
+                            }`}
                         >
                             {profile.isFollowing ? 'Following' : 'Follow'}
                         </button>
-                        <div>
-                            <h3>Posts:</h3>
-                            {profile.posts && profile.posts.length > 0 ? (
-                                shufflePosts(profile.posts).map((post) => (
-                                    <div key={post._id}>
-                                        {post.text && <p>{post.text}</p>}
-                                        {post.category && <p>Category: {post.category}</p>}
-                                        {post.media?.photos?.length > 0 && (
-                                            <div>
-                                                {post.media.photos.map((photo, index) => (
-                                                    <img key={index} src={photo.url} alt={`Photo ${index + 1}`} style={{ width: '100px', height: '100px' }} />
-                                                ))}
-                                            </div>
-                                        )}
-                                        {post.media?.videos?.length > 0 && (
-                                            <div>
-                                                {post.media.videos.map((video, index) => (
-                                                    <video key={index} width="300" controls>
-                                                        <source src={video.url} type="video/mp4" />
-                                                        Your browser does not support the video tag.
-                                                    </video>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
-                                ))
-                            ) : (
-                                <p>No posts available</p>
-                            )}
-                        </div>
                     </li>
                 ))}
             </ul>

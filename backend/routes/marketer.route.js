@@ -2,7 +2,7 @@ import express from 'express';
 import { register, login, updateProfile,addCampaign,listAllCampaigns, followUser, editEducation,updateExperiences,deleteExperience,updateEducation,deleteEducation, viewProfile, getAllProfiles, editExperience, editCampaign, deleteCampaign, getRandomSuggestedProfiles, getAllProfilesAdmin, updateSuggestedStatus } from '../controllers/marketer.controller.js';
 import isAuthenticated from '../middlewares/isAuthenticated.js';
 import upload from "../middlewares/multer.js";
-import { createPost, getAllPosts } from '../controllers/post.controller.js';
+import { createPost, getAllPosts, getTrendingPosts, toggleTrendingStatus } from '../controllers/post.controller.js';
 import isAuthenticated2 from '../middlewares/isAuthenticated2.js';
 const router = express.Router();
 
@@ -12,6 +12,11 @@ router.get('/profiles', isAuthenticated2, getAllProfiles);
 
 router.get('/posts', getAllPosts);
 router.post('/posts',isAuthenticated, upload.array('images', 10), createPost);
+router.get('/posts/trending', getTrendingPosts);
+router.get('/posts/toggle-trending', toggleTrendingStatus);
+
+
+
 router.get('/profile/:id', viewProfile);
 
 router.get('/admin/profiles', getAllProfilesAdmin);

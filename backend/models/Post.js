@@ -80,6 +80,7 @@ const postSchema = new mongoose.Schema({
         name: { type: String },
         url: { type: String },
     },
+    trending: { type: Boolean, default: false },
 }, { timestamps: true });
 
 function arrayLimit(val) {
