@@ -13,7 +13,7 @@ router.get('/profiles', isAuthenticated2, getAllProfiles);
 router.get('/posts', getAllPosts);
 router.post('/posts',isAuthenticated, upload.array('images', 10), createPost);
 router.get('/posts/trending', getTrendingPosts);
-router.get('/posts/toggle-trending', toggleTrendingStatus);
+router.post('/posts/toggle-trending', toggleTrendingStatus);
 
 
 

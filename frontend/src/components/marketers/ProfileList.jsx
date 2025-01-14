@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { MARKETER_API_END_POINT } from '@/utils/constant';
+import TrendingPosts from './post/TrendingPosts';
 
 const LoginModal = ({ isOpen, onClose }) => {
     if (!isOpen) return null;
@@ -137,6 +138,8 @@ const ProfileList = () => {
                 ))}
             </ul>
             <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+
+            <TrendingPosts/>
         </div>
     );
 };
