@@ -180,6 +180,61 @@ export const getAllPosts = async (req, res) => {
     }
 };  
 
+export const getPostById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+      const post = await Post.findById(id)
+          .populate('author', 'profile.fullname profile.profilePicture')
+          .lean();
+
+      if (!post) {
+          return res.status(404).json({
+              message: 'Post not found.',
+              success: false,
+          });
+      }
+
+      if (post.media) {
+          if (post.media.photos?.length > 0) {
+              post.media.photos = await Promise.all(
+                  post.media.photos.map(async (photo) => {
+                      const s3Key = photo.url.split("amazonaws.com/")[1];
+                      return {
+                          ...photo,
+                          url: await generatePostImageUrl(s3Key),
+                      };
+                  })
+              );
+          }
+
+          if (post.media.videos?.length > 0) {
+              post.media.videos = await Promise.all(
+                  post.media.videos.map(async (video) => {
+                      const s3Key = video.url.split("amazonaws.com/")[1];
+                      return {
+                          ...video,
+                          url: await generatePostVideoUrl(s3Key),
+                      };
+                  })
+              );
+          }
+      }
+
+      return res.status(200).json({
+          message: 'Post retrieved successfully.',
+          success: true,
+          post,
+      });
+  } catch (error) {
+      console.error('Error retrieving post by ID:', error);
+      return res.status(500).json({
+          message: 'Internal server error.',
+          success: false,
+      });
+  }
+};
+
 export const getTrendingPosts = async (req, res) => {
   try {
     const trendingPosts = await Post.find({ trending: true })

@@ -51,6 +51,7 @@ import CampaignManagement from './components/marketers/CampaignManagement'
 import PostsPage from './components/marketers/post/PostsPage'
 import AdminProfiles from './components/marketers/admin/AdminProfiles'
 import AdminToggle from './components/marketers/post/AdminToggle'
+import PostDetails from './components/marketers/post/PostDetails '
 const appRouter = createBrowserRouter([
   {
     path: '/',
@@ -223,6 +224,10 @@ const appRouter = createBrowserRouter([
   {
     path:"/posts",
     element:<PostsPage /> 
+  },
+  {
+    path:"/post/:id",
+    element:<PostDetails /> 
   },
   {
     path:"/admin/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NmY4NTU2MzU4ZTZmMmI3YTVjOTM0ZGYiLCJpYXQiOjE3MzAxMTMzNzYsImV4cCI6MTczMjcwNTM3Nn0.n4DUTrEBP_InFG8UlQNuWLsl4xhlIopufmi0o5J5ZLQ",
