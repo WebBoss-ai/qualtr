@@ -107,7 +107,7 @@ const ProfileList = () => {
             <ul>
                 {profiles.map((profile) => (
                     <li key={profile.id} onClick={() => handleProfileClick(profile.id)}>
-                        <div className="absolute top-28 left-4 sm:left-8">
+                        <div className="relative">
                             {profile.profilePhoto && (
                                 <img
                                     src={profile.profilePhoto}
