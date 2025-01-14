@@ -99,7 +99,7 @@ const TrendingPosts = () => {
                   </div>
                   <div className="flex items-center gap-1">
                     <Eye size={14} />
-                    <span>{post.views || 0}</span>
+                    <span>{post.impressions || 0}</span>
                   </div>
                 </div>
                 <span>{post.timeAgo}</span>

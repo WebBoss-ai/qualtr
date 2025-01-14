@@ -29,7 +29,7 @@ const PostDetails = () => {
 
     return (
         <div className="p-4">
-            <h1 className="text-2xl font-bold mb-4">{post?.text || 'No title available'}</h1>
+            <p className="text-2xl font-bold mb-4">{post?.text || 'No title available'}</p>
 
             {post?.category && <h3 className="text-lg font-semibold">Category: {post.category}</h3>}
 

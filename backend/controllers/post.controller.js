@@ -184,7 +184,12 @@ export const getPostById = async (req, res) => {
   const { id } = req.params;
 
   try {
-      const post = await Post.findById(id)
+      // Increment impressions by 1
+      const post = await Post.findByIdAndUpdate(
+          id,
+          { $inc: { impressions: 1 } }, // Increment impressions by 1
+          { new: true } // Return the updated document
+      )
           .populate('author', 'profile.fullname profile.profilePicture')
           .lean();
 

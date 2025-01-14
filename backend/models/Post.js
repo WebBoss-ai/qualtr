@@ -81,6 +81,7 @@ const postSchema = new mongoose.Schema({
         url: { type: String },
     },
     trending: { type: Boolean, default: false },
+    impressions: {type:Number, default:0},
 }, { timestamps: true });
 
 function arrayLimit(val) {
