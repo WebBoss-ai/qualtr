@@ -107,7 +107,7 @@ const commentSchema = new mongoose.Schema(
     },
     { timestamps: true }
 );
-  
+
 postSchema.add({
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'DigitalMarketer' }], // Array of users who liked the post
     comments: [commentSchema], // Nested comments

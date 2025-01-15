@@ -176,28 +176,30 @@ const PostDetails = () => {
                 <div>
                     <h3>Comments</h3>
                     <ul>
-                        {comments.map((comment) => (
-                            <li key={comment._id}>
-                                <p>{comment.text}</p>
-                                <button onClick={() => setReply({ commentId: comment._id, text: '' })}>Reply</button>
+                        <ul>
+                            {comments.map((comment, index) => (
+                                <li key={comment._id || `comment-${index}`}>
+                                    <p>{comment.text}</p>
+                                    <button onClick={() => setReply({ commentId: comment._id, text: '' })}>Reply</button>
 
-                                {comment.replies.map((reply) => (
-                                    <p key={reply._id} style={{ marginLeft: '20px' }}>
-                                        {reply.text}
-                                    </p>
-                                ))}
+                                    {comment.replies.map((reply, replyIndex) => (
+                                        <p key={reply._id || `reply-${replyIndex}`} style={{ marginLeft: '20px' }}>
+                                            {reply.text}
+                                        </p>
+                                    ))}
 
-                                {reply.commentId === comment._id && (
-                                    <div>
-                                        <input
-                                            value={reply.text}
-                                            onChange={(e) => setReply({ ...reply, text: e.target.value })}
-                                        />
-                                        <button onClick={() => replyToComment(comment._id)}>Submit</button>
-                                    </div>
-                                )}
-                            </li>
-                        ))}
+                                    {reply.commentId === comment._id && (
+                                        <div>
+                                            <input
+                                                value={reply.text}
+                                                onChange={(e) => setReply({ ...reply, text: e.target.value })}
+                                            />
+                                            <button onClick={() => replyToComment(comment._id)}>Submit</button>
+                                        </div>
+                                    )}
+                                </li>
+                            ))}
+                        </ul>
                     </ul>
 
                     <input

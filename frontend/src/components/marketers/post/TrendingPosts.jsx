@@ -50,7 +50,7 @@ const TrendingPosts = () => {
             <TrendingUp size={20} className="text-gray-500" />
             <h2 className="font-semibold text-gray-900">Trending Posts</h2>
           </div>
-          <Link 
+          <Link
             to="/trending"
             className="text-sm text-gray-500 hover:text-gray-900 flex items-center gap-1 group"
           >
@@ -62,28 +62,29 @@ const TrendingPosts = () => {
 
       <div className="divide-y divide-gray-50">
         {posts.map((post) => (
-          <div 
+          <div
             key={post._id}
             className="p-4 hover:bg-gray-50 transition-colors cursor-pointer"
           >
             <div className="space-y-2">
               <div className="flex items-start gap-3">
                 <div className="flex-1 min-w-0">
-                  <Link 
-                    to={post.profileLink}
+                  <Link
+                    to={post.profileLink || '#'}
                     className="text-sm font-medium text-gray-900 hover:underline line-clamp-1"
                   >
-                    {post.author?.profile?.fullname}
+                    {post.author?.profile?.fullname || 'Anonymous'}
                   </Link>
+
                   <p className="text-xs text-gray-500 line-clamp-1">
-                    {post.author?.profile?.agencyName}
+                    {post.author?.profile?.agencyName || 'Agency not specified'}
                   </p>
                 </div>
               </div>
 
               <Link to={`/post/${post._id}`} className="block">
                 <p className="text-sm text-gray-600 line-clamp-2">
-                  {post.text}
+                  {typeof post.text === 'object' ? JSON.stringify(post.text) : post.text}
                 </p>
               </Link>
 
@@ -91,19 +92,20 @@ const TrendingPosts = () => {
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-1">
                     <ThumbsUp size={14} />
-                    <span>{post.likes || 0}</span>
+                    <span>{post?.likes?.length || 0}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <MessageCircle size={14} />
-                    <span>{post.comments || 0}</span>
+                    <span>{post?.comments?.length || 0}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Eye size={14} />
-                    <span>{post.impressions || 0}</span>
+                    <span>{post?.impressions || 0}</span>
                   </div>
                 </div>
-                <span>{post.timeAgo}</span>
+                <span>{post?.timeAgo || 'N/A'}</span>
               </div>
+
             </div>
           </div>
         ))}
