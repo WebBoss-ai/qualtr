@@ -170,8 +170,9 @@ const PostDetails = () => {
 
             <div>
                 <button onClick={toggleLike}>
-                    {likes.includes(userId) ? 'Unlike' : 'Like'} ({likes.length})
+                    {likes?.includes(userId) ? 'Unlike' : 'Like'} ({likes?.length || 0})
                 </button>
+
 
                 <div>
                     <h3>Comments</h3>
