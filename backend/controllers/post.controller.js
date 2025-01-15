@@ -1,5 +1,5 @@
 import { Post } from '../models/Post.js';
-import { uploadPostMedia, deletePostMedia, generatePostImageUrl, generatePostVideoUrl } from '../utils/aws.js'; // Helper functions for AWS S3
+import { uploadPostMedia, deletePostMedia, getObjectURL, generatePostImageUrl, generatePostVideoUrl } from '../utils/aws.js'; // Helper functions for AWS S3
 import moment from 'moment'; // Add moment to handle time formatting
 
 // Create a new post
