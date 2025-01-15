@@ -4,10 +4,11 @@ import { MARKETER_API_END_POINT } from "@/utils/constant";
 import RandomSuggestedProfiles from '../RandomSuggestedProfiles';
 import { ChevronRight, ThumbsUp, Calendar, MapPin, Briefcase, BarChart2, FileText } from 'lucide-react'
 import { MessageCircle, Share2, Send, X, ChevronLeft } from 'lucide-react'
-
+import moment from 'moment';
 
 const PostPage = () => {
     const [posts, setPosts] = useState([]);
+    const [post, setPost] = useState(null)
     const [postCategory, setPostCategory] = useState('');
     const [postType, setPostType] = useState('');
     const [postText, setPostText] = useState('');
@@ -21,24 +22,30 @@ const PostPage = () => {
     const [showModal, setShowModal] = useState(false)
     const [userId, setUserId] = useState(null)
 
-    const toggleLike = async () => {
+    const toggleLike = async (postId) => {
         if (!userId) {
             return setShowModal(true); // Show login modal if user is not logged in
         }
 
         try {
-            // Send the request to the server to toggle the like
-            const response = await axios.post(`${MARKETER_API_END_POINT}/posts/${post._id}/like`);
+            const response = await axios.post(`${MARKETER_API_END_POINT}/posts/${postId}/like`);
 
-            // Update the state with the server response
-            setLikes({
-                isLiked: response.data.isLiked,
-                length: response.data.likesCount,
-            });
-            window.location.reload();
+            // Update the state for the specific post
+            setPosts((prevPosts) =>
+                prevPosts.map((post) =>
+                    post._id === postId
+                        ? {
+                            ...post,
+                            likes: {
+                                isLiked: response.data.isLiked,
+                                length: response.data.likesCount,
+                            },
+                        }
+                        : post
+                )
+            );
         } catch (error) {
             console.error('Error toggling like:', error);
-            // Optionally show an error notification or revert state
         }
     };
 
@@ -94,29 +101,54 @@ const PostPage = () => {
         }
     };
 
-    const addComment = async () => {
-        if (!userId) return setShowModal(true)
-        try {
-            const response = await axios.post(`${MARKETER_API_END_POINT}/posts/${post._id}/comment`, { text: newComment })
-            setComments(response.data.post.comments)
-            setNewComment('')
-        } catch (error) {
-            console.error('Error adding comment:', error)
-        }
-    }
+    const addComment = async (postId, commentText) => {
+        if (!userId) return setShowModal(true);
 
-    const replyToComment = async (commentId) => {
-        if (!userId) return setShowModal(true)
         try {
-            const response = await axios.post(`${MARKETER_API_END_POINT}/posts/${post._id}/comment/${commentId}/reply`, {
-                text: reply.text,
-            })
-            setComments(response.data.post.comments)
-            setReply({ commentId: null, text: '' })
+            const response = await axios.post(`${MARKETER_API_END_POINT}/posts/${postId}/comment`, {
+                text: commentText,
+            });
+
+            // Update the comments for the specific post
+            setPosts((prevPosts) =>
+                prevPosts.map((post) =>
+                    post._id === postId
+                        ? {
+                            ...post,
+                            comments: response.data.post.comments,
+                        }
+                        : post
+                )
+            );
         } catch (error) {
-            console.error('Error replying to comment:', error)
+            console.error('Error adding comment:', error);
         }
-    }
+    };
+
+    const replyToComment = async (postId, commentId, replyText) => {
+        if (!userId) return setShowModal(true);
+
+        try {
+            const response = await axios.post(
+                `${MARKETER_API_END_POINT}/posts/${postId}/comment/${commentId}/reply`,
+                { text: replyText }
+            );
+
+            // Update the comments for the specific post
+            setPosts((prevPosts) =>
+                prevPosts.map((post) =>
+                    post._id === postId
+                        ? {
+                            ...post,
+                            comments: response.data.post.comments,
+                        }
+                        : post
+                )
+            );
+        } catch (error) {
+            console.error('Error replying to comment:', error);
+        }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -696,12 +728,12 @@ const PostPage = () => {
                                             </div>
                                         </div>
                                         {/* Comments section */}
+
+
                                         <div className="mt-4 bg-white rounded-lg border border-gray-200 p-4">
                                             <h3 className="text-sm font-semibold text-gray-900 mb-3">Comments</h3>
                                             <div className="space-y-3 max-h-80 overflow-y-auto">
-                                                {comments.map((comment) => {
-                                                    console.log("Rendering comment:", comment); // Debugging comment data
-
+                                                {post.comments.map((comment) => {
                                                     return (
                                                         <div key={comment._id} className="border-b border-gray-100 pb-2">
                                                             <p className="text-sm text-gray-800 mb-1">{comment.text}</p>
@@ -710,46 +742,49 @@ const PostPage = () => {
                                                             </p>
                                                             <div className="flex items-center gap-3 text-xs text-gray-500">
                                                                 <button
-                                                                    onClick={() => {
-                                                                        console.log("Setting reply state for comment ID:", comment._id); // Debugging reply state setting
-                                                                        setReply({ commentId: comment._id, text: '' });
-                                                                    }}
+                                                                    onClick={() =>
+                                                                        setReply({
+                                                                            commentId: comment._id,
+                                                                            text: '',
+                                                                            postId: post._id,
+                                                                        })
+                                                                    }
                                                                     className="hover:text-gray-700"
                                                                 >
                                                                     Reply
                                                                 </button>
-                                                                <span>{moment(comment.createdAt).fromNow()}</span> {/* Relative time */}
+                                                                <span>{moment(comment.createdAt).fromNow()}</span>
                                                             </div>
 
-                                                            {comment.replies.map((reply) => {
-                                                                console.log("Rendering reply for comment ID:", comment._id, "Reply:", reply); // Debugging replies
+                                                            {/* Replies */}
+                                                            {comment.replies.map((reply) => (
+                                                                <div key={reply._id} className="ml-4 mt-1 p-2 bg-gray-50 rounded-md">
+                                                                    <p className="text-xs text-gray-800">{reply.text}</p>
+                                                                    <span className="text-xs text-gray-500">
+                                                                        {moment(reply.createdAt).fromNow()}
+                                                                    </span>
+                                                                </div>
+                                                            ))}
 
-                                                                return (
-                                                                    <div key={reply._id} className="ml-4 mt-1 p-2 bg-gray-50 rounded-md">
-                                                                        <p className="text-xs text-gray-800">{reply.text}</p>
-                                                                        <span className="text-xs text-gray-500">
-                                                                            {moment(reply.createdAt).fromNow()} {/* Display time like "2 minutes ago", "3 hours ago" */}
-                                                                        </span>
-                                                                    </div>
-                                                                );
-                                                            })}
-
+                                                            {/* Reply Input */}
                                                             {reply.commentId === comment._id && (
                                                                 <div className="mt-2 flex gap-2">
                                                                     <input
                                                                         value={reply.text}
-                                                                        onChange={(e) => {
-                                                                            console.log("Updating reply text for comment ID:", comment._id, "New text:", e.target.value); // Debugging input change
-                                                                            setReply({ ...reply, text: e.target.value });
-                                                                        }}
+                                                                        onChange={(e) =>
+                                                                            setReply({
+                                                                                ...reply,
+                                                                                text: e.target.value,
+                                                                                postId: post._id,
+                                                                            })
+                                                                        }
                                                                         className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
                                                                         placeholder="Write a reply..."
                                                                     />
                                                                     <button
-                                                                        onClick={() => {
-                                                                            console.log("Submitting reply for comment ID:", comment._id, "Reply text:", reply.text); // Debugging reply submission
-                                                                            replyToComment(comment._id);
-                                                                        }}
+                                                                        onClick={() =>
+                                                                            replyToComment(reply.postId, reply.commentId, reply.text)
+                                                                        }
                                                                         className="px-2 py-1 text-xs bg-gray-800 text-white rounded-md hover:bg-gray-700 transition-colors"
                                                                     >
                                                                         Reply
@@ -759,10 +794,9 @@ const PostPage = () => {
                                                         </div>
                                                     );
                                                 })}
-
-
-
                                             </div>
+
+                                            {/* Add Comment */}
                                             <div className="mt-3 flex gap-2">
                                                 <input
                                                     value={newComment}
@@ -771,13 +805,14 @@ const PostPage = () => {
                                                     placeholder="Add a comment..."
                                                 />
                                                 <button
-                                                    onClick={addComment}
+                                                    onClick={() => addComment(post._id, newComment)} // Pass post._id for the current post
                                                     className="px-3 py-2 bg-gray-800 text-white text-sm rounded-md hover:bg-gray-700 transition-colors"
                                                 >
                                                     <Send size={14} />
                                                 </button>
                                             </div>
                                         </div>
+
                                     </div>
                                 ))
                             ) : (
