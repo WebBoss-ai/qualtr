@@ -1,274 +1,402 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import axios from 'axios';
-import { MARKETER_API_END_POINT } from '@/utils/constant';
+import React, { useEffect, useState, useRef } from 'react'
+import { useParams } from 'react-router-dom'
+import axios from 'axios'
+import { MARKETER_API_END_POINT } from '@/utils/constant'
+import RandomSuggestedProfiles from '../RandomSuggestedProfiles'
+import { ThumbsUp, MessageCircle, Share2, Send, Calendar, MapPin, Briefcase, BarChart2, FileText, X, ChevronRight, ChevronLeft } from 'lucide-react'
+import moment from 'moment';
+import Navbar from '@/components/shared/Navbar'
+import Footer from '@/components/shared/Footer'
 
-const PostDetails = () => {
-    const { id } = useParams();
-    const [post, setPost] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [userId, setUserId] = useState(null); // State to store userId
-    const [likes, setLikes] = useState([]);
-    const [comments, setComments] = useState([]);
-    const [newComment, setNewComment] = useState('');
-    const [reply, setReply] = useState({ commentId: null, text: '' });
-    const [showModal, setShowModal] = useState(false);
+const LoginModal = ({ isOpen, onClose }) => {
+    if (!isOpen) return null
 
-    const toggleLike = async () => {
-        try {
-            const response = await axios.post(`${MARKETER_API_END_POINT}/posts/${post._id}/like`);
-            setLikes({
-                isLiked: response.data.isLiked, // Update the isLiked state
-                length: response.data.likesCount, // Update the likes count
-            });
-        } catch (error) {
-            console.error('Error toggling like:', error);
-        }
-    };
-
-    const addComment = async () => {
-        if (!userId) return setShowModal(true);
-        try {
-            const response = await axios.post(`${MARKETER_API_END_POINT}/posts/${post._id}/comment`, { text: newComment });
-            setComments(response.data.post.comments);
-            setNewComment('');
-        } catch (error) {
-            console.error('Error adding comment:', error);
-        }
-    };
-
-    const replyToComment = async (commentId) => {
-        if (!userId) return setShowModal(true);
-        try {
-            const response = await axios.post(`${MARKETER_API_END_POINT}/posts/${post._id}/comment/${commentId}/reply`, {
-                text: reply.text,
-            });
-            setComments(response.data.post.comments);
-            setReply({ commentId: null, text: '' });
-        } catch (error) {
-            console.error('Error replying to comment:', error);
-        }
-    };
-
-    const LoginModal = ({ isOpen, onClose }) => {
-        if (!userId) return setShowModal(true);
-        if (!isOpen) return null;
-        return (
-            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                <div className="bg-white rounded-lg p-6 w-96 text-center shadow-lg">
-                    <h2 className="text-2xl font-bold mb-4">Login Required</h2>
-                    <p className="mb-4">You need to log in to perform this action.</p>
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
+            <div className="relative bg-white rounded-lg w-full max-w-sm p-6 space-y-4">
+                <div className="flex items-center justify-between">
+                    <h2 className="text-lg font-semibold text-gray-900">Sign in to continue</h2>
+                    <button onClick={onClose} className="p-1 rounded-full hover:bg-gray-100">
+                        <X size={18} className="text-gray-500" />
+                    </button>
+                </div>
+                <p className="text-sm text-gray-600">Please sign in to interact with posts and connect with other marketers.</p>
+                <div className="flex gap-3">
                     <a
                         href="/marketer/login"
-                        className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+                        className="flex-1 bg-gray-900 text-white px-4 py-2 rounded-md text-sm hover:bg-gray-800 transition-colors text-center"
                     >
-                        Go to Login
+                        Sign in
                     </a>
                     <button
                         onClick={onClose}
-                        className="mt-4 text-gray-600 underline hover:text-gray-800"
+                        className="flex-1 border border-gray-200 px-4 py-2 rounded-md text-sm hover:bg-gray-50 transition-colors"
                     >
-                        Close
+                        Cancel
                     </button>
                 </div>
             </div>
-        );
+        </div>
+    )
+}
+
+const ImageGallery = ({ images }) => {
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [dimension, setDimension] = useState(0);
+    const containerRef = useRef(null);
+  
+    useEffect(() => {
+      // Dynamically calculate the square size based on the width of the container
+      const updateDimension = () => {
+        if (containerRef.current) {
+          const width = containerRef.current.offsetWidth;
+          setDimension(width); // Set the square's dimension to the width
+        }
+      };
+  
+      updateDimension();
+      window.addEventListener("resize", updateDimension); // Recalculate on window resize
+      return () => {
+        window.removeEventListener("resize", updateDimension);
+      };
+    }, []);
+  
+    const nextImage = () => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
     };
+  
+    const prevImage = () => {
+      setCurrentIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
+    };
+  
+    return (
+      <div
+        ref={containerRef}
+        style={{ height: `${dimension}px` }} // Dynamically set height to match width
+        className="relative w-[90vw] max-w-[500px] bg-black rounded-lg flex items-center justify-center overflow-hidden"
+      >
+        <img
+          src={images[currentIndex]?.url || "/placeholder.svg"}
+          alt={`Image ${currentIndex + 1}`}
+          className="object-contain w-full h-full"
+        />
+        {images.length > 1 && (
+          <>
+            <button
+              onClick={prevImage}
+              className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full"
+            >
+              <ChevronLeft size={24} />
+            </button>
+            <button
+              onClick={nextImage}
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full"
+            >
+              <ChevronRight size={24} />
+            </button>
+            <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-2">
+              {images.map((_, index) => (
+                <div
+                  key={index}
+                  className={`w-3 h-3 rounded-full ${
+                    index === currentIndex ? "bg-white" : "bg-white/50"
+                  }`}
+                />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    );
+  };
+
+
+const PostDetails = () => {
+    const { id } = useParams()
+    const [post, setPost] = useState(null)
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(null)
+    const [userId, setUserId] = useState(null)
+    const [likes, setLikes] = useState({ isLiked: false, length: 0 })
+    const [comments, setComments] = useState([])
+    const [newComment, setNewComment] = useState('')
+    const [reply, setReply] = useState({ commentId: null, text: '' })
+    const [showModal, setShowModal] = useState(false)
 
     useEffect(() => {
         const fetchPost = async () => {
-            console.log('Fetching post details...');  // Debugging statement
-
-            const storedUserId = localStorage.getItem('userId');
-            console.log('Stored UserId:', storedUserId);  // Debugging statement
-            setUserId(storedUserId);
+            const storedUserId = localStorage.getItem('userId')
+            setUserId(storedUserId)
 
             try {
-                console.log('Making API request for post:', `${MARKETER_API_END_POINT}/post/${id}`);  // Debugging statement
-                const response = await axios.get(`${MARKETER_API_END_POINT}/post/${id}`);
-                console.log('API response received:', response);  // Debugging statement
+                const response = await axios.get(`${MARKETER_API_END_POINT}/post/${id}`)
+                const fetchedPost = response.data.post
+                setPost(fetchedPost)
 
-                const fetchedPost = response.data.post;
-                console.log('Fetched post:', fetchedPost);  // Debugging statement
-
-                setPost(fetchedPost);
-
-                // Make sure `likes` is defined and is an array
-                const likes = Array.isArray(fetchedPost.likes) ? fetchedPost.likes : [];
-                const isLikedByUser = likes.includes(storedUserId);
-                console.log('Is post liked by user:', isLikedByUser);  // Debugging statement
-
+                const postLikes = Array.isArray(fetchedPost.likes) ? fetchedPost.likes : []
                 setLikes({
-                    isLiked: isLikedByUser,
-                    length: likes.length,
-                });
+                    isLiked: postLikes.includes(storedUserId),
+                    length: postLikes.length,
+                })
 
-                setComments(fetchedPost.comments || []);
-                console.log('Post comments:', fetchedPost.comments);  // Debugging statement
-
+                setComments(fetchedPost.comments || [])
             } catch (err) {
-                console.error('Error fetching post:', err);  // Debugging statement
-                setError(err.response?.data?.message || 'Error fetching post details');
+                setError(err.response?.data?.message || 'Error fetching post details')
             } finally {
-                console.log('Post fetching completed');  // Debugging statement
-                setLoading(false);
+                setLoading(false)
             }
-        };
-        fetchPost();
-    }, [id]);
+        }
+        fetchPost()
+    }, [id])
 
+    const toggleLike = async () => {
+        if (!userId) return setShowModal(true)
+        try {
+            const response = await axios.post(`${MARKETER_API_END_POINT}/posts/${post._id}/like`)
+            setLikes({
+                isLiked: response.data.isLiked,
+                length: response.data.likesCount,
+            })
+        } catch (error) {
+            console.error('Error toggling like:', error)
+        }
+    }
 
+    const addComment = async () => {
+        if (!userId) return setShowModal(true)
+        try {
+            const response = await axios.post(`${MARKETER_API_END_POINT}/posts/${post._id}/comment`, { text: newComment })
+            setComments(response.data.post.comments)
+            setNewComment('')
+        } catch (error) {
+            console.error('Error adding comment:', error)
+        }
+    }
 
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p className="text-red-500">{error}</p>;
+    const replyToComment = async (commentId) => {
+        if (!userId) return setShowModal(true)
+        try {
+            const response = await axios.post(`${MARKETER_API_END_POINT}/posts/${post._id}/comment/${commentId}/reply`, {
+                text: reply.text,
+            })
+            setComments(response.data.post.comments)
+            setReply({ commentId: null, text: '' })
+        } catch (error) {
+            console.error('Error replying to comment:', error)
+        }
+    }
+
+    if (loading) return (
+        <div className="flex justify-center items-center h-screen">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900"></div>
+        </div>
+    )
+
+    if (error) return <p className="text-red-500 text-center py-6 text-sm">{error}</p>
 
     return (
-        <div className="p-4">
-            <p className="text-2xl font-bold mb-4">{post?.text || 'No title available'}</p>
+        <div>
+            <Navbar />
+            <div className="bg-gray-50 min-h-screen">
+                <div className="max-w-6xl mx-auto px-4 py-6">
+                    <div className="lg:flex lg:gap-6">
+                        {/* Main content - 70% */}
+                        <div className="lg:flex-1">
+                            <div className="bg-white rounded-lg border border-gray-200 p-4">
+                                {/* Author info */}
+                                <div className="flex items-center mb-3">
+                                    {post?.author?.profile?.profilePhoto && (
+                                        <img
+                                            src={post.author.profile.profilePhoto || "/placeholder.svg"}
+                                            alt={post.author.profile.fullname}
+                                            className="w-10 h-10 rounded-full object-cover mr-3"
+                                        />
+                                    )}
+                                    <div>
+                                        <h2 className="text-base font-semibold text-gray-900">{post?.author?.profile?.fullname || 'Unknown Author'}</h2>
+                                        <p className="text-xs text-gray-500">{post?.author?.profile?.agencyName || 'Unknown Agency'}</p>
+                                    </div>
+                                </div>
 
-            {post?.category && <h3 className="text-lg font-semibold">Category: {post.category}</h3>}
+                                {/* Post content */}
+                                <p className="text-sm text-gray-700 mb-3">{post?.text || 'No content available'}</p>
 
-            {post?.author?.profile?.fullname && (
-                <p>
-                    <strong>Author:</strong> {post.author.profile.fullname}
-                </p>
-            )}
-            {post?.author?.profile?.profilePhoto && (
-                <img
-                    src={post.author.profile.profilePhoto}
-                    alt={post.author.profile.fullname}
-                    style={{ width: '50px', height: '50px', borderRadius: '50%' }}
-                />
-            )}
+                                {/* Media */}
+                                {post?.media?.photos?.length > 0 && (
+                                    <div className="mb-3 flex justify-center">
+                                        <ImageGallery images={post.media.photos} />
+                                    </div>
+                                )}
 
-            {post?.media?.photos?.length > 0 && (
-                <div className="mt-4">
-                    <h4 className="font-semibold">Photos:</h4>
-                    <div className="grid grid-cols-3 gap-4">
-                        {post.media.photos.map((photo, index) => (
-                            <img
-                                key={index}
-                                src={photo.url}
-                                alt={`Photo ${index + 1}`}
-                                className="rounded-lg"
-                                style={{ width: '100px', height: '100px' }}
-                            />
-                        ))}
+
+                                {/* Event details */}
+                                {post?.event && (
+                                    <div className="bg-gray-50 rounded-md p-3 mb-3 text-xs">
+                                        <h3 className="font-semibold text-gray-900 mb-1 flex items-center">
+                                            <Calendar className="mr-1" size={14} />
+                                            Event Details
+                                        </h3>
+                                        <p><strong>Title:</strong> {post.event.title || 'N/A'}</p>
+                                        <p><strong>Date:</strong> {post.event.date || 'N/A'}</p>
+                                        <p className="flex items-center">
+                                            <MapPin className="mr-1" size={12} />
+                                            <span><strong>Location:</strong> {post.event.location || 'N/A'}</span>
+                                        </p>
+                                    </div>
+                                )}
+
+                                {/* Job Opening */}
+                                {post?.jobOpening && (
+                                    <div className="bg-gray-50 rounded-md p-3 mb-3 text-xs">
+                                        <h3 className="font-semibold text-gray-900 mb-1 flex items-center">
+                                            <Briefcase className="mr-1" size={14} />
+                                            Job Opening
+                                        </h3>
+                                        <p><strong>Position:</strong> {post.jobOpening.position || 'N/A'}</p>
+                                        <p><strong>Salary:</strong> {post.jobOpening.salary || 'N/A'}</p>
+                                        <p className="flex items-center">
+                                            <MapPin className="mr-1" size={12} />
+                                            <span><strong>Location:</strong> {post.jobOpening.location || 'N/A'}</span>
+                                        </p>
+                                    </div>
+                                )}
+
+                                {/* Poll */}
+                                {post?.poll && (
+                                    <div className="bg-gray-50 rounded-md p-3 mb-3 text-xs">
+                                        <h3 className="font-semibold text-gray-900 mb-1 flex items-center">
+                                            <BarChart2 className="mr-1" size={14} />
+                                            Poll
+                                        </h3>
+                                        <p><strong>Question:</strong> {post.poll.question || 'N/A'}</p>
+                                        <ul className="list-disc pl-4 mt-1">
+                                            {post.poll.options?.map((option, index) => (
+                                                <li key={index} className="text-gray-700">{option}</li>
+                                            )) || <li>No options available</li>}
+                                        </ul>
+                                    </div>
+                                )}
+
+                                {/* Document */}
+                                {post?.document && (
+                                    <div className="bg-gray-50 rounded-md p-3 mb-3 text-xs">
+                                        <h3 className="font-semibold text-gray-900 mb-1 flex items-center">
+                                            <FileText className="mr-1" size={14} />
+                                            Document
+                                        </h3>
+                                        <a
+                                            href={post.document.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-gray-700 hover:underline flex items-center"
+                                        >
+                                            <FileText className="mr-1" size={12} />
+                                            {post.document.title || 'View Document'}
+                                        </a>
+                                    </div>
+                                )}
+
+                                {/* Interactions */}
+                                <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-200">
+                                    <button
+                                        onClick={toggleLike}
+                                        className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs transition-colors ${likes.isLiked
+                                            ? 'bg-gray-200 text-gray-800'
+                                            : 'hover:bg-gray-100 text-gray-700'
+                                            }`}
+                                    >
+                                        <ThumbsUp size={14} />
+                                        <span>{likes.isLiked ? 'Liked' : 'Like'}</span>
+                                        <span className="text-gray-500">({likes.length})</span>
+                                    </button>
+                                    <button className="flex items-center gap-1 px-3 py-1 rounded-full text-xs hover:bg-gray-100 text-gray-700">
+                                        <MessageCircle size={14} />
+                                        <span>Comment</span>
+                                        <span className="text-gray-500">({comments.length})</span>
+                                    </button>
+                                    <button className="flex items-center gap-1 px-3 py-1 rounded-full text-xs hover:bg-gray-100 text-gray-700">
+                                        <Share2 size={14} />
+                                        <span>Share</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Comments section */}
+                            <div className="mt-4 bg-white rounded-lg border border-gray-200 p-4">
+                                <h3 className="text-sm font-semibold text-gray-900 mb-3">Comments</h3>
+                                <div className="space-y-3 max-h-80 overflow-y-auto">
+                                    {comments.map((comment) => (
+                                        <div key={comment._id} className="border-b border-gray-100 pb-2">
+                                            <p className="text-sm text-gray-800 mb-1">{comment.text}</p>
+                                            <div className="flex items-center gap-3 text-xs text-gray-500">
+                                                <button
+                                                    onClick={() => setReply({ commentId: comment._id, text: '' })}
+                                                    className="hover:text-gray-700"
+                                                >
+                                                    Reply
+                                                </button>
+                                                <span>{moment(comment.createdAt).fromNow()}</span> {/* Relative time */}
+                                            </div>
+
+                                            {comment.replies.map((reply) => (
+                                                <div key={reply._id} className="ml-4 mt-1 p-2 bg-gray-50 rounded-md">
+                                                    <p className="text-xs text-gray-800">{reply.text}</p>
+                                                    <span className="text-xs text-gray-500">
+                                                        {moment(reply.createdAt).fromNow()} {/* Display time like "2 minutes ago", "3 hours ago" */}
+                                                    </span>
+                                                </div>
+                                            ))}
+                                            {reply.commentId === comment._id && (
+                                                <div className="mt-2 flex gap-2">
+                                                    <input
+                                                        value={reply.text}
+                                                        onChange={(e) => setReply({ ...reply, text: e.target.value })}
+                                                        className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
+                                                        placeholder="Write a reply..."
+                                                    />
+                                                    <button
+                                                        onClick={() => replyToComment(comment._id)}
+                                                        className="px-2 py-1 text-xs bg-gray-800 text-white rounded-md hover:bg-gray-700 transition-colors"
+                                                    >
+                                                        Reply
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="mt-3 flex gap-2">
+                                    <input
+                                        value={newComment}
+                                        onChange={(e) => setNewComment(e.target.value)}
+                                        className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
+                                        placeholder="Add a comment..."
+                                    />
+                                    <button
+                                        onClick={addComment}
+                                        className="px-3 py-2 bg-gray-800 text-white text-sm rounded-md hover:bg-gray-700 transition-colors"
+                                    >
+                                        <Send size={14} />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Suggested Profiles - 30% */}
+                        <div className="hidden lg:block lg:w-72">
+                            <div className="sticky top-20">
+                                <RandomSuggestedProfiles />
+                            </div>
+                        </div>
                     </div>
                 </div>
-            )}
-
-            {post?.media?.videos?.length > 0 && (
-                <div className="mt-4">
-                    <h4 className="font-semibold">Videos:</h4>
-                    {post.media.videos.map((video, index) => (
-                        <video key={index} width="300" controls>
-                            <source src={video.url} type="video/mp4" />
-                            Your browser does not support the video tag.
-                        </video>
-                    ))}
-                </div>
-            )}
-
-            {post?.event && (
-                <div className="mt-4">
-                    <h4 className="font-semibold">Event Details:</h4>
-                    <p><strong>Title:</strong> {post.event.title || 'N/A'}</p>
-                    <p><strong>Date:</strong> {post.event.date || 'N/A'}</p>
-                    <p><strong>Location:</strong> {post.event.location || 'N/A'}</p>
-                </div>
-            )}
-
-            {post?.occasion && (
-                <div className="mt-4">
-                    <h4 className="font-semibold">Occasion Details:</h4>
-                    <p><strong>Occasion:</strong> {post.occasion.name || 'N/A'}</p>
-                    <p><strong>Description:</strong> {post.occasion.description || 'N/A'}</p>
-                </div>
-            )}
-
-            {post?.jobOpening && (
-                <div className="mt-4">
-                    <h4 className="font-semibold">Job Opening:</h4>
-                    <p><strong>Position:</strong> {post.jobOpening.position || 'N/A'}</p>
-                    <p><strong>Salary:</strong> {post.jobOpening.salary || 'N/A'}</p>
-                    <p><strong>Location:</strong> {post.jobOpening.location || 'N/A'}</p>
-                </div>
-            )}
-
-            {post?.poll && (
-                <div className="mt-4">
-                    <h4 className="font-semibold">Poll:</h4>
-                    <p><strong>Question:</strong> {post.poll.question || 'N/A'}</p>
-                    <ul className="list-disc pl-5">
-                        {post.poll.options?.map((option, index) => (
-                            <li key={index}>{option}</li>
-                        )) || <li>No options available</li>}
-                    </ul>
-                </div>
-            )}
-
-            {post?.document && (
-                <div className="mt-4">
-                    <h4 className="font-semibold">Document:</h4>
-                    <a
-                        href={post.document.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-500 underline"
-                    >
-                        {post.document.title || 'View Document'}
-                    </a>
-                </div>
-            )}
-
-            <div>
-                <button onClick={toggleLike}>
-                    {likes.isLiked ? 'Unlike' : 'Like'} ({likes.length})
-                </button>
-
-                <div>
-                    <h3>Comments</h3>
-                    <ul>
-                        <ul>
-                            {comments.map((comment, index) => (
-                                <li key={comment._id || `comment-${index}`}>
-                                    <p>{comment.text}</p>
-                                    <button onClick={() => setReply({ commentId: comment._id, text: '' })}>Reply</button>
-
-                                    {comment.replies.map((reply, replyIndex) => (
-                                        <p key={reply._id || `reply-${replyIndex}`} style={{ marginLeft: '20px' }}>
-                                            {reply.text}
-                                        </p>
-                                    ))}
-
-                                    {reply.commentId === comment._id && (
-                                        <div>
-                                            <input
-                                                value={reply.text}
-                                                onChange={(e) => setReply({ ...reply, text: e.target.value })}
-                                            />
-                                            <button onClick={() => replyToComment(comment._id)}>Submit</button>
-                                        </div>
-                                    )}
-                                </li>
-                            ))}
-                        </ul>
-                    </ul>
-
-                    <input
-                        value={newComment}
-                        onChange={(e) => setNewComment(e.target.value)}
-                        placeholder="Add a comment"
-                    />
-                    <button onClick={addComment}>Comment</button>
-                </div>
+                <LoginModal isOpen={showModal} onClose={() => setShowModal(false)} />
             </div>
-            <LoginModal isOpen={showModal} onClose={() => setShowModal(false)} />
+            <Footer />
         </div>
-    );
 
-};
+    )
+}
 
-export default PostDetails;
+export default PostDetails

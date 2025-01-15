@@ -190,7 +190,7 @@ export const getPostById = async (req, res) => {
           { $inc: { impressions: 1 } }, // Increment impressions by 1
           { new: true } // Return the updated document
       )
-          .populate('author', 'profile.fullname profile.profilePicture')
+          .populate('author', 'profile.fullname profile.agencyName profile.profilePicture') // Include basic author details
           .lean();
 
       if (!post) {
@@ -198,6 +198,12 @@ export const getPostById = async (req, res) => {
               message: 'Post not found.',
               success: false,
           });
+      }
+
+      // Fetch and update the author's profile photo URL
+      if (post.author && post.author.profilePicture) {
+          const profilePhotoURL = await getObjectURL(post.author.profilePicture); // Generate a presigned URL for the profile picture
+          post.author.profilePicture = profilePhotoURL; // Replace with the generated URL
       }
 
       if (post.media) {
