@@ -150,17 +150,24 @@ const PostDetails = () => {
     }, [id])
 
     const toggleLike = async () => {
-        if (!userId) return setShowModal(true)
+        if (!userId) return setShowModal(true);
+        
+        const updatedLikeState = !likes.isLiked; // toggle like state
+        setLikes({
+            isLiked: updatedLikeState,
+            length: updatedLikeState ? likes.length + 1 : likes.length - 1, // update the count based on the like state
+        });
+    
         try {
-            const response = await axios.post(`${MARKETER_API_END_POINT}/posts/${post._id}/like`)
+            const response = await axios.post(`${MARKETER_API_END_POINT}/posts/${post._id}/like`);
             setLikes({
                 isLiked: response.data.isLiked,
                 length: response.data.likesCount,
-            })
+            });
         } catch (error) {
-            console.error('Error toggling like:', error)
+            console.error('Error toggling like:', error);
         }
-    }
+    };    
 
     const addComment = async () => {
         if (!userId) return setShowModal(true)
