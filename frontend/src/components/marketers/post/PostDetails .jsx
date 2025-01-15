@@ -150,24 +150,25 @@ const PostDetails = () => {
     }, [id])
 
     const toggleLike = async () => {
-        if (!userId) return setShowModal(true);
-        
-        const updatedLikeState = !likes.isLiked; // toggle like state
-        setLikes({
-            isLiked: updatedLikeState,
-            length: updatedLikeState ? likes.length + 1 : likes.length - 1, // update the count based on the like state
-        });
-    
+        if (!userId) {
+            return setShowModal(true); // Show login modal if user is not logged in
+        }
+
         try {
+            // Send the request to the server to toggle the like
             const response = await axios.post(`${MARKETER_API_END_POINT}/posts/${post._id}/like`);
+
+            // Update the state with the server response
             setLikes({
                 isLiked: response.data.isLiked,
                 length: response.data.likesCount,
             });
         } catch (error) {
             console.error('Error toggling like:', error);
+            // Optionally show an error notification or revert state
         }
-    };    
+    };
+
 
     const addComment = async () => {
         if (!userId) return setShowModal(true)
@@ -313,6 +314,7 @@ const PostDetails = () => {
 
                                 {/* Interactions */}
                                 <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-200">
+                                    {/* Like Button */}
                                     <button
                                         onClick={toggleLike}
                                         className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs transition-colors ${likes.isLiked ? 'bg-pink-100 text-pink-600' : 'hover:bg-gray-100 text-gray-700'
@@ -327,12 +329,14 @@ const PostDetails = () => {
                                         <span className="text-gray-500">({likes.length})</span>
                                     </button>
 
+                                    {/* Comment Button */}
                                     <button className="flex items-center gap-1 px-3 py-1 rounded-full text-xs hover:bg-gray-100 text-gray-700">
                                         <MessageCircle size={14} />
                                         <span>Comment</span>
                                         <span className="text-gray-500">({comments.length})</span>
                                     </button>
 
+                                    {/* Share Button */}
                                     <button className="flex items-center gap-1 px-3 py-1 rounded-full text-xs hover:bg-gray-100 text-gray-700">
                                         <Share2 size={14} />
                                         <span>Share</span>
