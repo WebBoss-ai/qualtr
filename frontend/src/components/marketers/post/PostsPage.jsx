@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { MARKETER_API_END_POINT } from "@/utils/constant";
 import RandomSuggestedProfiles from '../RandomSuggestedProfiles';
+import { ChevronRight, ThumbsUp, Calendar, MapPin, Briefcase, BarChart2, FileText } from 'lucide-react'
+import { MessageCircle, Share2, Send, X, ChevronLeft } from 'lucide-react'
+
 
 const PostPage = () => {
     const [posts, setPosts] = useState([]);
@@ -11,22 +14,109 @@ const PostPage = () => {
     const [media, setMedia] = useState({ images: [], videos: [] });
     const [additionalData, setAdditionalData] = useState({});
     const [currentStep, setCurrentStep] = useState(1);
+    const [likes, setLikes] = useState({ isLiked: false, length: 0 })
+    const [comments, setComments] = useState([])
+    const [newComment, setNewComment] = useState('')
+    const [reply, setReply] = useState({ commentId: null, text: '' })
+    const [showModal, setShowModal] = useState(false)
+    const [userId, setUserId] = useState(null)
+
+    const toggleLike = async () => {
+        if (!userId) {
+            return setShowModal(true); // Show login modal if user is not logged in
+        }
+
+        try {
+            // Send the request to the server to toggle the like
+            const response = await axios.post(`${MARKETER_API_END_POINT}/posts/${post._id}/like`);
+
+            // Update the state with the server response
+            setLikes({
+                isLiked: response.data.isLiked,
+                length: response.data.likesCount,
+            });
+            window.location.reload();
+        } catch (error) {
+            console.error('Error toggling like:', error);
+            // Optionally show an error notification or revert state
+        }
+    };
+
+    const categories = [
+        { name: 'Trending', href: '/trending' },
+        { name: 'Brand Strategy & Identity', href: '/category/brand-strategy-identity' },
+        { name: 'Memes & Marketing Fun', href: '/category/memes-marketing-fun' },
+        { name: 'Content Creation & Design', href: '/category/content-creation-design' },
+        { name: 'Digital Marketing', href: '/category/digital-marketing' },
+    ]
 
     useEffect(() => {
         fetchPosts();
     }, []);
 
     const fetchPosts = async () => {
+        const storedUserId = localStorage.getItem('userId');
+        setUserId(storedUserId);
+
         try {
-            console.log('Fetching posts...');
+            // Fetch all posts
             const response = await axios.get(`${MARKETER_API_END_POINT}/posts`);
             console.log('Posts fetched successfully:', response.data);
-            setPosts(response.data.posts || []);
+
+            const posts = response.data.posts || [];
+
+            // Fetch likes and comments for each post
+            const updatedPosts = await Promise.all(
+                posts.map(async (post) => {
+                    try {
+                        const postResponse = await axios.get(`${MARKETER_API_END_POINT}/post/${post._id}`);
+                        const fetchedPost = postResponse.data.post;
+
+                        return {
+                            ...post,
+                            likes: {
+                                isLiked: fetchedPost.likes?.includes(storedUserId),
+                                length: fetchedPost.likes?.length || 0,
+                            },
+                            comments: fetchedPost.comments || [],
+                        };
+                    } catch (error) {
+                        console.error(`Failed to fetch details for post ${post._id}:`, error);
+                        return post; // Return original post if fetching details fails
+                    }
+                })
+            );
+
+            setPosts(updatedPosts);
         } catch (error) {
             console.error('Failed to fetch posts:', error);
             setPosts([]);
         }
     };
+
+    const addComment = async () => {
+        if (!userId) return setShowModal(true)
+        try {
+            const response = await axios.post(`${MARKETER_API_END_POINT}/posts/${post._id}/comment`, { text: newComment })
+            setComments(response.data.post.comments)
+            setNewComment('')
+        } catch (error) {
+            console.error('Error adding comment:', error)
+        }
+    }
+
+    const replyToComment = async (commentId) => {
+        if (!userId) return setShowModal(true)
+        try {
+            const response = await axios.post(`${MARKETER_API_END_POINT}/posts/${post._id}/comment/${commentId}/reply`, {
+                text: reply.text,
+            })
+            setComments(response.data.post.comments)
+            setReply({ commentId: null, text: '' })
+        } catch (error) {
+            console.error('Error replying to comment:', error)
+        }
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -398,103 +488,312 @@ const PostPage = () => {
                     <button type="submit">Create Post</button>
                 </form>
             )}
-            <div>
-                <h2>All Posts</h2>
-                {posts.length > 0 ? (
-                    posts.map((post) => (
-                        <div key={post._id}>
-                            {post.category && <h3>Category: {post.category}</h3>}
-                            {post.text && <p>{post.text}</p>}
-                            {post.author?.profile?.fullname && <p>Author: {post.author.profile.fullname}</p>}
-                            {post.author?.profile?.profilePhoto && (
-                                <img
-                                    src={post.author.profile.profilePhoto}
-                                    alt={post.author.profile.fullname}
-                                    style={{ width: '50px', height: '50px', borderRadius: '50%' }}
-                                />
-                            )}
-                            {post.media?.photos?.length > 0 && (
-                                <div>
-                                    <h4>Photos:</h4>
-                                    {post.media.photos.map((photo, index) => (
-                                        <img
-                                            key={index}
-                                            src={photo.url}
-                                            alt={`Photo ${index + 1}`}
-                                            style={{ width: '100px', height: '100px' }}
-                                        />
-                                    ))}
+            <div className="bg-gray-100 min-h-screen">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                    <h1 className="text-3xl font-bold text-gray-900 mb-8">All Posts</h1>
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+                        {/* Left Sidebar */}
+                        <div className="hidden lg:block lg:col-span-3">
+                            <div className="sticky top-20">
+                                <div className="bg-white shadow-md rounded-lg overflow-hidden">
+                                    <h2 className="text-lg font-semibold text-gray-900 p-4 border-b border-gray-200">Categories</h2>
+                                    <nav className="flex flex-col">
+                                        {categories.map((category, index) => (
+                                            <a
+                                                key={index}
+                                                href={category.href}
+                                                className="flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out"
+                                            >
+                                                {category.name}
+                                                <ChevronRight className="h-5 w-5 text-gray-400" />
+                                            </a>
+                                        ))}
+                                    </nav>
                                 </div>
-                            )}
-                            {post.media?.videos?.length > 0 && (
-                                <div>
-                                    <h4>Videos:</h4>
-                                    {post.media.videos.map((video, index) => (
-                                        <video key={index} width="300" controls>
-                                            <source src={video.url} type="video/mp4" />
-                                            Your browser does not support the video tag.
-                                        </video>
-                                    ))}
-                                </div>
-                            )}
-                            {post.event && (
-                                <div>
-                                    <h4>Event:</h4>
-                                    <p>Title: {post.event.title}</p>
-                                    {post.event.description && <p>Description: {post.event.description}</p>}
-                                    {post.event.date && <p>Date: {new Date(post.event.date).toLocaleDateString()}</p>}
-                                    {post.event.location && <p>Location: {post.event.location}</p>}
-                                </div>
-                            )}
-                            {post.occasion && (
-                                <div>
-                                    <h4>Occasion:</h4>
-                                    <p>Title: {post.occasion.title}</p>
-                                    {post.occasion.description && <p>Description: {post.occasion.description}</p>}
-                                    {post.occasion.date && <p>Date: {new Date(post.occasion.date).toLocaleDateString()}</p>}
-                                </div>
-                            )}
-                            {post.jobOpening && (
-                                <div>
-                                    <h4>Job Opening:</h4>
-                                    <p>Title: {post.jobOpening.title}</p>
-                                    {post.jobOpening.description && <p>Description: {post.jobOpening.description}</p>}
-                                    {post.jobOpening.location && <p>Location: {post.jobOpening.location}</p>}
-                                    {post.jobOpening.salaryRange && <p>Salary Range: {post.jobOpening.salaryRange}</p>}
-                                </div>
-                            )}
-                            {post.poll && (
-                                <div>
-                                    <h4>Poll:</h4>
-                                    <p>Question: {post.poll.question}</p>
-                                    {post.poll.options?.length > 0 && (
-                                        <ul>
-                                            {post.poll.options.map((option, index) => (
-                                                <li key={index}>{option}</li>
-                                            ))}
-                                        </ul>
-                                    )}
-                                    {post.poll.endDate && <p>Ends on: {new Date(post.poll.endDate).toLocaleDateString()}</p>}
-                                </div>
-                            )}
-                            {post.document && (
-                                <div>
-                                    <h4>Document:</h4>
-                                    <p>Name: {post.document.name}</p>
-                                    {post.document.url && (
-                                        <a href={post.document.url} target="_blank" rel="noopener noreferrer">
-                                            Download
-                                        </a>
-                                    )}
-                                </div>
+                            </div>
+                        </div>
+
+                        {/* Main Content */}
+                        <div className="lg:col-span-6">
+                            {posts.length > 0 ? (
+                                posts.map((post) => (
+                                    <div key={post._id} className="bg-white shadow-md rounded-lg overflow-hidden mb-6">
+                                        <div className="p-4">
+                                            {post.category && (
+                                                <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-xs font-semibold text-gray-700 mb-2">
+                                                    {post.category}
+                                                </span>
+                                            )}
+                                            {post.text && <p className="text-gray-700 text-sm mb-4">{post.text}</p>}
+                                            {post.author?.profile && (
+                                                <div className="flex items-center mb-4">
+                                                    {post.author.profile.profilePhoto && (
+                                                        <img
+                                                            src={post.author.profile.profilePhoto || "/placeholder.svg"}
+                                                            alt={post.author.profile.fullname}
+                                                            className="w-10 h-10 rounded-full mr-3"
+                                                        />
+                                                    )}
+                                                    <div>
+                                                        <p className="text-sm font-medium text-gray-900">{post.author.profile.fullname}</p>
+                                                        <p className="text-xs text-gray-500">{post.author.profile.agencyName}</p>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {/* Media Section */}
+                                            {post.media?.photos?.length > 0 && (
+                                                <div className="mb-4">
+                                                    <div className="grid grid-cols-2 gap-2">
+                                                        {post.media.photos.map((photo, index) => (
+                                                            <img
+                                                                key={index}
+                                                                src={photo.url || "/placeholder.svg"}
+                                                                alt={`Photo ${index + 1}`}
+                                                                className="w-full h-40 object-cover rounded-md"
+                                                            />
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+                                            {post.media?.videos?.length > 0 && (
+                                                <div className="mb-4">
+                                                    {post.media.videos.map((video, index) => (
+                                                        <video key={index} controls className="w-full rounded-md">
+                                                            <source src={video.url} type="video/mp4" />
+                                                            Your browser does not support the video tag.
+                                                        </video>
+                                                    ))}
+                                                </div>
+                                            )}
+
+                                            {/* Event Section */}
+                                            {post.event && (
+                                                <div className="bg-gray-50 rounded-md p-3 mb-4">
+                                                    <h4 className="text-sm font-semibold text-gray-900 mb-2 flex items-center">
+                                                        <Calendar className="w-4 h-4 mr-1" /> Event
+                                                    </h4>
+                                                    <p className="text-sm font-medium text-gray-700">{post.event.title}</p>
+                                                    {post.event.description && <p className="text-xs text-gray-600 mt-1">{post.event.description}</p>}
+                                                    {post.event.date && (
+                                                        <p className="text-xs text-gray-600 mt-1">
+                                                            Date: {new Date(post.event.date).toLocaleDateString()}
+                                                        </p>
+                                                    )}
+                                                    {post.event.location && (
+                                                        <p className="text-xs text-gray-600 mt-1 flex items-center">
+                                                            <MapPin className="w-3 h-3 mr-1" /> {post.event.location}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            )}
+
+                                            {/* Occasion Section */}
+                                            {post.occasion && (
+                                                <div className="bg-gray-50 rounded-md p-3 mb-4">
+                                                    <h4 className="text-sm font-semibold text-gray-900 mb-2 flex items-center">
+                                                        <Calendar className="w-4 h-4 mr-1" /> Occasion
+                                                    </h4>
+                                                    <p className="text-sm font-medium text-gray-700">{post.occasion.title}</p>
+                                                    {post.occasion.description && (
+                                                        <p className="text-xs text-gray-600 mt-1">{post.occasion.description}</p>
+                                                    )}
+                                                    {post.occasion.date && (
+                                                        <p className="text-xs text-gray-600 mt-1">
+                                                            Date: {new Date(post.occasion.date).toLocaleDateString()}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            )}
+
+                                            {/* Job Opening Section */}
+                                            {post.jobOpening && (
+                                                <div className="bg-gray-50 rounded-md p-3 mb-4">
+                                                    <h4 className="text-sm font-semibold text-gray-900 mb-2 flex items-center">
+                                                        <Briefcase className="w-4 h-4 mr-1" /> Job Opening
+                                                    </h4>
+                                                    <p className="text-sm font-medium text-gray-700">{post.jobOpening.position}</p>
+                                                    {post.jobOpening.company && (
+                                                        <p className="text-xs text-gray-600 mt-1">{post.jobOpening.company}</p>
+                                                    )}
+                                                    {post.jobOpening.location && (
+                                                        <p className="text-xs text-gray-600 mt-1 flex items-center">
+                                                            <MapPin className="w-3 h-3 mr-1" /> {post.jobOpening.location}
+                                                        </p>
+                                                    )}
+                                                    {post.jobOpening.salary && (
+                                                        <p className="text-xs text-gray-600 mt-1">Salary: {post.jobOpening.salary}</p>
+                                                    )}
+                                                </div>
+                                            )}
+
+                                            {/* Poll Section */}
+                                            {post.poll && (
+                                                <div className="bg-gray-50 rounded-md p-3 mb-4">
+                                                    <h4 className="text-sm font-semibold text-gray-900 mb-2 flex items-center">
+                                                        <BarChart2 className="w-4 h-4 mr-1" /> Poll
+                                                    </h4>
+                                                    <p className="text-sm font-medium text-gray-700">{post.poll.question}</p>
+                                                    {post.poll.options && (
+                                                        <ul className="mt-2 space-y-1">
+                                                            {post.poll.options.map((option, index) => (
+                                                                <li key={index} className="text-xs text-gray-600">
+                                                                    {option}
+                                                                </li>
+                                                            ))}
+                                                        </ul>
+                                                    )}
+                                                </div>
+                                            )}
+
+                                            {/* Document Section */}
+                                            {post.document && (
+                                                <div className="bg-gray-50 rounded-md p-3 mb-4">
+                                                    <h4 className="text-sm font-semibold text-gray-900 mb-2 flex items-center">
+                                                        <FileText className="w-4 h-4 mr-1" /> Document
+                                                    </h4>
+                                                    <a
+                                                        href={post.document.url}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="text-sm text-blue-600 hover:underline flex items-center"
+                                                    >
+                                                        <FileText className="w-4 h-4 mr-1" />
+                                                        {post.document.title || 'View Document'}
+                                                    </a>
+                                                </div>
+                                            )}
+
+                                            <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-200">
+                                                {/* Like Button */}
+                                                <button
+                                                    onClick={toggleLike}
+                                                    className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs transition-colors ${post.likes.isLiked ? 'bg-pink-100 text-pink-600' : 'hover:bg-gray-100 text-gray-700'
+                                                        }`}
+                                                >
+                                                    <ThumbsUp
+                                                        size={14}
+                                                        className={`transition-colors ${post.likes.isLiked ? 'text-pink-500 fill-current' : 'text-gray-500'
+                                                            }`}
+                                                    />
+                                                    <span>{likes.isLiked ? 'Liked' : 'Like'}</span>
+                                                    <span className="text-gray-500">({post.likes.length})</span>
+                                                </button>
+
+                                                {/* Comment Button */}
+                                                <button className="flex items-center gap-1 px-3 py-1 rounded-full text-xs hover:bg-gray-100 text-gray-700">
+                                                    <MessageCircle size={14} />
+                                                    <span>Comment</span>
+                                                    <span className="text-gray-500">({post.comments.length})</span>
+                                                </button>
+
+                                                {/* Share Button */}
+                                                <button className="flex items-center gap-1 px-3 py-1 rounded-full text-xs hover:bg-gray-100 text-gray-700">
+                                                    <Share2 size={14} />
+                                                    <span>Share</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        {/* Comments section */}
+                                        <div className="mt-4 bg-white rounded-lg border border-gray-200 p-4">
+                                            <h3 className="text-sm font-semibold text-gray-900 mb-3">Comments</h3>
+                                            <div className="space-y-3 max-h-80 overflow-y-auto">
+                                                {comments.map((comment) => {
+                                                    console.log("Rendering comment:", comment); // Debugging comment data
+
+                                                    return (
+                                                        <div key={comment._id} className="border-b border-gray-100 pb-2">
+                                                            <p className="text-sm text-gray-800 mb-1">{comment.text}</p>
+                                                            <p className="text-sm text-gray-800 mb-1">
+                                                                {comment.user?.profile?.fullname || 'Anonymous User'}
+                                                            </p>
+                                                            <div className="flex items-center gap-3 text-xs text-gray-500">
+                                                                <button
+                                                                    onClick={() => {
+                                                                        console.log("Setting reply state for comment ID:", comment._id); // Debugging reply state setting
+                                                                        setReply({ commentId: comment._id, text: '' });
+                                                                    }}
+                                                                    className="hover:text-gray-700"
+                                                                >
+                                                                    Reply
+                                                                </button>
+                                                                <span>{moment(comment.createdAt).fromNow()}</span> {/* Relative time */}
+                                                            </div>
+
+                                                            {comment.replies.map((reply) => {
+                                                                console.log("Rendering reply for comment ID:", comment._id, "Reply:", reply); // Debugging replies
+
+                                                                return (
+                                                                    <div key={reply._id} className="ml-4 mt-1 p-2 bg-gray-50 rounded-md">
+                                                                        <p className="text-xs text-gray-800">{reply.text}</p>
+                                                                        <span className="text-xs text-gray-500">
+                                                                            {moment(reply.createdAt).fromNow()} {/* Display time like "2 minutes ago", "3 hours ago" */}
+                                                                        </span>
+                                                                    </div>
+                                                                );
+                                                            })}
+
+                                                            {reply.commentId === comment._id && (
+                                                                <div className="mt-2 flex gap-2">
+                                                                    <input
+                                                                        value={reply.text}
+                                                                        onChange={(e) => {
+                                                                            console.log("Updating reply text for comment ID:", comment._id, "New text:", e.target.value); // Debugging input change
+                                                                            setReply({ ...reply, text: e.target.value });
+                                                                        }}
+                                                                        className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
+                                                                        placeholder="Write a reply..."
+                                                                    />
+                                                                    <button
+                                                                        onClick={() => {
+                                                                            console.log("Submitting reply for comment ID:", comment._id, "Reply text:", reply.text); // Debugging reply submission
+                                                                            replyToComment(comment._id);
+                                                                        }}
+                                                                        className="px-2 py-1 text-xs bg-gray-800 text-white rounded-md hover:bg-gray-700 transition-colors"
+                                                                    >
+                                                                        Reply
+                                                                    </button>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    );
+                                                })}
+
+
+
+                                            </div>
+                                            <div className="mt-3 flex gap-2">
+                                                <input
+                                                    value={newComment}
+                                                    onChange={(e) => setNewComment(e.target.value)}
+                                                    className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
+                                                    placeholder="Add a comment..."
+                                                />
+                                                <button
+                                                    onClick={addComment}
+                                                    className="px-3 py-2 bg-gray-800 text-white text-sm rounded-md hover:bg-gray-700 transition-colors"
+                                                >
+                                                    <Send size={14} />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <p className="text-gray-700 text-center py-8">No posts available</p>
                             )}
                         </div>
-                    ))
-                ) : (
-                    <p>No posts available</p>
-                )}
+
+                        {/* Right Sidebar */}
+                        <div className="hidden lg:block lg:col-span-3">
+                            <div className="sticky top-20">
+                                <RandomSuggestedProfiles />
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        <RandomSuggestedProfiles/>
         </div>
     );
 };
