@@ -163,6 +163,7 @@ const PostDetails = () => {
                 isLiked: response.data.isLiked,
                 length: response.data.likesCount,
             });
+            window.location.reload();
         } catch (error) {
             console.error('Error toggling like:', error);
             // Optionally show an error notification or revert state
