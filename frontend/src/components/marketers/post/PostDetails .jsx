@@ -214,13 +214,20 @@ const PostDetails = () => {
                             <div className="bg-white rounded-lg border border-gray-200 p-4">
                                 {/* Author info */}
                                 <div className="flex items-center mb-3">
-                                    {post?.author?.profile?.profilePhoto && (
+                                    {post?.author?.profile?.profilePhoto ? (
                                         <img
-                                            src={post.author.profile.profilePhoto || "/placeholder.svg"}
-                                            alt={post.author.profile.fullname}
+                                            src={post.author.profile.profilePhoto}
+                                            alt={post.author.profile.fullname || "User"}
+                                            className="w-10 h-10 rounded-full object-cover mr-3"
+                                        />
+                                    ) : (
+                                        <img
+                                            src="/placeholder.svg"
+                                            alt="Default Profile"
                                             className="w-10 h-10 rounded-full object-cover mr-3"
                                         />
                                     )}
+
                                     <div>
                                         <h2 className="text-base font-semibold text-gray-900">{post?.author?.profile?.fullname || 'Unknown Author'}</h2>
                                         <p className="text-xs text-gray-500">{post?.author?.profile?.agencyName || 'Unknown Agency'}</p>

@@ -190,7 +190,7 @@ export const getPostById = async (req, res) => {
           { $inc: { impressions: 1 } }, // Increment impressions by 1
           { new: true } // Return the updated document
       )
-          .populate('author', 'profile.fullname profile.agencyName profile.profilePhoto') // Include basic author details
+          .populate('author', 'profile') // Populate the entire profile object
           .lean();
 
       if (!post) {
@@ -201,9 +201,9 @@ export const getPostById = async (req, res) => {
       }
 
       // Fetch and update the author's profile photo URL
-      if (post.author && post.author.profilePhoto) {
-          const profilePhotoURL = await getObjectURL(post.author.profilePhoto); // Generate a presigned URL for the profile picture
-          post.author.profilePhoto = profilePhotoURL; // Replace with the generated URL
+      if (post.author?.profile?.profilePhoto) {
+          const profilePhotoURL = await getObjectURL(post.author.profile.profilePhoto); // Generate a presigned URL for the profile picture
+          post.author.profile.profilePhoto = profilePhotoURL; // Replace with the generated URL
       }
 
       if (post.media) {
