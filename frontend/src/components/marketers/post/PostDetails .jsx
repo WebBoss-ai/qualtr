@@ -45,71 +45,70 @@ const ImageGallery = ({ images }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [dimension, setDimension] = useState(0);
     const containerRef = useRef(null);
-  
+
     useEffect(() => {
-      // Dynamically calculate the square size based on the width of the container
-      const updateDimension = () => {
-        if (containerRef.current) {
-          const width = containerRef.current.offsetWidth;
-          setDimension(width); // Set the square's dimension to the width
-        }
-      };
-  
-      updateDimension();
-      window.addEventListener("resize", updateDimension); // Recalculate on window resize
-      return () => {
-        window.removeEventListener("resize", updateDimension);
-      };
+        // Dynamically calculate the square size based on the width of the container
+        const updateDimension = () => {
+            if (containerRef.current) {
+                const width = containerRef.current.offsetWidth;
+                setDimension(width); // Set the square's dimension to the width
+            }
+        };
+
+        updateDimension();
+        window.addEventListener("resize", updateDimension); // Recalculate on window resize
+        return () => {
+            window.removeEventListener("resize", updateDimension);
+        };
     }, []);
-  
+
     const nextImage = () => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
     };
-  
+
     const prevImage = () => {
-      setCurrentIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
+        setCurrentIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
     };
-  
+
     return (
-      <div
-        ref={containerRef}
-        style={{ height: `${dimension}px` }} // Dynamically set height to match width
-        className="relative w-[90vw] max-w-[500px] bg-black rounded-lg flex items-center justify-center overflow-hidden"
-      >
-        <img
-          src={images[currentIndex]?.url || "/placeholder.svg"}
-          alt={`Image ${currentIndex + 1}`}
-          className="object-contain w-full h-full"
-        />
-        {images.length > 1 && (
-          <>
-            <button
-              onClick={prevImage}
-              className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full"
-            >
-              <ChevronLeft size={24} />
-            </button>
-            <button
-              onClick={nextImage}
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full"
-            >
-              <ChevronRight size={24} />
-            </button>
-            <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-2">
-              {images.map((_, index) => (
-                <div
-                  key={index}
-                  className={`w-3 h-3 rounded-full ${
-                    index === currentIndex ? "bg-white" : "bg-white/50"
-                  }`}
-                />
-              ))}
-            </div>
-          </>
-        )}
-      </div>
+        <div
+            ref={containerRef}
+            style={{ height: `${dimension}px` }} // Dynamically set height to match width
+            className="relative w-[90vw] max-w-[500px] bg-black rounded-lg flex items-center justify-center overflow-hidden"
+        >
+            <img
+                src={images[currentIndex]?.url || "/placeholder.svg"}
+                alt={`Image ${currentIndex + 1}`}
+                className="object-contain w-full h-full"
+            />
+            {images.length > 1 && (
+                <>
+                    <button
+                        onClick={prevImage}
+                        className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full"
+                    >
+                        <ChevronLeft size={24} />
+                    </button>
+                    <button
+                        onClick={nextImage}
+                        className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full"
+                    >
+                        <ChevronRight size={24} />
+                    </button>
+                    <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                        {images.map((_, index) => (
+                            <div
+                                key={index}
+                                className={`w-3 h-3 rounded-full ${index === currentIndex ? "bg-white" : "bg-white/50"
+                                    }`}
+                            />
+                        ))}
+                    </div>
+                </>
+            )}
+        </div>
     );
-  };
+};
 
 
 const PostDetails = () => {
@@ -229,20 +228,28 @@ const PostDetails = () => {
                                     </div>
                                 )}
 
-
                                 {/* Event details */}
                                 {post?.event && (
-                                    <div className="bg-gray-50 rounded-md p-3 mb-3 text-xs">
-                                        <h3 className="font-semibold text-gray-900 mb-1 flex items-center">
-                                            <Calendar className="mr-1" size={14} />
+                                    <div className="bg-white rounded-lg border border-gray-200 p-4 mb-4">
+                                        <h3 className="font-bold text-lg text-gray-800 mb-2 flex items-center">
+                                            <Calendar className="mr-2 text-gray-700" size={20} />
                                             Event Details
                                         </h3>
-                                        <p><strong>Title:</strong> {post.event.title || 'N/A'}</p>
-                                        <p><strong>Date:</strong> {post.event.date || 'N/A'}</p>
-                                        <p className="flex items-center">
-                                            <MapPin className="mr-1" size={12} />
-                                            <span><strong>Location:</strong> {post.event.location || 'N/A'}</span>
-                                        </p>
+                                        <div className="space-y-2">
+                                            <p className="text-sm text-gray-700">
+                                                <span className="font-semibold text-gray-800">Title:</span> {post.event.title || 'N/A'}
+                                            </p>
+                                            <p className="text-sm text-gray-700">
+                                                <span className="font-semibold text-gray-800">Date:</span>
+                                                {new Date(post.event.date).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' }) || 'N/A'}
+                                            </p>
+                                            <p className="text-sm text-gray-700 flex items-center">
+                                                <MapPin className="mr-2 text-gray-700" size={16} />
+                                                <span>
+                                                    <span className="font-semibold text-gray-800">Location:</span> {post.event.location || 'N/A'}
+                                                </span>
+                                            </p>
+                                        </div>
                                     </div>
                                 )}
 
@@ -263,7 +270,7 @@ const PostDetails = () => {
                                 )}
 
                                 {/* Poll */}
-                                {post?.poll && (
+                                {post?.poll && post?.poll?.question && (
                                     <div className="bg-gray-50 rounded-md p-3 mb-3 text-xs">
                                         <h3 className="font-semibold text-gray-900 mb-1 flex items-center">
                                             <BarChart2 className="mr-1" size={14} />
@@ -301,20 +308,24 @@ const PostDetails = () => {
                                 <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-200">
                                     <button
                                         onClick={toggleLike}
-                                        className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs transition-colors ${likes.isLiked
-                                            ? 'bg-gray-200 text-gray-800'
-                                            : 'hover:bg-gray-100 text-gray-700'
+                                        className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs transition-colors ${likes.isLiked ? 'bg-pink-100 text-pink-600' : 'hover:bg-gray-100 text-gray-700'
                                             }`}
                                     >
-                                        <ThumbsUp size={14} />
+                                        <ThumbsUp
+                                            size={14}
+                                            className={`transition-colors ${likes.isLiked ? 'text-pink-500 fill-current' : 'text-gray-500'
+                                                }`}
+                                        />
                                         <span>{likes.isLiked ? 'Liked' : 'Like'}</span>
                                         <span className="text-gray-500">({likes.length})</span>
                                     </button>
+
                                     <button className="flex items-center gap-1 px-3 py-1 rounded-full text-xs hover:bg-gray-100 text-gray-700">
                                         <MessageCircle size={14} />
                                         <span>Comment</span>
                                         <span className="text-gray-500">({comments.length})</span>
                                     </button>
+
                                     <button className="flex items-center gap-1 px-3 py-1 rounded-full text-xs hover:bg-gray-100 text-gray-700">
                                         <Share2 size={14} />
                                         <span>Share</span>
