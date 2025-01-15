@@ -5,6 +5,8 @@ import RandomSuggestedProfiles from '../RandomSuggestedProfiles';
 import { ChevronRight, ThumbsUp, Calendar, MapPin, Briefcase, BarChart2, FileText } from 'lucide-react'
 import { MessageCircle, Share2, Send, X, ChevronLeft } from 'lucide-react'
 import moment from 'moment';
+import Footer from '@/components/shared/Footer';
+import Navbar from '@/components/shared/Navbar';
 
 const PostPage = () => {
     const [posts, setPosts] = useState([]);
@@ -19,16 +21,55 @@ const PostPage = () => {
     const [comments, setComments] = useState([])
     const [newComment, setNewComment] = useState('')
     const [reply, setReply] = useState({ commentId: null, text: '' })
-    const [showModal, setShowModal] = useState(false)
     const [userId, setUserId] = useState(null)
+    const [showModal, setShowModal] = useState(false)
+
+
+    const LoginModal = ({ isOpen, onClose }) => {
+        if (!isOpen) return null
+
+        return (
+            <div className="fixed inset-0 z-50 flex items-center justify-center">
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
+                <div className="relative bg-white rounded-lg w-full max-w-sm p-6 space-y-4">
+                    <div className="flex items-center justify-between">
+                        <h2 className="text-lg font-semibold text-gray-900">Sign in to continue</h2>
+                        <button onClick={onClose} className="p-1 rounded-full hover:bg-gray-100">
+                            <X size={18} className="text-gray-500" />
+                        </button>
+                    </div>
+                    <p className="text-sm text-gray-600">Please sign in to interact with posts and connect with other marketers.</p>
+                    <div className="flex gap-3">
+                        <a
+                            href="/marketer/login"
+                            className="flex-1 bg-gray-900 text-white px-4 py-2 rounded-md text-sm hover:bg-gray-800 transition-colors text-center"
+                        >
+                            Sign in
+                        </a>
+                        <button
+                            onClick={onClose}
+                            className="flex-1 border border-gray-200 px-4 py-2 rounded-md text-sm hover:bg-gray-50 transition-colors"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        )
+    }
 
     const toggleLike = async (postId) => {
         if (!userId) {
+            console.log('User not logged in. Showing login modal...');
             return setShowModal(true); // Show login modal if user is not logged in
         }
 
+        console.log('Attempting to toggle like for post ID:', postId);
+
         try {
             const response = await axios.post(`${MARKETER_API_END_POINT}/posts/${postId}/like`);
+
+            console.log('API response received:', response.data);
 
             // Update the state for the specific post
             setPosts((prevPosts) =>
@@ -44,8 +85,12 @@ const PostPage = () => {
                         : post
                 )
             );
+
+            console.log('Post state updated successfully');
         } catch (error) {
             console.error('Error toggling like:', error);
+            console.error('Error response:', error.response?.data || 'No error response from server');
+            console.error('Error config:', error.config);
         }
     };
 
@@ -461,6 +506,8 @@ const PostPage = () => {
 
     return (
         <div>
+            <Navbar/>
+            <div>
             {currentStep === 1 && (
                 <>
                     <h2>Select Post Category</h2>
@@ -522,12 +569,10 @@ const PostPage = () => {
             )}
             <div className="bg-gray-100 min-h-screen">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                    <h1 className="text-3xl font-bold text-gray-900 mb-8">All Posts</h1>
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-
                         {/* Left Sidebar */}
                         <div className="hidden lg:block lg:col-span-3">
-                            <div className="sticky top-20">
+                            <div className="sticky top-10">
                                 <div className="bg-white shadow-md rounded-lg overflow-hidden">
                                     <h2 className="text-lg font-semibold text-gray-900 p-4 border-b border-gray-200">Categories</h2>
                                     <nav className="flex flex-col">
@@ -822,7 +867,7 @@ const PostPage = () => {
 
                         {/* Right Sidebar */}
                         <div className="hidden lg:block lg:col-span-3">
-                            <div className="sticky top-20">
+                            <div className="sticky top-10">
                                 <RandomSuggestedProfiles />
                             </div>
                         </div>
@@ -830,6 +875,10 @@ const PostPage = () => {
                 </div>
             </div>
         </div>
+        <LoginModal isOpen={showModal} onClose={() => setShowModal(false)} />
+        <Footer/>
+        </div>
+        
     );
 };
 
