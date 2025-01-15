@@ -126,59 +126,68 @@ export const deletePost = async (req, res) => {
 
 // Get all posts
 export const getAllPosts = async (req, res) => {
-    try {
-      const posts = await Post.find()
-        .populate('author', 'profile.fullname profile.profilePhoto')
-        .sort({ createdAt: -1 });
-  
-      const postsWithMediaUrls = await Promise.all(
-        posts.map(async post => {
-          if (post.media) {
-            if (post.media.photos?.length > 0) {
-              post.media.photos = await Promise.all(
-                post.media.photos
-                  .filter(photo => photo && photo.url)
-                  .map(async photo => {
-                    const s3Key = photo.url.split("amazonaws.com/")[1];
-                    return {
-                      ...photo,
-                      url: await generatePostImageUrl(s3Key),
-                    };
-                  })
-              );
-            }
-  
-            if (post.media.videos?.length > 0) {
-              post.media.videos = await Promise.all(
-                post.media.videos
-                  .filter(video => video && video.url)
-                  .map(async video => {
-                    const s3Key = video.url.split("amazonaws.com/")[1];
-                    return {
-                      ...video,
-                      url: await generatePostVideoUrl(s3Key),
-                    };
-                  })
-              );
-            }
+  try {
+    const posts = await Post.find()
+      .populate('author', 'profile') // Populate the full profile object
+      .sort({ createdAt: -1 })
+      .lean(); // Use lean for better performance since no modifications are needed to the Mongoose document
+
+    const postsWithMediaAndAuthorData = await Promise.all(
+      posts.map(async (post) => {
+        // Process author profile photo URL
+        if (post.author?.profile?.profilePhoto) {
+          const profilePhotoURL = await getObjectURL(post.author.profile.profilePhoto); // Generate a presigned URL for the profile picture
+          post.author.profile.profilePhoto = profilePhotoURL; // Replace with the generated URL
+        }
+
+        // Process media (photos and videos)
+        if (post.media) {
+          if (post.media.photos?.length > 0) {
+            post.media.photos = await Promise.all(
+              post.media.photos
+                .filter((photo) => photo && photo.url)
+                .map(async (photo) => {
+                  const s3Key = photo.url.split('amazonaws.com/')[1];
+                  return {
+                    ...photo,
+                    url: await generatePostImageUrl(s3Key),
+                  };
+                })
+            );
           }
-          return post;
-        })
-      );
-  
-      return res.status(200).json({
-        message: 'Posts retrieved successfully.',
-        success: true,
-        posts: postsWithMediaUrls,
-      });
-    } catch (error) {
-      console.error('Error retrieving posts:', error);
-      return res.status(500).json({
-        message: 'Internal server error.',
-        success: false,
-      });
-    }
-};  
+
+          if (post.media.videos?.length > 0) {
+            post.media.videos = await Promise.all(
+              post.media.videos
+                .filter((video) => video && video.url)
+                .map(async (video) => {
+                  const s3Key = video.url.split('amazonaws.com/')[1];
+                  return {
+                    ...video,
+                    url: await generatePostVideoUrl(s3Key),
+                  };
+                })
+            );
+          }
+        }
+
+        return post;
+      })
+    );
+
+    return res.status(200).json({
+      message: 'Posts retrieved successfully.',
+      success: true,
+      posts: postsWithMediaAndAuthorData,
+    });
+  } catch (error) {
+    console.error('Error retrieving posts:', error);
+    return res.status(500).json({
+      message: 'Internal server error.',
+      success: false,
+    });
+  }
+};
 
 export const getPostById = async (req, res) => {
   const { id } = req.params;

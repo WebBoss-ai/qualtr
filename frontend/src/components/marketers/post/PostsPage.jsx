@@ -2,14 +2,21 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { MARKETER_API_END_POINT } from "@/utils/constant";
 import RandomSuggestedProfiles from '../RandomSuggestedProfiles';
-import { ChevronRight, ThumbsUp, Calendar, MapPin, Briefcase, BarChart2, FileText } from 'lucide-react'
-import { MessageCircle, Share2, Send, X, ChevronLeft } from 'lucide-react'
+import { ThumbsUp, MessageCircle, Share2, Send, Calendar, MapPin, Briefcase, BarChart2, FileText, TrendingUpIcon as Trending, Palette, Smile, PenTool, Megaphone, ChevronRight } from 'lucide-react'
 import moment from 'moment';
 import Footer from '@/components/shared/Footer';
 import Navbar from '@/components/shared/Navbar';
 
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+
+
 const PostPage = () => {
     const [posts, setPosts] = useState([]);
+    const [visibleCommentPostId, setVisibleCommentPostId] = useState(null); // Track the post ID for the visible comments section
     const [post, setPost] = useState(null)
     const [postCategory, setPostCategory] = useState('');
     const [postType, setPostType] = useState('');
@@ -24,6 +31,9 @@ const PostPage = () => {
     const [userId, setUserId] = useState(null)
     const [showModal, setShowModal] = useState(false)
 
+    const toggleComments = (postId) => {
+        setVisibleCommentPostId((prevId) => (prevId === postId ? null : postId));
+    };
 
     const LoginModal = ({ isOpen, onClose }) => {
         if (!isOpen) return null
@@ -95,11 +105,11 @@ const PostPage = () => {
     };
 
     const categories = [
-        { name: 'Trending', href: '/trending' },
-        { name: 'Brand Strategy & Identity', href: '/category/brand-strategy-identity' },
-        { name: 'Memes & Marketing Fun', href: '/category/memes-marketing-fun' },
-        { name: 'Content Creation & Design', href: '/category/content-creation-design' },
-        { name: 'Digital Marketing', href: '/category/digital-marketing' },
+        { name: 'Trending', icon: Trending, href: '/trending' },
+        { name: 'Brand Strategy & Identity', icon: Palette, href: '/category/brand-strategy-identity' },
+        { name: 'Memes & Marketing Fun', icon: Smile, href: '/category/memes-marketing-fun' },
+        { name: 'Content Creation & Design', icon: PenTool, href: '/category/content-creation-design' },
+        { name: 'Digital Marketing', icon: Megaphone, href: '/category/digital-marketing' },
     ]
 
     useEffect(() => {
@@ -506,379 +516,399 @@ const PostPage = () => {
 
     return (
         <div>
-            <Navbar/>
+            <Navbar />
             <div>
-            {currentStep === 1 && (
-                <>
-                    <h2>Select Post Category</h2>
-                    <select
-                        value={postCategory}
-                        onChange={(e) => {
-                            console.log('Post category selected:', e.target.value);
-                            setPostCategory(e.target.value);
-                        }}
-                        required
-                    >
-                        <option value="">Select Category</option>
-                        <option value="Brand Strategy & Identity">Brand Strategy & Identity</option>
-                        <option value="Memes & Marketing Fun">Memes & Marketing Fun</option>
-                        <option value="Content Creation & Design">Content Creation & Design</option>
-                        <option value="Digital Marketing">Digital Marketing</option>
-                    </select>
-                    <button onClick={() => setCurrentStep(2)}>Next</button>
-                </>
-            )}
-            {currentStep === 2 && (
-                <>
-                    <h2>Select Post Type</h2>
-                    <select
-                        value={postType}
-                        onChange={(e) => {
-                            console.log('Post type selected:', e.target.value);
-                            setPostType(e.target.value);
-                        }}
-                        required
-                    >
-                        <option value="">Select Type</option>
-                        <option value="media">Media</option>
-                        <option value="event">Event</option>
-                        <option value="occasion">Occasion</option>
-                        <option value="jobOpening">Job Opening</option>
-                        <option value="poll">Poll</option>
-                        <option value="document">Document</option>
-                    </select>
-                    <button onClick={() => setCurrentStep(3)}>Next</button>
-                </>
-            )}
-            {currentStep === 3 && (
-                <form onSubmit={handleSubmit}>
-                    <h2>Create Post</h2>
-                    <label>Post Text:</label>
-                    <textarea
-                        value={postText}
-                        onChange={(e) => {
-                            console.log('Post text:', e.target.value);
-                            setPostText(e.target.value);
-                        }}
-                        placeholder="Write your post"
-                        required
-                    ></textarea>
-                    {renderPostTypeFields()}
-                    <button type="submit">Create Post</button>
-                </form>
-            )}
-            <div className="bg-gray-100 min-h-screen">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                        {/* Left Sidebar */}
-                        <div className="hidden lg:block lg:col-span-3">
-                            <div className="sticky top-10">
-                                <div className="bg-white shadow-md rounded-lg overflow-hidden">
+                {currentStep === 1 && (
+                    <>
+                        <h2>Select Post Category</h2>
+                        <select
+                            value={postCategory}
+                            onChange={(e) => {
+                                console.log('Post category selected:', e.target.value);
+                                setPostCategory(e.target.value);
+                            }}
+                            required
+                        >
+                            <option value="">Select Category</option>
+                            <option value="Brand Strategy & Identity">Brand Strategy & Identity</option>
+                            <option value="Memes & Marketing Fun">Memes & Marketing Fun</option>
+                            <option value="Content Creation & Design">Content Creation & Design</option>
+                            <option value="Digital Marketing">Digital Marketing</option>
+                        </select>
+                        <button onClick={() => setCurrentStep(2)}>Next</button>
+                    </>
+                )}
+                {currentStep === 2 && (
+                    <>
+                        <h2>Select Post Type</h2>
+                        <select
+                            value={postType}
+                            onChange={(e) => {
+                                console.log('Post type selected:', e.target.value);
+                                setPostType(e.target.value);
+                            }}
+                            required
+                        >
+                            <option value="">Select Type</option>
+                            <option value="media">Media</option>
+                            <option value="event">Event</option>
+                            <option value="occasion">Occasion</option>
+                            <option value="jobOpening">Job Opening</option>
+                            <option value="poll">Poll</option>
+                            <option value="document">Document</option>
+                        </select>
+                        <button onClick={() => setCurrentStep(3)}>Next</button>
+                    </>
+                )}
+                {currentStep === 3 && (
+                    <form onSubmit={handleSubmit}>
+                        <h2>Create Post</h2>
+                        <label>Post Text:</label>
+                        <textarea
+                            value={postText}
+                            onChange={(e) => {
+                                console.log('Post text:', e.target.value);
+                                setPostText(e.target.value);
+                            }}
+                            placeholder="Write your post"
+                            required
+                        ></textarea>
+                        {renderPostTypeFields()}
+                        <button type="submit">Create Post</button>
+                    </form>
+                )}
+                <div className="bg-gray-100 min-h-screen">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                            {/* Left Sidebar */}
+                            <div className="lg:col-span-3">
+                                <div className="bg-white border border-[1px] rounded-lg overflow-hidden sticky top-8">
                                     <h2 className="text-lg font-semibold text-gray-900 p-4 border-b border-gray-200">Categories</h2>
                                     <nav className="flex flex-col">
                                         {categories.map((category, index) => (
                                             <a
                                                 key={index}
                                                 href={category.href}
-                                                className="flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out"
+                                                className="flex items-center px-4 py-6 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out"
                                             >
-                                                {category.name}
-                                                <ChevronRight className="h-5 w-5 text-gray-400" />
+                                                <category.icon className="h-5 w-5 mr-3 text-gray-400" />
+                                                <span>{category.name}</span>
+                                                <ChevronRight className="h-5 w-5 ml-auto text-gray-400" />
                                             </a>
                                         ))}
                                     </nav>
                                 </div>
                             </div>
-                        </div>
 
-                        {/* Main Content */}
-                        <div className="lg:col-span-6">
-                            {posts.length > 0 ? (
-                                posts.map((post) => (
-                                    <div key={post._id} className="bg-white shadow-md rounded-lg overflow-hidden mb-6">
-                                        <div className="p-4">
-                                            {post.category && (
-                                                <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-xs font-semibold text-gray-700 mb-2">
-                                                    {post.category}
-                                                </span>
-                                            )}
-                                            {post.text && <p className="text-gray-700 text-sm mb-4">{post.text}</p>}
-                                            {post.author?.profile && (
-                                                <div className="flex items-center mb-4">
-                                                    {post.author.profile.profilePhoto && (
-                                                        <img
-                                                            src={post.author.profile.profilePhoto || "/placeholder.svg"}
-                                                            alt={post.author.profile.fullname}
-                                                            className="w-10 h-10 rounded-full mr-3"
-                                                        />
+                            {/* Main Content */}
+                            <div className="lg:col-span-6">
+                                {posts.length > 0 ? (
+                                    posts.map((post) => (
+                                        <div key={post._id} className="bg-white border border-[1px] rounded-lg overflow-hidden mb-6">
+                                            <div className="p-4">
+                                                <div className="flex items-center justify-between mb-4">
+                                                    {/* Author Profile */}
+                                                    {post.author?.profile && (
+                                                        <div className="flex items-center">
+                                                            {post.author.profile.profilePhoto && (
+                                                                <img
+                                                                    src={post.author.profile.profilePhoto || "/placeholder.svg"}
+                                                                    alt={post.author.profile.fullname}
+                                                                    className="w-10 h-10 rounded-full mr-3"
+                                                                />
+                                                            )}
+                                                            <div>
+                                                                <p className="text-sm font-medium text-gray-900">{post.author.profile.fullname}</p>
+                                                                <p className="text-xs text-gray-500">{post?.author?.profile?.agencyName}</p>
+                                                            </div>
+                                                        </div>
                                                     )}
-                                                    <div>
-                                                        <p className="text-sm font-medium text-gray-900">{post.author.profile.fullname}</p>
-                                                        <p className="text-xs text-gray-500">{post.author.profile.agencyName}</p>
-                                                    </div>
-                                                </div>
-                                            )}
 
-                                            {/* Media Section */}
-                                            {post.media?.photos?.length > 0 && (
-                                                <div className="mb-4">
-                                                    <div className="grid grid-cols-2 gap-2">
-                                                        {post.media.photos.map((photo, index) => (
-                                                            <img
-                                                                key={index}
-                                                                src={photo.url || "/placeholder.svg"}
-                                                                alt={`Photo ${index + 1}`}
-                                                                className="w-full h-40 object-cover rounded-md"
-                                                            />
+                                                    {/* Post Category */}
+                                                    {post.category && (
+                                                        <span className="bg-gray-200 rounded-full px-3 py-1 text-xs font-semibold text-gray-700">
+                                                            {post.category}
+                                                        </span>
+                                                    )}
+                                                </div>
+
+                                                {post.text && <p className="text-gray-700 text-sm mb-4">{post.text}</p>}
+                                                {/* Media Section */}
+                                                {post.media?.photos?.length > 0 && (
+                                                    <div className="mb-4">
+                                                        <Swiper
+                                                            modules={[Navigation, Pagination]} // Add navigation and pagination modules
+                                                            spaceBetween={10}
+                                                            slidesPerView={1} // Show one slide at a time
+                                                            navigation // Enable next/prev buttons
+                                                            pagination={{ clickable: true }} // Enable pagination dots
+                                                        >
+                                                            {post.media.photos.map((photo, index) => (
+                                                                <SwiperSlide key={index}>
+                                                                    <img
+                                                                        src={photo.url || "/placeholder.svg"}
+                                                                        alt={`Photo ${index + 1}`}
+                                                                        className="w-full h-auto object-contain rounded-md"
+                                                                    />
+                                                                </SwiperSlide>
+                                                            ))}
+                                                        </Swiper>
+                                                    </div>
+                                                )}
+                                                {post.media?.videos?.length > 0 && (
+                                                    <div className="mb-4">
+                                                        {post.media.videos.map((video, index) => (
+                                                            <video key={index} controls className="w-full rounded-md">
+                                                                <source src={video.url} type="video/mp4" />
+                                                                Your browser does not support the video tag.
+                                                            </video>
                                                         ))}
                                                     </div>
-                                                </div>
-                                            )}
-                                            {post.media?.videos?.length > 0 && (
-                                                <div className="mb-4">
-                                                    {post.media.videos.map((video, index) => (
-                                                        <video key={index} controls className="w-full rounded-md">
-                                                            <source src={video.url} type="video/mp4" />
-                                                            Your browser does not support the video tag.
-                                                        </video>
-                                                    ))}
-                                                </div>
-                                            )}
+                                                )}
 
-                                            {/* Event Section */}
-                                            {post.event && (
-                                                <div className="bg-gray-50 rounded-md p-3 mb-4">
-                                                    <h4 className="text-sm font-semibold text-gray-900 mb-2 flex items-center">
-                                                        <Calendar className="w-4 h-4 mr-1" /> Event
-                                                    </h4>
-                                                    <p className="text-sm font-medium text-gray-700">{post.event.title}</p>
-                                                    {post.event.description && <p className="text-xs text-gray-600 mt-1">{post.event.description}</p>}
-                                                    {post.event.date && (
-                                                        <p className="text-xs text-gray-600 mt-1">
-                                                            Date: {new Date(post.event.date).toLocaleDateString()}
-                                                        </p>
-                                                    )}
-                                                    {post.event.location && (
-                                                        <p className="text-xs text-gray-600 mt-1 flex items-center">
-                                                            <MapPin className="w-3 h-3 mr-1" /> {post.event.location}
-                                                        </p>
-                                                    )}
-                                                </div>
-                                            )}
-
-                                            {/* Occasion Section */}
-                                            {post.occasion && (
-                                                <div className="bg-gray-50 rounded-md p-3 mb-4">
-                                                    <h4 className="text-sm font-semibold text-gray-900 mb-2 flex items-center">
-                                                        <Calendar className="w-4 h-4 mr-1" /> Occasion
-                                                    </h4>
-                                                    <p className="text-sm font-medium text-gray-700">{post.occasion.title}</p>
-                                                    {post.occasion.description && (
-                                                        <p className="text-xs text-gray-600 mt-1">{post.occasion.description}</p>
-                                                    )}
-                                                    {post.occasion.date && (
-                                                        <p className="text-xs text-gray-600 mt-1">
-                                                            Date: {new Date(post.occasion.date).toLocaleDateString()}
-                                                        </p>
-                                                    )}
-                                                </div>
-                                            )}
-
-                                            {/* Job Opening Section */}
-                                            {post.jobOpening && (
-                                                <div className="bg-gray-50 rounded-md p-3 mb-4">
-                                                    <h4 className="text-sm font-semibold text-gray-900 mb-2 flex items-center">
-                                                        <Briefcase className="w-4 h-4 mr-1" /> Job Opening
-                                                    </h4>
-                                                    <p className="text-sm font-medium text-gray-700">{post.jobOpening.position}</p>
-                                                    {post.jobOpening.company && (
-                                                        <p className="text-xs text-gray-600 mt-1">{post.jobOpening.company}</p>
-                                                    )}
-                                                    {post.jobOpening.location && (
-                                                        <p className="text-xs text-gray-600 mt-1 flex items-center">
-                                                            <MapPin className="w-3 h-3 mr-1" /> {post.jobOpening.location}
-                                                        </p>
-                                                    )}
-                                                    {post.jobOpening.salary && (
-                                                        <p className="text-xs text-gray-600 mt-1">Salary: {post.jobOpening.salary}</p>
-                                                    )}
-                                                </div>
-                                            )}
-
-                                            {/* Poll Section */}
-                                            {post.poll && (
-                                                <div className="bg-gray-50 rounded-md p-3 mb-4">
-                                                    <h4 className="text-sm font-semibold text-gray-900 mb-2 flex items-center">
-                                                        <BarChart2 className="w-4 h-4 mr-1" /> Poll
-                                                    </h4>
-                                                    <p className="text-sm font-medium text-gray-700">{post.poll.question}</p>
-                                                    {post.poll.options && (
-                                                        <ul className="mt-2 space-y-1">
-                                                            {post.poll.options.map((option, index) => (
-                                                                <li key={index} className="text-xs text-gray-600">
-                                                                    {option}
-                                                                </li>
-                                                            ))}
-                                                        </ul>
-                                                    )}
-                                                </div>
-                                            )}
-
-                                            {/* Document Section */}
-                                            {post.document && (
-                                                <div className="bg-gray-50 rounded-md p-3 mb-4">
-                                                    <h4 className="text-sm font-semibold text-gray-900 mb-2 flex items-center">
-                                                        <FileText className="w-4 h-4 mr-1" /> Document
-                                                    </h4>
-                                                    <a
-                                                        href={post.document.url}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="text-sm text-blue-600 hover:underline flex items-center"
-                                                    >
-                                                        <FileText className="w-4 h-4 mr-1" />
-                                                        {post.document.title || 'View Document'}
-                                                    </a>
-                                                </div>
-                                            )}
-
-                                            <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-200">
-                                                {/* Like Button */}
-                                                <button
-                                                    onClick={toggleLike}
-                                                    className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs transition-colors ${post.likes.isLiked ? 'bg-pink-100 text-pink-600' : 'hover:bg-gray-100 text-gray-700'
-                                                        }`}
-                                                >
-                                                    <ThumbsUp
-                                                        size={14}
-                                                        className={`transition-colors ${post.likes.isLiked ? 'text-pink-500 fill-current' : 'text-gray-500'
-                                                            }`}
-                                                    />
-                                                    <span>{likes.isLiked ? 'Liked' : 'Like'}</span>
-                                                    <span className="text-gray-500">({post.likes.length})</span>
-                                                </button>
-
-                                                {/* Comment Button */}
-                                                <button className="flex items-center gap-1 px-3 py-1 rounded-full text-xs hover:bg-gray-100 text-gray-700">
-                                                    <MessageCircle size={14} />
-                                                    <span>Comment</span>
-                                                    <span className="text-gray-500">({post.comments.length})</span>
-                                                </button>
-
-                                                {/* Share Button */}
-                                                <button className="flex items-center gap-1 px-3 py-1 rounded-full text-xs hover:bg-gray-100 text-gray-700">
-                                                    <Share2 size={14} />
-                                                    <span>Share</span>
-                                                </button>
-                                            </div>
-                                        </div>
-                                        {/* Comments section */}
-
-
-                                        <div className="mt-4 bg-white rounded-lg border border-gray-200 p-4">
-                                            <h3 className="text-sm font-semibold text-gray-900 mb-3">Comments</h3>
-                                            <div className="space-y-3 max-h-80 overflow-y-auto">
-                                                {post.comments.map((comment) => {
-                                                    return (
-                                                        <div key={comment._id} className="border-b border-gray-100 pb-2">
-                                                            <p className="text-sm text-gray-800 mb-1">{comment.text}</p>
-                                                            <p className="text-sm text-gray-800 mb-1">
-                                                                {comment.user?.profile?.fullname || 'Anonymous User'}
+                                                {/* Event Section */}
+                                                {post.event && (
+                                                    <div className="bg-gray-50 rounded-md p-3 mb-4">
+                                                        <h4 className="text-sm font-semibold text-gray-900 mb-2 flex items-center">
+                                                            <Calendar className="w-4 h-4 mr-1" /> Event
+                                                        </h4>
+                                                        <p className="text-sm font-medium text-gray-700">{post.event.title}</p>
+                                                        {post.event.description && <p className="text-xs text-gray-600 mt-1">{post.event.description}</p>}
+                                                        {post.event.date && (
+                                                            <p className="text-xs text-gray-600 mt-1">
+                                                                Date: {new Date(post.event.date).toLocaleDateString()}
                                                             </p>
-                                                            <div className="flex items-center gap-3 text-xs text-gray-500">
-                                                                <button
-                                                                    onClick={() =>
-                                                                        setReply({
-                                                                            commentId: comment._id,
-                                                                            text: '',
-                                                                            postId: post._id,
-                                                                        })
-                                                                    }
-                                                                    className="hover:text-gray-700"
-                                                                >
-                                                                    Reply
-                                                                </button>
-                                                                <span>{moment(comment.createdAt).fromNow()}</span>
-                                                            </div>
+                                                        )}
+                                                        {post.event.location && (
+                                                            <p className="text-xs text-gray-600 mt-1 flex items-center">
+                                                                <MapPin className="w-3 h-3 mr-1" /> {post.event.location}
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                )}
 
-                                                            {/* Replies */}
-                                                            {comment.replies.map((reply) => (
-                                                                <div key={reply._id} className="ml-4 mt-1 p-2 bg-gray-50 rounded-md">
-                                                                    <p className="text-xs text-gray-800">{reply.text}</p>
-                                                                    <span className="text-xs text-gray-500">
-                                                                        {moment(reply.createdAt).fromNow()}
-                                                                    </span>
-                                                                </div>
-                                                            ))}
+                                                {/* Occasion Section */}
+                                                {post.occasion && (
+                                                    <div className="bg-gray-50 rounded-md p-3 mb-4">
+                                                        <h4 className="text-sm font-semibold text-gray-900 mb-2 flex items-center">
+                                                            <Calendar className="w-4 h-4 mr-1" /> Occasion
+                                                        </h4>
+                                                        <p className="text-sm font-medium text-gray-700">{post.occasion.title}</p>
+                                                        {post.occasion.description && (
+                                                            <p className="text-xs text-gray-600 mt-1">{post.occasion.description}</p>
+                                                        )}
+                                                        {post.occasion.date && (
+                                                            <p className="text-xs text-gray-600 mt-1">
+                                                                Date: {new Date(post.occasion.date).toLocaleDateString()}
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                )}
 
-                                                            {/* Reply Input */}
-                                                            {reply.commentId === comment._id && (
-                                                                <div className="mt-2 flex gap-2">
-                                                                    <input
-                                                                        value={reply.text}
-                                                                        onChange={(e) =>
-                                                                            setReply({
-                                                                                ...reply,
-                                                                                text: e.target.value,
-                                                                                postId: post._id,
-                                                                            })
-                                                                        }
-                                                                        className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
-                                                                        placeholder="Write a reply..."
-                                                                    />
-                                                                    <button
-                                                                        onClick={() =>
-                                                                            replyToComment(reply.postId, reply.commentId, reply.text)
-                                                                        }
-                                                                        className="px-2 py-1 text-xs bg-gray-800 text-white rounded-md hover:bg-gray-700 transition-colors"
-                                                                    >
-                                                                        Reply
-                                                                    </button>
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                    );
-                                                })}
+                                                {/* Job Opening Section */}
+                                                {post.jobOpening && (
+                                                    <div className="bg-gray-50 rounded-md p-3 mb-4">
+                                                        <h4 className="text-sm font-semibold text-gray-900 mb-2 flex items-center">
+                                                            <Briefcase className="w-4 h-4 mr-1" /> Job Opening
+                                                        </h4>
+                                                        <p className="text-sm font-medium text-gray-700">{post.jobOpening.position}</p>
+                                                        {post.jobOpening.company && (
+                                                            <p className="text-xs text-gray-600 mt-1">{post.jobOpening.company}</p>
+                                                        )}
+                                                        {post.jobOpening.location && (
+                                                            <p className="text-xs text-gray-600 mt-1 flex items-center">
+                                                                <MapPin className="w-3 h-3 mr-1" /> {post.jobOpening.location}
+                                                            </p>
+                                                        )}
+                                                        {post.jobOpening.salary && (
+                                                            <p className="text-xs text-gray-600 mt-1">Salary: {post.jobOpening.salary}</p>
+                                                        )}
+                                                    </div>
+                                                )}
+
+                                                {/* Poll Section */}
+                                                {post.poll && post.poll.question && (
+                                                    <div className="bg-gray-50 rounded-md p-3 mb-4">
+                                                        <h4 className="text-sm font-semibold text-gray-900 mb-2 flex items-center">
+                                                            <BarChart2 className="w-4 h-4 mr-1" /> Poll
+                                                        </h4>
+                                                        <p className="text-sm font-medium text-gray-700">{post.poll.question}</p>
+                                                        {post.poll.options && (
+                                                            <ul className="mt-2 space-y-1">
+                                                                {post.poll.options.map((option, index) => (
+                                                                    <li key={index} className="text-xs text-gray-600">
+                                                                        {option}
+                                                                    </li>
+                                                                ))}
+                                                            </ul>
+                                                        )}
+                                                    </div>
+                                                )}
+
+                                                {/* Document Section */}
+                                                {post.document && (
+                                                    <div className="bg-gray-50 rounded-md p-3 mb-4">
+                                                        <h4 className="text-sm font-semibold text-gray-900 mb-2 flex items-center">
+                                                            <FileText className="w-4 h-4 mr-1" /> Document
+                                                        </h4>
+                                                        <a
+                                                            href={post.document.url}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="text-sm text-blue-600 hover:underline flex items-center"
+                                                        >
+                                                            <FileText className="w-4 h-4 mr-1" />
+                                                            {post.document.title || 'View Document'}
+                                                        </a>
+                                                    </div>
+                                                )}
+
+                                                <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-200">
+                                                    {/* Like Button */}
+                                                    <button
+                                                        onClick={() => toggleLike(post._id)} // Pass post._id to toggleLike
+                                                        className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs transition-colors ${post.likes.isLiked ? 'bg-pink-100 text-pink-600' : 'hover:bg-gray-100 text-gray-700'
+                                                            }`}
+                                                    >
+                                                        <ThumbsUp
+                                                            size={14}
+                                                            className={`transition-colors ${post.likes.isLiked ? 'text-pink-500 fill-current' : 'text-gray-500'
+                                                                }`}
+                                                        />
+                                                        <span>{post.likes.isLiked ? 'Liked' : 'Like'}</span>
+                                                        <span className="text-gray-500">({post.likes.length})</span>
+                                                    </button>
+
+
+                                                    {/* Comment Button */}
+                                                    <button
+                                                        onClick={() => toggleComments(post._id)} // Pass the post ID to toggle
+                                                        className="flex items-center gap-1 px-3 py-1 rounded-full text-xs hover:bg-gray-100 text-gray-700"
+                                                    >
+                                                        <MessageCircle size={14} />
+                                                        <span>Comment</span>
+                                                        <span className="text-gray-500">({post.comments.length})</span>
+                                                    </button>
+
+                                                    {/* Share Button */}
+                                                    <button className="flex items-center gap-1 px-3 py-1 rounded-full text-xs hover:bg-gray-100 text-gray-700">
+                                                        <Share2 size={14} />
+                                                        <span>Share</span>
+                                                    </button>
+                                                </div>
                                             </div>
+                                            {/* Comments section */}
+                                            {visibleCommentPostId === post._id && ( // Only show if this post's ID matches the visibleCommentPostId
+                                                <div className="mt-4 bg-white rounded-lg border border-gray-200 p-4">
+                                                    <h3 className="text-sm font-semibold text-gray-900 mb-3">Comments</h3>
+                                                    <div className="space-y-3 max-h-80 overflow-y-auto">
+                                                        {post.comments.map((comment) => {
+                                                            return (
+                                                                <div key={comment._id} className="border-b border-gray-100 pb-2">
+                                                                    <p className="text-sm text-gray-800 mb-1">{comment.text}</p>
+                                                                    <p className="text-sm text-gray-800 mb-1">
+                                                                        {comment.user?.profile?.fullname || 'Anonymous User'}
+                                                                    </p>
+                                                                    <div className="flex items-center gap-3 text-xs text-gray-500">
+                                                                        <button
+                                                                            onClick={() =>
+                                                                                setReply({
+                                                                                    commentId: comment._id,
+                                                                                    text: '',
+                                                                                    postId: post._id,
+                                                                                })
+                                                                            }
+                                                                            className="hover:text-gray-700"
+                                                                        >
+                                                                            Reply
+                                                                        </button>
+                                                                        <span>{moment(comment.createdAt).fromNow()}</span>
+                                                                    </div>
 
-                                            {/* Add Comment */}
-                                            <div className="mt-3 flex gap-2">
-                                                <input
-                                                    value={newComment}
-                                                    onChange={(e) => setNewComment(e.target.value)}
-                                                    className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
-                                                    placeholder="Add a comment..."
-                                                />
-                                                <button
-                                                    onClick={() => addComment(post._id, newComment)} // Pass post._id for the current post
-                                                    className="px-3 py-2 bg-gray-800 text-white text-sm rounded-md hover:bg-gray-700 transition-colors"
-                                                >
-                                                    <Send size={14} />
-                                                </button>
-                                            </div>
+                                                                    {/* Replies */}
+                                                                    {comment.replies.map((reply) => (
+                                                                        <div
+                                                                            key={reply._id}
+                                                                            className="ml-4 mt-1 p-2 bg-gray-50 rounded-md"
+                                                                        >
+                                                                            <p className="text-xs text-gray-800">{reply.text}</p>
+                                                                            <span className="text-xs text-gray-500">
+                                                                                {moment(reply.createdAt).fromNow()}
+                                                                            </span>
+                                                                        </div>
+                                                                    ))}
+
+                                                                    {/* Reply Input */}
+                                                                    {reply.commentId === comment._id && (
+                                                                        <div className="mt-2 flex gap-2">
+                                                                            <input
+                                                                                value={reply.text}
+                                                                                onChange={(e) =>
+                                                                                    setReply({
+                                                                                        ...reply,
+                                                                                        text: e.target.value,
+                                                                                        postId: post._id,
+                                                                                    })
+                                                                                }
+                                                                                className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
+                                                                                placeholder="Write a reply..."
+                                                                            />
+                                                                            <button
+                                                                                onClick={() =>
+                                                                                    replyToComment(
+                                                                                        reply.postId,
+                                                                                        reply.commentId,
+                                                                                        reply.text
+                                                                                    )
+                                                                                }
+                                                                                className="px-2 py-1 text-xs bg-gray-800 text-white rounded-md hover:bg-gray-700 transition-colors"
+                                                                            >
+                                                                                Reply
+                                                                            </button>
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            );
+                                                        })}
+                                                    </div>
+
+                                                    {/* Add Comment */}
+                                                    <div className="mt-3 flex gap-2">
+                                                        <input
+                                                            value={newComment}
+                                                            onChange={(e) => setNewComment(e.target.value)}
+                                                            className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
+                                                            placeholder="Add a comment..."
+                                                        />
+                                                        <button
+                                                            onClick={() => addComment(post._id, newComment)} // Pass post._id for the current post
+                                                            className="px-3 py-2 bg-gray-800 text-white text-sm rounded-md hover:bg-gray-700 transition-colors"
+                                                        >
+                                                            <Send size={14} />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
+                                    ))
+                                ) : (
+                                    <p className="text-gray-700 text-center py-8">No posts available</p>
+                                )}
+                            </div>
 
-                                    </div>
-                                ))
-                            ) : (
-                                <p className="text-gray-700 text-center py-8">No posts available</p>
-                            )}
-                        </div>
-
-                        {/* Right Sidebar */}
-                        <div className="hidden lg:block lg:col-span-3">
-                            <div className="sticky top-10">
-                                <RandomSuggestedProfiles />
+                            {/* Right Sidebar */}
+                            <div className="hidden lg:block lg:col-span-3">
+                                <div className="sticky top-10">
+                                    <RandomSuggestedProfiles />
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <LoginModal isOpen={showModal} onClose={() => setShowModal(false)} />
-        <Footer/>
-        </div>
-        
+            <LoginModal isOpen={showModal} onClose={() => setShowModal(false)} />
+            <Footer />
+        </div >
     );
 };
 
