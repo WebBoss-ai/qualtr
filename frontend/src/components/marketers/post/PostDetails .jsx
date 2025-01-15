@@ -78,27 +78,47 @@ const PostDetails = () => {
 
     useEffect(() => {
         const fetchPost = async () => {
-            const storedUserId = localStorage.getItem('userId'); // Retrieve userId from localStorage
+            console.log('Fetching post details...');  // Debugging statement
+
+            const storedUserId = localStorage.getItem('userId');
+            console.log('Stored UserId:', storedUserId);  // Debugging statement
             setUserId(storedUserId);
+
             try {
+                console.log('Making API request for post:', `${MARKETER_API_END_POINT}/post/${id}`);  // Debugging statement
                 const response = await axios.get(`${MARKETER_API_END_POINT}/post/${id}`);
+                console.log('API response received:', response);  // Debugging statement
+
                 const fetchedPost = response.data.post;
+                console.log('Fetched post:', fetchedPost);  // Debugging statement
+
                 setPost(fetchedPost);
-                const isLikedByUser = fetchedPost.likes.includes(storedUserId);
+
+                // Make sure `likes` is defined and is an array
+                const likes = Array.isArray(fetchedPost.likes) ? fetchedPost.likes : [];
+                const isLikedByUser = likes.includes(storedUserId);
+                console.log('Is post liked by user:', isLikedByUser);  // Debugging statement
+
                 setLikes({
                     isLiked: isLikedByUser,
-                    length: fetchedPost.likes.length,
+                    length: likes.length,
                 });
+
                 setComments(fetchedPost.comments || []);
+                console.log('Post comments:', fetchedPost.comments);  // Debugging statement
+
             } catch (err) {
+                console.error('Error fetching post:', err);  // Debugging statement
                 setError(err.response?.data?.message || 'Error fetching post details');
             } finally {
+                console.log('Post fetching completed');  // Debugging statement
                 setLoading(false);
             }
         };
-
         fetchPost();
     }, [id]);
+
+
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p className="text-red-500">{error}</p>;
