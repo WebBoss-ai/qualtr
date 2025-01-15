@@ -128,7 +128,7 @@ export const deletePost = async (req, res) => {
 export const getAllPosts = async (req, res) => {
     try {
       const posts = await Post.find()
-        .populate('author', 'profile.fullname profile.profilePicture')
+        .populate('author', 'profile.fullname profile.profilePhoto')
         .sort({ createdAt: -1 });
   
       const postsWithMediaUrls = await Promise.all(
@@ -190,7 +190,7 @@ export const getPostById = async (req, res) => {
           { $inc: { impressions: 1 } }, // Increment impressions by 1
           { new: true } // Return the updated document
       )
-          .populate('author', 'profile.fullname profile.agencyName profile.profilePicture') // Include basic author details
+          .populate('author', 'profile.fullname profile.agencyName profile.profilePhoto') // Include basic author details
           .lean();
 
       if (!post) {
@@ -201,9 +201,9 @@ export const getPostById = async (req, res) => {
       }
 
       // Fetch and update the author's profile photo URL
-      if (post.author && post.author.profilePicture) {
-          const profilePhotoURL = await getObjectURL(post.author.profilePicture); // Generate a presigned URL for the profile picture
-          post.author.profilePicture = profilePhotoURL; // Replace with the generated URL
+      if (post.author && post.author.profilePhoto) {
+          const profilePhotoURL = await getObjectURL(post.author.profilePhoto); // Generate a presigned URL for the profile picture
+          post.author.profilePhoto = profilePhotoURL; // Replace with the generated URL
       }
 
       if (post.media) {
@@ -249,7 +249,7 @@ export const getPostById = async (req, res) => {
 export const getTrendingPosts = async (req, res) => {
   try {
     const trendingPosts = await Post.find({ trending: true })
-      .populate('author', 'profile.fullname profile.agencyName profile.profilePicture');
+      .populate('author', 'profile.fullname profile.agencyName profile.profilePhoto');
 
     // Shuffle the posts array
     const shuffledPosts = trendingPosts.sort(() => Math.random() - 0.5);
