@@ -329,6 +329,7 @@ export const toggleLike = async (req, res) => {
       success: true,
       message: isLiked ? 'Like removed' : 'Post liked',
       likesCount: post.likes.length,
+      isLiked: isLiked,
     });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Internal server error' });
