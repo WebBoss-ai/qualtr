@@ -13,17 +13,22 @@ const PostDetails = () => {
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState('');
     const [reply, setReply] = useState({ commentId: null, text: '' });
+    const [showModal, setShowModal] = useState(false);
 
     const toggleLike = async () => {
         try {
             const response = await axios.post(`${MARKETER_API_END_POINT}/posts/${post._id}/like`);
-            setLikes(response.data.likes);
+            setLikes({
+                isLiked: response.data.isLiked, // Update the isLiked state
+                length: response.data.likesCount, // Update the likes count
+            });
         } catch (error) {
             console.error('Error toggling like:', error);
         }
     };
 
     const addComment = async () => {
+        if (!userId) return setShowModal(true);
         try {
             const response = await axios.post(`${MARKETER_API_END_POINT}/posts/${post._id}/comment`, { text: newComment });
             setComments(response.data.post.comments);
@@ -34,6 +39,7 @@ const PostDetails = () => {
     };
 
     const replyToComment = async (commentId) => {
+        if (!userId) return setShowModal(true);
         try {
             const response = await axios.post(`${MARKETER_API_END_POINT}/posts/${post._id}/comment/${commentId}/reply`, {
                 text: reply.text,
@@ -45,6 +51,31 @@ const PostDetails = () => {
         }
     };
 
+    const LoginModal = ({ isOpen, onClose }) => {
+        if (!userId) return setShowModal(true);
+        if (!isOpen) return null;
+        return (
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="bg-white rounded-lg p-6 w-96 text-center shadow-lg">
+                    <h2 className="text-2xl font-bold mb-4">Login Required</h2>
+                    <p className="mb-4">You need to log in to perform this action.</p>
+                    <a
+                        href="/marketer/login"
+                        className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+                    >
+                        Go to Login
+                    </a>
+                    <button
+                        onClick={onClose}
+                        className="mt-4 text-gray-600 underline hover:text-gray-800"
+                    >
+                        Close
+                    </button>
+                </div>
+            </div>
+        );
+    };
+
     useEffect(() => {
         const fetchPost = async () => {
             const storedUserId = localStorage.getItem('userId'); // Retrieve userId from localStorage
@@ -53,7 +84,11 @@ const PostDetails = () => {
                 const response = await axios.get(`${MARKETER_API_END_POINT}/post/${id}`);
                 const fetchedPost = response.data.post;
                 setPost(fetchedPost);
-                setLikes(fetchedPost.likes || []);
+                const isLikedByUser = fetchedPost.likes.includes(storedUserId);
+                setLikes({
+                    isLiked: isLikedByUser,
+                    length: fetchedPost.likes.length,
+                });
                 setComments(fetchedPost.comments || []);
             } catch (err) {
                 setError(err.response?.data?.message || 'Error fetching post details');
@@ -210,6 +245,7 @@ const PostDetails = () => {
                     <button onClick={addComment}>Comment</button>
                 </div>
             </div>
+            <LoginModal isOpen={showModal} onClose={() => setShowModal(false)} />
         </div>
     );
 
