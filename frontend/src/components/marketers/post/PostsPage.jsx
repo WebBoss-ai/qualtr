@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { MARKETER_API_END_POINT } from "@/utils/constant";
 import RandomSuggestedProfiles from '../RandomSuggestedProfiles';
-import { ThumbsUp, MessageCircle, Share2, Send, Calendar, MapPin, Briefcase, BarChart2, FileText, TrendingUpIcon as Trending, Palette, Smile, PenTool, Megaphone, ChevronRight } from 'lucide-react'
+import { ThumbsUp, MessageCircle, Share2, Send, Calendar, MapPin, Briefcase, X, BarChart2, FileText, TrendingUpIcon as Trending, Palette, Smile, PenTool, Megaphone, ChevronRight } from 'lucide-react'
+import { TrendingUp, Scale, DollarSign, Users, Wrench, Lightbulb, Clock } from 'lucide-react';
 import moment from 'moment';
 import Footer from '@/components/shared/Footer';
 import Navbar from '@/components/shared/Navbar';
-
+import { formatDistanceToNow } from 'date-fns';
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
@@ -30,6 +31,49 @@ const PostPage = () => {
     const [reply, setReply] = useState({ commentId: null, text: '' })
     const [userId, setUserId] = useState(null)
     const [showModal, setShowModal] = useState(false)
+
+    const PostTimestamp = ({ createdAt }) => {
+        const formattedTime = formatDistanceToNow(new Date(createdAt), { addSuffix: true });
+
+        return (
+            <div className="flex ml-10 items-center text-gray-500 text-xs whitespace-nowrap">
+                <Clock className="w-4 h-4 mr-1" />
+                <span>{formattedTime}</span>
+            </div>
+        );
+    };
+    const ExpandableText = ({ text, maxLength = 100 }) => {
+        const [isExpanded, setIsExpanded] = useState(false);
+        const contentRef = useRef(null);
+
+        const toggleExpand = () => {
+            setIsExpanded(!isExpanded);
+        };
+
+        return (
+            <div>
+                <div
+                    ref={contentRef}
+                    className={`overflow-hidden transition-all duration-300`}
+                    style={{
+                        maxHeight: isExpanded ? `${contentRef.current?.scrollHeight}px` : '40px',
+                    }}
+                >
+                    <p className="text-gray-700 text-sm mb-4">
+                        {text}
+                    </p>
+                </div>
+                {text.length > maxLength && (
+                    <button
+                        onClick={toggleExpand}
+                        className="text-blue-500 text-sm font-medium hover:underline focus:outline-none"
+                    >
+                        {isExpanded ? 'Read Less' : 'Read More'}
+                    </button>
+                )}
+            </div>
+        );
+    };
 
     const toggleComments = (postId) => {
         setVisibleCommentPostId((prevId) => (prevId === postId ? null : postId));
@@ -95,7 +139,7 @@ const PostPage = () => {
                         : post
                 )
             );
-
+            window.location.reload();
             console.log('Post state updated successfully');
         } catch (error) {
             console.error('Error toggling like:', error);
@@ -103,13 +147,19 @@ const PostPage = () => {
             console.error('Error config:', error.config);
         }
     };
-
     const categories = [
-        { name: 'Trending', icon: Trending, href: '/trending' },
-        { name: 'Brand Strategy & Identity', icon: Palette, href: '/category/brand-strategy-identity' },
-        { name: 'Memes & Marketing Fun', icon: Smile, href: '/category/memes-marketing-fun' },
-        { name: 'Content Creation & Design', icon: PenTool, href: '/category/content-creation-design' },
-        { name: 'Digital Marketing', icon: Megaphone, href: '/category/digital-marketing' },
+        { name: 'Trending', icon: TrendingUp, href: '/trending' },
+        { name: 'Startup Essentials', icon: Briefcase, href: '/category/startup-essentials' },
+        { name: 'Marketing & Branding', icon: Megaphone, href: '/category/marketing-branding' },
+        { name: 'Legal & Compliance', icon: Scale, href: '/category/legal-compliance' },
+        { name: 'Finance & Investment', icon: DollarSign, href: '/category/finance-investment' },
+        { name: 'Sales & Customer Acquisition', icon: Users, href: '/category/sales-customer-acquisition' },
+        { name: 'Technology & Tools', icon: Wrench, href: '/category/technology-tools' },
+        { name: 'Inspirations', icon: Lightbulb, href: '/category/inspirations' },
+        // { name: 'Brand Strategy & Identity', icon: Palette, href: '/category/brand-strategy-identity' },
+        // { name: 'Memes & Marketing Fun', icon: Smile, href: '/category/memes-marketing-fun' },
+        // { name: 'Content Creation & Design', icon: PenTool, href: '/category/content-creation-design' },
+        // { name: 'Digital Marketing', icon: Megaphone, href: '/category/digital-marketing' },
     ]
 
     useEffect(() => {
@@ -392,6 +442,21 @@ const PostPage = () => {
                         />
                     </>
                 );
+            case 'text':
+                return (
+                    <>
+                        <label>Title:</label>
+                        <input
+                            type="text"
+                            onChange={(e) => {
+                                setAdditionalData((prev) => ({
+                                    ...prev,
+                                    occasion: { ...prev.occasion, title: e.target.value },
+                                }));
+                            }}
+                        />
+                    </>
+                );
             case 'jobOpening':
                 return (
                     <>
@@ -530,10 +595,14 @@ const PostPage = () => {
                             required
                         >
                             <option value="">Select Category</option>
-                            <option value="Brand Strategy & Identity">Brand Strategy & Identity</option>
-                            <option value="Memes & Marketing Fun">Memes & Marketing Fun</option>
-                            <option value="Content Creation & Design">Content Creation & Design</option>
-                            <option value="Digital Marketing">Digital Marketing</option>
+                            <option value="Startup Essentials">Startup Essentials</option>
+                            <option value="Marketing & Branding">Marketing & Branding</option>
+                            <option value="Legal & Compliance">Legal & Compliance</option>
+                            <option value="Finance & Investment">Finance & Investment</option>
+                            <option value="Sales & Customer Acquisition">Sales & Customer Acquisition</option>
+                            <option value="Technology & Tools">Technology & Tools</option>
+                            <option value="Inspirations">Inspirations</option>
+
                         </select>
                         <button onClick={() => setCurrentStep(2)}>Next</button>
                     </>
@@ -549,7 +618,7 @@ const PostPage = () => {
                             }}
                             required
                         >
-                            <option value="">Select Type</option>
+                            <option value="text">Text Only</option>
                             <option value="media">Media</option>
                             <option value="event">Event</option>
                             <option value="occasion">Occasion</option>
@@ -618,22 +687,20 @@ const PostPage = () => {
                                                                 />
                                                             )}
                                                             <div>
-                                                                <p className="text-sm font-medium text-gray-900">{post.author.profile.fullname}</p>
+                                                                <p className="text-sm font-medium text-gray-900">
+                                                                    {post.author.profile.fullname}
+                                                                    {post.category && (
+                                                                        <> | <span className="text-gray-700">{post.category}</span></>
+                                                                    )}
+                                                                </p>
                                                                 <p className="text-xs text-gray-500">{post?.author?.profile?.agencyName}</p>
                                                             </div>
+
                                                         </div>
                                                     )}
-
-                                                    {/* Post Category */}
-                                                    {post.category && (
-                                                        <span className="bg-gray-200 rounded-full px-3 py-1 text-xs font-semibold text-gray-700">
-                                                            {post.category}
-                                                        </span>
-                                                    )}
+                                                    <PostTimestamp createdAt={post.createdAt} />
                                                 </div>
-
-                                                {post.text && <p className="text-gray-700 text-sm mb-4">{post.text}</p>}
-                                                {/* Media Section */}
+                                                {post.text && <ExpandableText text={post.text} maxLength={100} />}                                                {/* Media Section */}
                                                 {post.media?.photos?.length > 0 && (
                                                     <div className="mb-4">
                                                         <Swiper

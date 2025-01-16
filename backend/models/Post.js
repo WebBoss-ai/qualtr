@@ -13,7 +13,14 @@ const postSchema = new mongoose.Schema({
             'Memes & Marketing Fun',         // 4
             'Content Creation & Design',     // 3
             'Digital Marketing',             // 2
-        ], // Define the allowed categories
+            'Startup Essentials',            // 5
+            'Marketing & Branding',          // 6
+            'Legal & Compliance',            // 7
+            'Finance & Investment',          // 8
+            'Sales & Customer Acquisition',  // 9
+            'Technology & Tools',            // 10
+            'Inspirations',                  // 11
+        ],        
         required: true,
     },
     text: {
