@@ -1,6 +1,7 @@
 import { Post } from '../models/Post.js';
 import { uploadPostMedia, deletePostMedia, getObjectURL, generatePostImageUrl, generatePostVideoUrl } from '../utils/aws.js'; // Helper functions for AWS S3
 import moment from 'moment'; // Add moment to handle time formatting
+import { DigitalMarketer } from '../models/DigitalMarketer.js';
 
 // Create a new post
 export const createPost = async (req, res) => {
