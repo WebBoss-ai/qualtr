@@ -423,8 +423,8 @@ export const replyToComment = async (req, res) => {
 
 export const voteOnPoll = async (req, res) => {
   const { postId } = req.params;
-  const { option } = req.body;console.log(postId);
-console.log(option);
+  const { option } = req.body;
+  const userId = req.user._id; // Assuming user ID is available in `req.user`
 
   try {
       const post = await Post.findById(postId);
@@ -443,10 +443,18 @@ console.log(option);
           });
       }
 
-      // Check if voting period has ended
+      // Check if the poll has ended
       if (new Date() > new Date(post.poll.endDate)) {
           return res.status(400).json({
               message: 'Poll voting has ended.',
+              success: false,
+          });
+      }
+
+      // Check if the user has already voted
+      if (post.poll.voters.includes(userId)) {
+          return res.status(403).json({
+              message: 'You have already voted on this poll.',
               success: false,
           });
       }
@@ -456,6 +464,9 @@ console.log(option);
           post.poll.votes.set(option, 0); // Initialize vote count if not present
       }
       post.poll.votes.set(option, post.poll.votes.get(option) + 1);
+
+      // Add the user to the voters list
+      post.poll.voters.push(userId);
 
       await post.save();
 
@@ -479,7 +490,7 @@ console.log(option);
 
 export const getPollResults = async (req, res) => {
   const { postId } = req.params;
-
+  const hasVoted = post.poll.voters.includes(req.user._id);
   try {
       const post = await Post.findById(postId);
 
@@ -491,14 +502,15 @@ export const getPollResults = async (req, res) => {
       }
 
       return res.status(200).json({
-          message: 'Poll results retrieved successfully.',
-          success: true,
-          poll: {
-              question: post.poll.question,
-              options: post.poll.options,
-              votes: Object.fromEntries(post.poll.votes),
-          },
-      });
+        message: 'Poll data retrieved successfully.',
+        success: true,
+        poll: {
+            question: post.poll.question,
+            options: post.poll.options,
+            votes: Object.fromEntries(post.poll.votes),
+            hasVoted,
+        },
+    });
   } catch (error) {
       console.error('Error fetching poll results:', error);
       return res.status(500).json({

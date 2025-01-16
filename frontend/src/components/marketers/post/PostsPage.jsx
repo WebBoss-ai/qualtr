@@ -39,7 +39,7 @@ const PostPage = () => {
             const response = await axios.post(`${MARKETER_API_END_POINT}/posts/${postId}/poll/vote`, {
                 option,
             });
-    
+
             // Check if the response indicates success
             const data = response.data; // Axios automatically parses JSON responses
             if (data.success) {
@@ -64,7 +64,7 @@ const PostPage = () => {
             }
         }
     };
-        
+
 
     const PostTimestamp = ({ createdAt }) => {
         const formattedTime = formatDistanceToNow(new Date(createdAt), { addSuffix: true });
@@ -977,12 +977,35 @@ const PostPage = () => {
                                                                 key={index}
                                                                 className="text-sm text-gray-600 bg-blue-50 px-4 py-2 rounded-md m-2 hover:bg-blue-100"
                                                                 onClick={() => handleVote(post._id, option)}
+                                                                disabled={post.poll.hasVoted} // Disable the button if the user has already voted
                                                             >
                                                                 {option}
                                                             </button>
                                                         ))}
+                                                        {post.poll.hasVoted && (
+                                                            <p className="text-xs text-green-600">You have already voted on this poll.</p>
+                                                        )}
                                                     </div>
                                                 )}
+                                                {post.poll && post.poll.votes && (
+                                                    <div className="bg-gray-50 rounded-md p-3 mt-4">
+                                                        <h4 className="text-sm font-semibold text-gray-900 mb-2">Poll Results</h4>
+                                                        <ul className="space-y-1">
+                                                            {post.poll.options.map((option, index) => {
+                                                                const votes = post.poll.votes[option] || 0;
+                                                                const totalVotes = Object.values(post.poll.votes).reduce((a, b) => a + b, 0);
+                                                                const percentage = totalVotes ? ((votes / totalVotes) * 100).toFixed(2) : 0;
+
+                                                                return (
+                                                                    <li key={index} className="text-xs text-gray-600">
+                                                                        {option}: {votes} votes ({percentage}%)
+                                                                    </li>
+                                                                );
+                                                            })}
+                                                        </ul>
+                                                    </div>
+                                                )}
+
 
 
                                                 {/* Document Section */}

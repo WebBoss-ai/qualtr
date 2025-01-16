@@ -87,6 +87,10 @@ const postSchema = new mongoose.Schema({
             of: Number, // Maps each option to the number of votes
             default: {}, // Initialize as an empty map
         },
+        voters: {
+            type: [mongoose.Schema.Types.ObjectId], // Array of user IDs who have voted
+            default: [],
+        },
     },
 
     document: {
