@@ -36,8 +36,7 @@ const PostPage = () => {
     const handleVote = async (postId, option) => {
         try {
             // Make the POST request using axios
-            const response = await axios.post(`${MARKETER_API_END_POINT}/posts/vote`, {
-                postId,
+            const response = await axios.post(`${MARKETER_API_END_POINT}/posts/${postId}/poll/vote`, {
                 option,
             });
     
