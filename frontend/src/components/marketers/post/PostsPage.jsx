@@ -33,6 +33,40 @@ const PostPage = () => {
     const [userId, setUserId] = useState(null)
     const [showModal, setShowModal] = useState(false)
 
+    const handleVote = async (postId, option) => {
+        try {
+            // Make the POST request using axios
+            const response = await axios.post(`${MARKETER_API_END_POINT}/posts/vote`, {
+                postId,
+                option,
+            });
+    
+            // Check if the response indicates success
+            const data = response.data; // Axios automatically parses JSON responses
+            if (data.success) {
+                alert('Vote submitted successfully!');
+            } else {
+                alert(data.message || 'Unknown error occurred.');
+            }
+        } catch (error) {
+            // Handle errors
+            if (error.response) {
+                // The request was made, and the server responded with a status code outside of the 2xx range
+                console.error('Server Error:', error.response.data);
+                alert(`Error: ${error.response.status} - ${error.response.data.message || 'Something went wrong'}`);
+            } else if (error.request) {
+                // The request was made, but no response was received
+                console.error('No response received:', error.request);
+                alert('No response from the server. Please try again later.');
+            } else {
+                // Something happened while setting up the request
+                console.error('Error:', error.message);
+                alert('An error occurred while submitting your vote.');
+            }
+        }
+    };
+        
+
     const PostTimestamp = ({ createdAt }) => {
         const formattedTime = formatDistanceToNow(new Date(createdAt), { addSuffix: true });
 
@@ -78,10 +112,10 @@ const PostPage = () => {
     const handleFileChange = (e) => {
         const selectedFiles = Array.from(e.target.files || []);
         setMedia((prev) => ({
-          ...prev,
-          images: [...prev.images, ...selectedFiles],
+            ...prev,
+            images: [...prev.images, ...selectedFiles],
         }));
-      };
+    };
     const toggleComments = (postId) => {
         setVisibleCommentPostId((prevId) => (prevId === postId ? null : postId));
     };
@@ -153,7 +187,7 @@ const PostPage = () => {
             console.error('Error response:', error.response?.data || 'No error response from server');
             console.error('Error config:', error.config);
         }
-    };const categories = [
+    }; const categories = [
         { name: 'Trending', icon: TrendingUp, href: '/trending' },
         { name: 'Startup Essentials', icon: Briefcase, href: '/category/startup-essentials' },
         { name: 'Marketing & Branding', icon: Megaphone, href: '/category/marketing-branding' },
@@ -355,297 +389,297 @@ const PostPage = () => {
     const renderPostTypeFields = () => {
         const inputClass = "w-full p-2 bg-white text-gray-800 placeholder-gray-400 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
         const labelClass = "block text-sm font-medium text-gray-700 mb-1"
-    
+
         switch (postType) {
-          case 'media':
-            return (
-                <div className="space-y-4">
-                <label className="text-gray-700 font-medium">Images (Max 10):</label>
-                <div className="flex items-center justify-center w-full">
-                  <label
-                    htmlFor="dropzone-file"
-                    className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
-                  >
-                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                      <Upload className="w-10 h-10 mb-3 text-gray-400" />
-                      <p className="mb-2 text-sm text-gray-500">
-                        <span className="font-semibold">Click to upload</span> or drag and drop
-                      </p>
-                      <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB each</p>
+            case 'media':
+                return (
+                    <div className="space-y-4">
+                        <label className="text-gray-700 font-medium">Images (Max 10):</label>
+                        <div className="flex items-center justify-center w-full">
+                            <label
+                                htmlFor="dropzone-file"
+                                className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
+                            >
+                                <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                    <Upload className="w-10 h-10 mb-3 text-gray-400" />
+                                    <p className="mb-2 text-sm text-gray-500">
+                                        <span className="font-semibold">Click to upload</span> or drag and drop
+                                    </p>
+                                    <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB each</p>
+                                </div>
+                                <input
+                                    id="dropzone-file"
+                                    type="file"
+                                    className="hidden"
+                                    name="images"
+                                    accept="image/*"
+                                    multiple
+                                    onChange={handleFileChange}
+                                />
+                            </label>
+                        </div>
+                        {/* Preview Section */}
+                        <div className="flex flex-wrap gap-4 mt-4">
+                            {media.images.map((image, index) => (
+                                <div key={index} className="relative w-24 h-24">
+                                    <img
+                                        src={URL.createObjectURL(image)}
+                                        alt={`Preview ${index + 1}`}
+                                        className="w-full h-full object-cover rounded-lg"
+                                    />
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                    <input
-                      id="dropzone-file"
-                      type="file"
-                      className="hidden"
-                      name="images"
-                      accept="image/*"
-                      multiple
-                      onChange={handleFileChange}
-                    />
-                  </label>
-                </div>
-                {/* Preview Section */}
-                <div className="flex flex-wrap gap-4 mt-4">
-                  {media.images.map((image, index) => (
-                    <div key={index} className="relative w-24 h-24">
-                      <img
-                        src={URL.createObjectURL(image)}
-                        alt={`Preview ${index + 1}`}
-                        className="w-full h-full object-cover rounded-lg"
-                      />
+                )
+            case 'event':
+                return (
+                    <div className="space-y-4">
+                        <div>
+                            <label className={labelClass}>Event Title:</label>
+                            <input
+                                type="text"
+                                className={inputClass}
+                                onChange={(e) => {
+                                    setAdditionalData((prev) => ({
+                                        ...prev,
+                                        event: { ...prev.event, title: e.target.value },
+                                    }))
+                                }}
+                            />
+                        </div>
+                        <div>
+                            <label className={labelClass}>Description:</label>
+                            <textarea
+                                className={inputClass}
+                                rows={3}
+                                onChange={(e) => {
+                                    setAdditionalData((prev) => ({
+                                        ...prev,
+                                        event: { ...prev.event, description: e.target.value },
+                                    }))
+                                }}
+                            />
+                        </div>
+                        <div>
+                            <label className={labelClass}>Date:</label>
+                            <input
+                                type="date"
+                                className={inputClass}
+                                onChange={(e) => {
+                                    setAdditionalData((prev) => ({
+                                        ...prev,
+                                        event: { ...prev.event, date: e.target.value },
+                                    }))
+                                }}
+                            />
+                        </div>
+                        <div>
+                            <label className={labelClass}>Location:</label>
+                            <input
+                                type="text"
+                                className={inputClass}
+                                onChange={(e) => {
+                                    setAdditionalData((prev) => ({
+                                        ...prev,
+                                        event: { ...prev.event, location: e.target.value },
+                                    }))
+                                }}
+                            />
+                        </div>
                     </div>
-                  ))}
-                </div>
-              </div>
-            )
-          case 'event':
-            return (
-              <div className="space-y-4">
-                <div>
-                  <label className={labelClass}>Event Title:</label>
-                  <input
-                    type="text"
-                    className={inputClass}
-                    onChange={(e) => {
-                      setAdditionalData((prev) => ({
-                        ...prev,
-                        event: { ...prev.event, title: e.target.value },
-                      }))
-                    }}
-                  />
-                </div>
-                <div>
-                  <label className={labelClass}>Description:</label>
-                  <textarea
-                    className={inputClass}
-                    rows={3}
-                    onChange={(e) => {
-                      setAdditionalData((prev) => ({
-                        ...prev,
-                        event: { ...prev.event, description: e.target.value },
-                      }))
-                    }}
-                  />
-                </div>
-                <div>
-                  <label className={labelClass}>Date:</label>
-                  <input
-                    type="date"
-                    className={inputClass}
-                    onChange={(e) => {
-                      setAdditionalData((prev) => ({
-                        ...prev,
-                        event: { ...prev.event, date: e.target.value },
-                      }))
-                    }}
-                  />
-                </div>
-                <div>
-                  <label className={labelClass}>Location:</label>
-                  <input
-                    type="text"
-                    className={inputClass}
-                    onChange={(e) => {
-                      setAdditionalData((prev) => ({
-                        ...prev,
-                        event: { ...prev.event, location: e.target.value },
-                      }))
-                    }}
-                  />
-                </div>
-              </div>
-            )
-          case 'occasion':
-            return (
-              <div className="space-y-4">
-                <div>
-                  <label className={labelClass}>Occasion Title:</label>
-                  <input
-                    type="text"
-                    className={inputClass}
-                    onChange={(e) => {
-                      setAdditionalData((prev) => ({
-                        ...prev,
-                        occasion: { ...prev.occasion, title: e.target.value },
-                      }))
-                    }}
-                  />
-                </div>
-                <div>
-                  <label className={labelClass}>Description:</label>
-                  <textarea
-                    className={inputClass}
-                    rows={3}
-                    onChange={(e) => {
-                      setAdditionalData((prev) => ({
-                        ...prev,
-                        occasion: { ...prev.occasion, description: e.target.value },
-                      }))
-                    }}
-                  />
-                </div>
-                <div>
-                  <label className={labelClass}>Date:</label>
-                  <input
-                    type="date"
-                    className={inputClass}
-                    onChange={(e) => {
-                      setAdditionalData((prev) => ({
-                        ...prev,
-                        occasion: { ...prev.occasion, date: e.target.value },
-                      }))
-                    }}
-                  />
-                </div>
-              </div>
-            )
-          case 'jobOpening':
-            return (
-              <div className="space-y-4">
-                <div>
-                  <label className={labelClass}>Job Title:</label>
-                  <input
-                    type="text"
-                    className={inputClass}
-                    onChange={(e) => {
-                      setAdditionalData((prev) => ({
-                        ...prev,
-                        jobOpening: { ...prev.jobOpening, title: e.target.value },
-                      }))
-                    }}
-                  />
-                </div>
-                <div>
-                  <label className={labelClass}>Description:</label>
-                  <textarea
-                    className={inputClass}
-                    rows={3}
-                    onChange={(e) => {
-                      setAdditionalData((prev) => ({
-                        ...prev,
-                        jobOpening: { ...prev.jobOpening, description: e.target.value },
-                      }))
-                    }}
-                  />
-                </div>
-                <div>
-                  <label className={labelClass}>Location:</label>
-                  <input
-                    type="text"
-                    className={inputClass}
-                    onChange={(e) => {
-                      setAdditionalData((prev) => ({
-                        ...prev,
-                        jobOpening: { ...prev.jobOpening, location: e.target.value },
-                      }))
-                    }}
-                  />
-                </div>
-                <div>
-                  <label className={labelClass}>Salary Range:</label>
-                  <input
-                    type="text"
-                    className={inputClass}
-                    onChange={(e) => {
-                      setAdditionalData((prev) => ({
-                        ...prev,
-                        jobOpening: { ...prev.jobOpening, salaryRange: e.target.value },
-                      }))
-                    }}
-                  />
-                </div>
-              </div>
-            )
-          case 'poll':
-            return (
-              <div className="space-y-4">
-                <div>
-                  <label className={labelClass}>Question:</label>
-                  <input
-                    type="text"
-                    className={inputClass}
-                    onChange={(e) => {
-                      setAdditionalData((prev) => ({
-                        ...prev,
-                        poll: { ...prev.poll, question: e.target.value },
-                      }))
-                    }}
-                  />
-                </div>
-                <div>
-                  <label className={labelClass}>Options (Max 4):</label>
-                  {[1, 2, 3, 4].map((num) => (
-                    <input
-                      key={num}
-                      type="text"
-                      className={`${inputClass} mt-2`}
-                      placeholder={`Option ${num}`}
-                      onChange={(e) => {
-                        setAdditionalData((prev) => ({
-                          ...prev,
-                          poll: {
-                            ...prev.poll,
-                            options: [
-                              ...(prev.poll?.options?.slice(0, num - 1) || []),
-                              e.target.value,
-                              ...(prev.poll?.options?.slice(num) || []),
-                            ],
-                          },
-                        }))
-                      }}
-                    />
-                  ))}
-                </div>
-                <div>
-                  <label className={labelClass}>End Date:</label>
-                  <input
-                    type="date"
-                    className={inputClass}
-                    onChange={(e) => {
-                      setAdditionalData((prev) => ({
-                        ...prev,
-                        poll: { ...prev.poll, endDate: e.target.value },
-                      }))
-                    }}
-                  />
-                </div>
-              </div>
-            )
-          case 'document':
-            return (
-              <div className="space-y-4">
-                <div>
-                  <label className={labelClass}>Document Name:</label>
-                  <input
-                    type="text"
-                    className={inputClass}
-                    onChange={(e) => {
-                      setAdditionalData((prev) => ({
-                        ...prev,
-                        document: { ...prev.document, name: e.target.value },
-                      }))
-                    }}
-                  />
-                </div>
-                <div>
-                  <label className={labelClass}>Document URL:</label>
-                  <input
-                    type="text"
-                    className={inputClass}
-                    onChange={(e) => {
-                      setAdditionalData((prev) => ({
-                        ...prev,
-                        document: { ...prev.document, url: e.target.value },
-                      }))
-                    }}
-                  />
-                </div>
-              </div>
-            )
-          default:
-            return null
+                )
+            case 'occasion':
+                return (
+                    <div className="space-y-4">
+                        <div>
+                            <label className={labelClass}>Occasion Title:</label>
+                            <input
+                                type="text"
+                                className={inputClass}
+                                onChange={(e) => {
+                                    setAdditionalData((prev) => ({
+                                        ...prev,
+                                        occasion: { ...prev.occasion, title: e.target.value },
+                                    }))
+                                }}
+                            />
+                        </div>
+                        <div>
+                            <label className={labelClass}>Description:</label>
+                            <textarea
+                                className={inputClass}
+                                rows={3}
+                                onChange={(e) => {
+                                    setAdditionalData((prev) => ({
+                                        ...prev,
+                                        occasion: { ...prev.occasion, description: e.target.value },
+                                    }))
+                                }}
+                            />
+                        </div>
+                        <div>
+                            <label className={labelClass}>Date:</label>
+                            <input
+                                type="date"
+                                className={inputClass}
+                                onChange={(e) => {
+                                    setAdditionalData((prev) => ({
+                                        ...prev,
+                                        occasion: { ...prev.occasion, date: e.target.value },
+                                    }))
+                                }}
+                            />
+                        </div>
+                    </div>
+                )
+            case 'jobOpening':
+                return (
+                    <div className="space-y-4">
+                        <div>
+                            <label className={labelClass}>Job Title:</label>
+                            <input
+                                type="text"
+                                className={inputClass}
+                                onChange={(e) => {
+                                    setAdditionalData((prev) => ({
+                                        ...prev,
+                                        jobOpening: { ...prev.jobOpening, title: e.target.value },
+                                    }))
+                                }}
+                            />
+                        </div>
+                        <div>
+                            <label className={labelClass}>Description:</label>
+                            <textarea
+                                className={inputClass}
+                                rows={3}
+                                onChange={(e) => {
+                                    setAdditionalData((prev) => ({
+                                        ...prev,
+                                        jobOpening: { ...prev.jobOpening, description: e.target.value },
+                                    }))
+                                }}
+                            />
+                        </div>
+                        <div>
+                            <label className={labelClass}>Location:</label>
+                            <input
+                                type="text"
+                                className={inputClass}
+                                onChange={(e) => {
+                                    setAdditionalData((prev) => ({
+                                        ...prev,
+                                        jobOpening: { ...prev.jobOpening, location: e.target.value },
+                                    }))
+                                }}
+                            />
+                        </div>
+                        <div>
+                            <label className={labelClass}>Salary Range:</label>
+                            <input
+                                type="text"
+                                className={inputClass}
+                                onChange={(e) => {
+                                    setAdditionalData((prev) => ({
+                                        ...prev,
+                                        jobOpening: { ...prev.jobOpening, salaryRange: e.target.value },
+                                    }))
+                                }}
+                            />
+                        </div>
+                    </div>
+                )
+            case 'poll':
+                return (
+                    <div className="space-y-4">
+                        <div>
+                            <label className={labelClass}>Question:</label>
+                            <input
+                                type="text"
+                                className={inputClass}
+                                onChange={(e) => {
+                                    setAdditionalData((prev) => ({
+                                        ...prev,
+                                        poll: { ...prev.poll, question: e.target.value },
+                                    }))
+                                }}
+                            />
+                        </div>
+                        <div>
+                            <label className={labelClass}>Options (Max 4):</label>
+                            {[1, 2, 3, 4].map((num) => (
+                                <input
+                                    key={num}
+                                    type="text"
+                                    className={`${inputClass} mt-2`}
+                                    placeholder={`Option ${num}`}
+                                    onChange={(e) => {
+                                        setAdditionalData((prev) => ({
+                                            ...prev,
+                                            poll: {
+                                                ...prev.poll,
+                                                options: [
+                                                    ...(prev.poll?.options?.slice(0, num - 1) || []),
+                                                    e.target.value,
+                                                    ...(prev.poll?.options?.slice(num) || []),
+                                                ],
+                                            },
+                                        }))
+                                    }}
+                                />
+                            ))}
+                        </div>
+                        <div>
+                            <label className={labelClass}>End Date:</label>
+                            <input
+                                type="date"
+                                className={inputClass}
+                                onChange={(e) => {
+                                    setAdditionalData((prev) => ({
+                                        ...prev,
+                                        poll: { ...prev.poll, endDate: e.target.value },
+                                    }))
+                                }}
+                            />
+                        </div>
+                    </div>
+                )
+            case 'document':
+                return (
+                    <div className="space-y-4">
+                        <div>
+                            <label className={labelClass}>Document Name:</label>
+                            <input
+                                type="text"
+                                className={inputClass}
+                                onChange={(e) => {
+                                    setAdditionalData((prev) => ({
+                                        ...prev,
+                                        document: { ...prev.document, name: e.target.value },
+                                    }))
+                                }}
+                            />
+                        </div>
+                        <div>
+                            <label className={labelClass}>Document URL:</label>
+                            <input
+                                type="text"
+                                className={inputClass}
+                                onChange={(e) => {
+                                    setAdditionalData((prev) => ({
+                                        ...prev,
+                                        document: { ...prev.document, url: e.target.value },
+                                    }))
+                                }}
+                            />
+                        </div>
+                    </div>
+                )
+            default:
+                return null
         }
-      }
+    }
 
     return (
         <div>
@@ -934,6 +968,23 @@ const PostPage = () => {
                                                         )}
                                                     </div>
                                                 )}
+                                                {post.poll && post.poll.question && (
+                                                    <div className="bg-gray-50 rounded-md p-3 mb-4">
+                                                        <h4 className="text-sm font-semibold text-gray-900 mb-2 flex items-center">
+                                                            Poll: {post.poll.question}
+                                                        </h4>
+                                                        {post.poll.options.map((option, index) => (
+                                                            <button
+                                                                key={index}
+                                                                className="text-sm text-gray-600 bg-blue-50 px-4 py-2 rounded-md m-2 hover:bg-blue-100"
+                                                                onClick={() => handleVote(post._id, option)}
+                                                            >
+                                                                {option}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                )}
+
 
                                                 {/* Document Section */}
                                                 {post.document && (

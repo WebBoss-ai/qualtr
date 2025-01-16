@@ -20,7 +20,7 @@ const postSchema = new mongoose.Schema({
             'Sales & Customer Acquisition',  // 9
             'Technology & Tools',            // 10
             'Inspirations',                  // 11
-        ],        
+        ],
         required: true,
     },
     text: {
@@ -28,7 +28,7 @@ const postSchema = new mongoose.Schema({
         maxlength: 2000, // Limit for text length
     },
     media: {
-        photos: { 
+        photos: {
             type: [
                 {
                     url: { type: String, required: true }, // The photo URL
@@ -44,7 +44,7 @@ const postSchema = new mongoose.Schema({
             ],
             validate: [arrayLimit, '{PATH} exceeds the limit of 10'], // Max 10 photos
         },
-        videos: { 
+        videos: {
             type: [
                 {
                     url: { type: String, required: true }, // The video URL
@@ -82,13 +82,19 @@ const postSchema = new mongoose.Schema({
             validate: [arrayLimitPollOptions, '{PATH} exceeds the limit of 4'], // Max 4 options
         },
         endDate: { type: Date },
+        votes: {
+            type: Map,
+            of: Number, // Maps each option to the number of votes
+            default: {}, // Initialize as an empty map
+        },
     },
+
     document: {
         name: { type: String },
         url: { type: String },
     },
     trending: { type: Boolean, default: false },
-    impressions: {type:Number, default:0},
+    impressions: { type: Number, default: 0 },
 }, { timestamps: true });
 
 function arrayLimit(val) {
@@ -101,16 +107,16 @@ function arrayLimitPollOptions(val) {
 
 const commentSchema = new mongoose.Schema(
     {
-      user: { type: mongoose.Schema.Types.ObjectId, ref: 'DigitalMarketer', required: true },
-      text: { type: String, required: true },
-      replies: [
-        {
-          user: { type: mongoose.Schema.Types.ObjectId, ref: 'DigitalMarketer', required: true },
-          text: { type: String, required: true },
-          taggedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'DigitalMarketer' }],
-        },
-      ],
-      taggedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'DigitalMarketer' }],
+        user: { type: mongoose.Schema.Types.ObjectId, ref: 'DigitalMarketer', required: true },
+        text: { type: String, required: true },
+        replies: [
+            {
+                user: { type: mongoose.Schema.Types.ObjectId, ref: 'DigitalMarketer', required: true },
+                text: { type: String, required: true },
+                taggedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'DigitalMarketer' }],
+            },
+        ],
+        taggedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'DigitalMarketer' }],
     },
     { timestamps: true }
 );

@@ -420,3 +420,88 @@ export const replyToComment = async (req, res) => {
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
+
+export const voteOnPoll = async (req, res) => {
+  const { postId, option } = req.body;
+
+  try {
+      const post = await Post.findById(postId);
+
+      if (!post || !post.poll) {
+          return res.status(404).json({
+              message: 'Post or poll not found.',
+              success: false,
+          });
+      }
+
+      if (!post.poll.options.includes(option)) {
+          return res.status(400).json({
+              message: 'Invalid option.',
+              success: false,
+          });
+      }
+
+      // Check if voting period has ended
+      if (new Date() > new Date(post.poll.endDate)) {
+          return res.status(400).json({
+              message: 'Poll voting has ended.',
+              success: false,
+          });
+      }
+
+      // Increment vote count for the selected option
+      if (!post.poll.votes.has(option)) {
+          post.poll.votes.set(option, 0); // Initialize vote count if not present
+      }
+      post.poll.votes.set(option, post.poll.votes.get(option) + 1);
+
+      await post.save();
+
+      return res.status(200).json({
+          message: 'Vote submitted successfully.',
+          success: true,
+          poll: {
+              question: post.poll.question,
+              options: post.poll.options,
+              votes: Object.fromEntries(post.poll.votes), // Convert Map to plain object
+          },
+      });
+  } catch (error) {
+      console.error('Error voting on poll:', error);
+      return res.status(500).json({
+          message: 'Internal server error.',
+          success: false,
+      });
+  }
+};
+
+export const getPollResults = async (req, res) => {
+  const { postId } = req.params;
+
+  try {
+      const post = await Post.findById(postId);
+
+      if (!post || !post.poll) {
+          return res.status(404).json({
+              message: 'Post or poll not found.',
+              success: false,
+          });
+      }
+
+      return res.status(200).json({
+          message: 'Poll results retrieved successfully.',
+          success: true,
+          poll: {
+              question: post.poll.question,
+              options: post.poll.options,
+              votes: Object.fromEntries(post.poll.votes),
+          },
+      });
+  } catch (error) {
+      console.error('Error fetching poll results:', error);
+      return res.status(500).json({
+          message: 'Internal server error.',
+          success: false,
+      });
+  }
+};
