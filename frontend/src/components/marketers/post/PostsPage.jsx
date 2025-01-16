@@ -973,20 +973,23 @@ const PostPage = () => {
                                                             <h4 className="text-lg font-semibold text-gray-800 mb-4">
                                                                 Poll: {post.poll.question}
                                                             </h4>
-                                                            {!post.poll.hasVoted ? (
-                                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                                                    {post.poll.options.map((option, index) => (
-                                                                        <button
-                                                                            key={index}
-                                                                            className="text-sm text-white bg-blue-500 px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 transition"
-                                                                            onClick={() => handleVote(post._id, option)}
-                                                                        >
-                                                                            {option}
-                                                                        </button>
-                                                                    ))}
-                                                                </div>
-                                                            ) : (
-                                                                <p className="text-sm text-green-600 mt-2">
+                                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                                {post.poll.options.map((option, index) => (
+                                                                    <button
+                                                                        key={index}
+                                                                        className={`text-sm px-4 py-2 rounded-md focus:outline-none focus:ring-2 transition ${post.poll.hasVoted
+                                                                                ? "bg-gray-400 text-gray-600 cursor-not-allowed"
+                                                                                : "bg-blue-500 text-white hover:bg-blue-600 focus:ring-blue-400 focus:ring-opacity-50"
+                                                                            }`}
+                                                                        onClick={() => !post.poll.hasVoted && handleVote(post._id, option)}
+                                                                        disabled={post.poll.hasVoted} // Disable button if user has already voted
+                                                                    >
+                                                                        {option}
+                                                                    </button>
+                                                                ))}
+                                                            </div>
+                                                            {post.poll.hasVoted && (
+                                                                <p className="text-sm text-green-600 mt-4">
                                                                     You have already voted on this poll. Thank you for your participation!
                                                                 </p>
                                                             )}
@@ -1026,10 +1029,7 @@ const PostPage = () => {
                                                         </div>
                                                     )}
                                                 </div>
-
-
-
-
+                                                
                                                 {/* Document Section */}
                                                 {post.document && (
                                                     <div className="bg-gray-50 rounded-md p-3 mb-4">
