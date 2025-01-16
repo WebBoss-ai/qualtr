@@ -3,7 +3,7 @@ import axios from 'axios';
 import { MARKETER_API_END_POINT } from "@/utils/constant";
 import RandomSuggestedProfiles from '../RandomSuggestedProfiles';
 import { ThumbsUp, MessageCircle, Share2, Send, Calendar, MapPin, Briefcase, X, BarChart2, FileText, TrendingUpIcon as Trending, Palette, Smile, PenTool, Megaphone, ChevronRight } from 'lucide-react'
-import { TrendingUp, Scale, DollarSign, Users, Wrench, Lightbulb, Clock } from 'lucide-react';
+import { TrendingUp, Scale, DollarSign, Image, Users, Wrench, Lightbulb, Clock } from 'lucide-react';
 import moment from 'moment';
 import Footer from '@/components/shared/Footer';
 import Navbar from '@/components/shared/Navbar';
@@ -18,8 +18,9 @@ import "swiper/css/pagination";
 const PostPage = () => {
     const [posts, setPosts] = useState([]);
     const [visibleCommentPostId, setVisibleCommentPostId] = useState(null); // Track the post ID for the visible comments section
-    const [post, setPost] = useState(null)
+    const [isExpanded, setIsExpanded] = useState(false)
     const [postCategory, setPostCategory] = useState('');
+    const [userProfilePhoto, setUserProfilePhoto] = useState('');
     const [postType, setPostType] = useState('');
     const [postText, setPostText] = useState('');
     const [media, setMedia] = useState({ images: [], videos: [] });
@@ -161,6 +162,28 @@ const PostPage = () => {
         // { name: 'Content Creation & Design', icon: PenTool, href: '/category/content-creation-design' },
         // { name: 'Digital Marketing', icon: Megaphone, href: '/category/digital-marketing' },
     ]
+    const categories2 = [
+        { name: 'Startup Essentials', icon: Briefcase, href: '/category/startup-essentials' },
+        { name: 'Marketing & Branding', icon: Megaphone, href: '/category/marketing-branding' },
+        { name: 'Legal & Compliance', icon: Scale, href: '/category/legal-compliance' },
+        { name: 'Finance & Investment', icon: DollarSign, href: '/category/finance-investment' },
+        { name: 'Sales & Customer Acquisition', icon: Users, href: '/category/sales-customer-acquisition' },
+        { name: 'Technology & Tools', icon: Wrench, href: '/category/technology-tools' },
+        { name: 'Inspirations', icon: Lightbulb, href: '/category/inspirations' },
+        // { name: 'Brand Strategy & Identity', icon: Palette, href: '/category/brand-strategy-identity' },
+        // { name: 'Memes & Marketing Fun', icon: Smile, href: '/category/memes-marketing-fun' },
+        // { name: 'Content Creation & Design', icon: PenTool, href: '/category/content-creation-design' },
+        // { name: 'Digital Marketing', icon: Megaphone, href: '/category/digital-marketing' },
+    ]
+    const postTypes = [
+        { value: "text", label: "Text Only", icon: FileText },
+        { value: "media", label: "Media", icon: Image },
+        { value: "event", label: "Event", icon: Calendar },
+        { value: "occasion", label: "Occasion", icon: Calendar },
+        { value: "jobOpening", label: "Job Opening", icon: Briefcase },
+        { value: "poll", label: "Poll", icon: BarChart2 },
+        { value: "document", label: "Document", icon: FileText },
+    ]
 
     useEffect(() => {
         fetchPosts();
@@ -198,7 +221,7 @@ const PostPage = () => {
                     }
                 })
             );
-
+            setUserProfilePhoto(response.data.userProfilePhoto);
             setPosts(updatedPosts);
         } catch (error) {
             console.error('Failed to fetch posts:', error);
@@ -341,20 +364,6 @@ const PostPage = () => {
                                 }));
                             }}
                         />
-
-                        <label>Videos (Max 5):</label>
-                        <input
-                            type="file"
-                            accept="video/*"
-                            multiple
-                            onChange={(e) => {
-                                console.log('Videos selected:', e.target.files);
-                                setMedia((prev) => ({
-                                    ...prev,
-                                    videos: [...prev.videos, ...e.target.files],
-                                }));
-                            }}
-                        />
                     </>
                 );
             case 'event':
@@ -445,16 +454,6 @@ const PostPage = () => {
             case 'text':
                 return (
                     <>
-                        <label>Title:</label>
-                        <input
-                            type="text"
-                            onChange={(e) => {
-                                setAdditionalData((prev) => ({
-                                    ...prev,
-                                    occasion: { ...prev.occasion, title: e.target.value },
-                                }));
-                            }}
-                        />
                     </>
                 );
             case 'jobOpening':
@@ -583,69 +582,6 @@ const PostPage = () => {
         <div>
             <Navbar />
             <div>
-                {currentStep === 1 && (
-                    <>
-                        <h2>Select Post Category</h2>
-                        <select
-                            value={postCategory}
-                            onChange={(e) => {
-                                console.log('Post category selected:', e.target.value);
-                                setPostCategory(e.target.value);
-                            }}
-                            required
-                        >
-                            <option value="">Select Category</option>
-                            <option value="Startup Essentials">Startup Essentials</option>
-                            <option value="Marketing & Branding">Marketing & Branding</option>
-                            <option value="Legal & Compliance">Legal & Compliance</option>
-                            <option value="Finance & Investment">Finance & Investment</option>
-                            <option value="Sales & Customer Acquisition">Sales & Customer Acquisition</option>
-                            <option value="Technology & Tools">Technology & Tools</option>
-                            <option value="Inspirations">Inspirations</option>
-
-                        </select>
-                        <button onClick={() => setCurrentStep(2)}>Next</button>
-                    </>
-                )}
-                {currentStep === 2 && (
-                    <>
-                        <h2>Select Post Type</h2>
-                        <select
-                            value={postType}
-                            onChange={(e) => {
-                                console.log('Post type selected:', e.target.value);
-                                setPostType(e.target.value);
-                            }}
-                            required
-                        >
-                            <option value="text">Text Only</option>
-                            <option value="media">Media</option>
-                            <option value="event">Event</option>
-                            <option value="occasion">Occasion</option>
-                            <option value="jobOpening">Job Opening</option>
-                            <option value="poll">Poll</option>
-                            <option value="document">Document</option>
-                        </select>
-                        <button onClick={() => setCurrentStep(3)}>Next</button>
-                    </>
-                )}
-                {currentStep === 3 && (
-                    <form onSubmit={handleSubmit}>
-                        <h2>Create Post</h2>
-                        <label>Post Text:</label>
-                        <textarea
-                            value={postText}
-                            onChange={(e) => {
-                                console.log('Post text:', e.target.value);
-                                setPostText(e.target.value);
-                            }}
-                            placeholder="Write your post"
-                            required
-                        ></textarea>
-                        {renderPostTypeFields()}
-                        <button type="submit">Create Post</button>
-                    </form>
-                )}
                 <div className="bg-gray-100 min-h-screen">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -671,6 +607,124 @@ const PostPage = () => {
 
                             {/* Main Content */}
                             <div className="lg:col-span-6">
+                                <div className="bg-white mb-5 rounded-xl max-w-2xl mx-auto border border-gray-200">
+                                    {!isExpanded ? (
+                                        <button
+                                            onClick={() => setIsExpanded(true)}
+                                            className="w-full p-4 text-left text-gray-600 hover:text-gray-800 transition-colors duration-150 ease-in-out focus:outline-none flex items-center space-x-4"
+                                        >
+                                            <div className="user-profile">
+                                                {userProfilePhoto && (
+                                                    <img
+                                                        src={userProfilePhoto}
+                                                        alt="Logged-in User Profile"
+                                                        className="w-8 h-8 rounded-full border border-gray-300"
+                                                    />
+                                                )}
+                                            </div>
+                                            <span>Create a new post...</span>
+                                        </button>
+                                    ) : (
+                                        <div className="space-y-4 p-4">
+
+                                            <div className="flex justify-between items-center">
+                                                <h2 className="text-xl font-semibold text-gray-800">Create a New Post</h2>
+                                                <button
+                                                    onClick={() => setIsExpanded(false)}
+                                                    className="text-gray-400 hover:text-gray-600 transition-colors duration-150 ease-in-out"
+                                                >
+                                                    <X className="w-5 h-5" />
+                                                </button>
+                                            </div>
+                                            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                                {currentStep === 1 && (
+                                                    <>
+                                                        <h3 className="text-sm font-semibold text-gray-700 mb-2">Select Post Category</h3>
+                                                        <div className="grid grid-cols-2 gap-2">
+                                                            {categories2.map((category) => (
+                                                                <button
+                                                                    key={category.name}
+                                                                    onClick={() => {
+                                                                        setPostCategory(category.name)
+                                                                        setCurrentStep(2)
+                                                                    }}
+                                                                    className={`flex items-center justify-between p-2 rounded-md text-sm transition-colors duration-150 ease-in-out ${postCategory === category.name
+                                                                        ? 'bg-gray-200 text-gray-800'
+                                                                        : 'bg-white text-gray-600 hover:bg-gray-100 hover:text-gray-800'
+                                                                        }`}
+                                                                >
+                                                                    <span className="flex items-center">
+                                                                        <category.icon className="w-4 h-4 mr-2" />
+                                                                        {category.name}
+                                                                    </span>
+                                                                    <ChevronRight className="w-4 h-4" />
+                                                                </button>
+                                                            ))}
+                                                        </div>
+                                                    </>
+                                                )}
+                                                {currentStep === 2 && (
+                                                    <>
+                                                        <h3 className="text-sm font-semibold text-gray-700 mb-2">Select Post Type</h3>
+                                                        <div className="grid grid-cols-3 gap-2">
+                                                            {postTypes.map((type) => (
+                                                                <button
+                                                                    key={type.value}
+                                                                    onClick={() => {
+                                                                        setPostType(type.value)
+                                                                        setCurrentStep(3)
+                                                                    }}
+                                                                    className={`flex flex-col items-center justify-center p-2 rounded-md text-xs transition-colors duration-150 ease-in-out ${postType === type.value
+                                                                        ? 'bg-gray-200 text-gray-800'
+                                                                        : 'bg-white text-gray-600 hover:bg-gray-100 hover:text-gray-800'
+                                                                        }`}
+                                                                >
+                                                                    <type.icon className="w-6 h-6 mb-1" />
+                                                                    {type.label}
+                                                                </button>
+                                                            ))}
+                                                        </div>
+                                                    </>
+                                                )}
+                                                {currentStep === 3 && (
+                                                    <form onSubmit={handleSubmit} className="space-y-4">
+                                                        <div>
+                                                            <label htmlFor="post-text" className="block text-sm font-medium text-gray-700 mb-1">
+                                                                Post Text
+                                                            </label>
+                                                            <textarea
+                                                                id="post-text"
+                                                                value={postText}
+                                                                onChange={(e) => setPostText(e.target.value)}
+                                                                placeholder="Write your post"
+                                                                required
+                                                                className="w-full p-2 bg-white text-gray-800 placeholder-gray-400 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                                                                rows={3}
+                                                            />
+                                                        </div>
+                                                        {renderPostTypeFields()}
+                                                        <div className="flex justify-end">
+                                                            <button
+                                                                type="submit"
+                                                                className="px-4 py-2 bg-gray-800 text-white text-sm font-medium rounded-md hover:bg-gray-700 transition-colors duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-500"
+                                                            >
+                                                                Create Post
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                )}
+                                            </div>
+                                            {currentStep > 1 && (
+                                                <button
+                                                    onClick={() => setCurrentStep(currentStep - 1)}
+                                                    className="text-sm font-medium text-gray-600 hover:text-gray-800 transition-colors duration-150 ease-in-out"
+                                                >
+                                                    ← Back
+                                                </button>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
                                 {posts.length > 0 ? (
                                     posts.map((post) => (
                                         <div key={post._id} className="bg-white border border-[1px] rounded-lg overflow-hidden mb-6">

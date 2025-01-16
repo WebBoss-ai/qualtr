@@ -132,6 +132,12 @@ export const getAllPosts = async (req, res) => {
       .sort({ createdAt: -1 })
       .lean(); // Use lean for better performance since no modifications are needed to the Mongoose document
 
+    // Process logged-in user's profile photo
+    let loggedInUserProfilePhoto = null;
+    if (req.user?.profile?.profilePhoto) {
+      loggedInUserProfilePhoto = await getObjectURL(req.user.profile.profilePhoto); // Generate a presigned URL for the user's profile picture
+    }
+
     const postsWithMediaAndAuthorData = await Promise.all(
       posts.map(async (post) => {
         // Process author profile photo URL
@@ -179,6 +185,7 @@ export const getAllPosts = async (req, res) => {
       message: 'Posts retrieved successfully.',
       success: true,
       posts: postsWithMediaAndAuthorData,
+      userProfilePhoto: loggedInUserProfilePhoto, // Include the logged-in user's profile photo URL
     });
   } catch (error) {
     console.error('Error retrieving posts:', error);
