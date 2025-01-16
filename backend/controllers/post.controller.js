@@ -147,9 +147,8 @@ export const getAllPosts = async (req, res) => {
 
     // Process logged-in user's profile photo
     let loggedInUserProfilePhoto = null;
-    if (req.user?.profile?.profilePhoto) {
-      console.log('Logged-in user profile photo found:', req.user.profile.profilePhoto);
-      loggedInUserProfilePhoto = await getObjectURL(req.user.profile.profilePhoto); // Generate a presigned URL for the user's profile picture
+    if (digitalMarketer) {
+      loggedInUserProfilePhoto = await getObjectURL(digitalMarketer.profile.profilePhoto); // Generate a presigned URL for the user's profile picture
     } else {
       console.log('No profile photo for logged-in user');
     }
