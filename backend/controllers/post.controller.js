@@ -127,6 +127,18 @@ export const deletePost = async (req, res) => {
 // Get all posts
 export const getAllPosts = async (req, res) => {
   try {
+    // Check if the logged-in user belongs to the DigitalMarketer model
+    const digitalMarketer = await DigitalMarketer.findOne({ user: req.user._id });
+
+    if (!digitalMarketer) {
+      return res.status(403).json({
+        message: 'You must be a Digital Marketer to access this resource.',
+        success: false,
+      });
+    }
+
+    console.log('Logged-in user is a Digital Marketer:', digitalMarketer);
+
     const posts = await Post.find()
       .populate('author', 'profile') // Populate the full profile object
       .sort({ createdAt: -1 })
@@ -134,23 +146,19 @@ export const getAllPosts = async (req, res) => {
 
     // Process logged-in user's profile photo
     let loggedInUserProfilePhoto = null;
-    console.log(req.user)
     if (req.user?.profile?.profilePhoto) {
-      console.log('Logged-in user profile photo found:', req.user.profile.profilePhoto); // Debugging statement
+      console.log('Logged-in user profile photo found:', req.user.profile.profilePhoto);
       loggedInUserProfilePhoto = await getObjectURL(req.user.profile.profilePhoto); // Generate a presigned URL for the user's profile picture
-      console.log('Logged-in user profile photo URL generated:', loggedInUserProfilePhoto); // Debugging statement
     } else {
-      console.log('No profile photo for logged-in user'); // Debugging statement if no profile photo is found
+      console.log('No profile photo for logged-in user');
     }
 
     const postsWithMediaAndAuthorData = await Promise.all(
       posts.map(async (post) => {
         // Process author profile photo URL
         if (post.author?.profile?.profilePhoto) {
-          const profilePhotoURL = await getObjectURL(post.author.profile.profilePhoto); // Generate a presigned URL for the profile picture
-          post.author.profile.profilePhoto = profilePhotoURL; // Replace with the generated URL
-        } else {
-          console.log(`No profile photo for author of post ${post._id}`); // Debugging statement if no profile photo is found
+          const profilePhotoURL = await getObjectURL(post.author.profile.profilePhoto);
+          post.author.profile.profilePhoto = profilePhotoURL;
         }
 
         // Process media (photos and videos)
