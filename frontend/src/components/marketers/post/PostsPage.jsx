@@ -967,44 +967,66 @@ const PostPage = () => {
                                                         )}
                                                     </div>
                                                 )}
-                                                {post.poll && post.poll.question && (
-                                                    <div className="bg-gray-50 rounded-md p-3 mb-4">
-                                                        <h4 className="text-sm font-semibold text-gray-900 mb-2 flex items-center">
-                                                            Poll: {post.poll.question}
-                                                        </h4>
-                                                        {post.poll.options.map((option, index) => (
-                                                            <button
-                                                                key={index}
-                                                                className="text-sm text-gray-600 bg-blue-50 px-4 py-2 rounded-md m-2 hover:bg-blue-100"
-                                                                onClick={() => handleVote(post._id, option)}
-                                                                disabled={post.poll.hasVoted} // Disable the button if the user has already voted
-                                                            >
-                                                                {option}
-                                                            </button>
-                                                        ))}
-                                                        {post.poll.hasVoted && (
-                                                            <p className="text-xs text-green-600">You have already voted on this poll.</p>
-                                                        )}
-                                                    </div>
-                                                )}
-                                                {post.poll && post.poll.votes && (
-                                                    <div className="bg-gray-50 rounded-md p-3 mt-4">
-                                                        <h4 className="text-sm font-semibold text-gray-900 mb-2">Poll Results</h4>
-                                                        <ul className="space-y-1">
-                                                            {post.poll.options.map((option, index) => {
-                                                                const votes = post.poll.votes[option] || 0;
-                                                                const totalVotes = Object.values(post.poll.votes).reduce((a, b) => a + b, 0);
-                                                                const percentage = totalVotes ? ((votes / totalVotes) * 100).toFixed(2) : 0;
+                                                <div className="bg-gray-50 shadow-md rounded-md p-4 mb-6">
+                                                    {post.poll && post.poll.question && (
+                                                        <div>
+                                                            <h4 className="text-lg font-semibold text-gray-800 mb-4">
+                                                                Poll: {post.poll.question}
+                                                            </h4>
+                                                            {!post.poll.hasVoted ? (
+                                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                                    {post.poll.options.map((option, index) => (
+                                                                        <button
+                                                                            key={index}
+                                                                            className="text-sm text-white bg-blue-500 px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 transition"
+                                                                            onClick={() => handleVote(post._id, option)}
+                                                                        >
+                                                                            {option}
+                                                                        </button>
+                                                                    ))}
+                                                                </div>
+                                                            ) : (
+                                                                <p className="text-sm text-green-600 mt-2">
+                                                                    You have already voted on this poll. Thank you for your participation!
+                                                                </p>
+                                                            )}
+                                                        </div>
+                                                    )}
 
-                                                                return (
-                                                                    <li key={index} className="text-xs text-gray-600">
-                                                                        {option}: {votes} votes ({percentage}%)
-                                                                    </li>
-                                                                );
-                                                            })}
-                                                        </ul>
-                                                    </div>
-                                                )}
+                                                    {post.poll && post.poll.votes && post.poll.hasVoted && (
+                                                        <div className="bg-gray-100 rounded-md p-4 mt-6">
+                                                            <h4 className="text-md font-semibold text-gray-800 mb-2">
+                                                                Poll Results
+                                                            </h4>
+                                                            <ul className="space-y-2">
+                                                                {post.poll.options.map((option, index) => {
+                                                                    const votes = post.poll.votes[option] || 0;
+                                                                    const totalVotes = Object.values(post.poll.votes).reduce((a, b) => a + b, 0);
+                                                                    const percentage = totalVotes ? ((votes / totalVotes) * 100).toFixed(2) : 0;
+
+                                                                    return (
+                                                                        <li key={index} className="text-sm text-gray-700">
+                                                                            <div className="flex items-center justify-between mb-1">
+                                                                                <span>{option}</span>
+                                                                                <span className="text-gray-500">{votes} votes ({percentage}%)</span>
+                                                                            </div>
+                                                                            <div className="w-full bg-gray-300 rounded-full h-2">
+                                                                                <div
+                                                                                    className="bg-blue-500 h-2 rounded-full transition"
+                                                                                    style={{ width: `${percentage}%` }}
+                                                                                ></div>
+                                                                            </div>
+                                                                        </li>
+                                                                    );
+                                                                })}
+                                                            </ul>
+                                                            <p className="text-xs text-gray-500 mt-2">
+                                                                Total votes: {Object.values(post.poll.votes).reduce((a, b) => a + b, 0)}
+                                                            </p>
+                                                        </div>
+                                                    )}
+                                                </div>
+
 
 
 
