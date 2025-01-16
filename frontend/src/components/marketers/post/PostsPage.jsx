@@ -147,8 +147,7 @@ const PostPage = () => {
             console.error('Error response:', error.response?.data || 'No error response from server');
             console.error('Error config:', error.config);
         }
-    };
-    const categories = [
+    };const categories = [
         { name: 'Trending', icon: TrendingUp, href: '/trending' },
         { name: 'Startup Essentials', icon: Briefcase, href: '/category/startup-essentials' },
         { name: 'Marketing & Branding', icon: Megaphone, href: '/category/marketing-branding' },
@@ -222,6 +221,7 @@ const PostPage = () => {
                 })
             );
             setUserProfilePhoto(response.data.userProfilePhoto);
+            console.log('User Profile Photo:', response.data.userProfilePhoto);
             setPosts(updatedPosts);
         } catch (error) {
             console.error('Failed to fetch posts:', error);
