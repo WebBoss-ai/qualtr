@@ -129,7 +129,7 @@ export const deletePost = async (req, res) => {
 export const getAllPosts = async (req, res) => {
   try {
     // Check if the logged-in user belongs to the DigitalMarketer model
-    const digitalMarketer = await DigitalMarketer.findOne({ user: req.user._id });
+    const digitalMarketer = await DigitalMarketer.findOne({ user: req._id });
 
     if (!digitalMarketer) {
       return res.status(403).json({
