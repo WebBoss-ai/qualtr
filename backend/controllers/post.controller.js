@@ -147,9 +147,7 @@ export const getAllPosts = async (req, res) => {
       posts.map(async (post) => {
         // Process author profile photo URL
         if (post.author?.profile?.profilePhoto) {
-          console.log(`Processing author profile photo for post ${post._id}:`, post.author.profile.profilePhoto); // Debugging statement
           const profilePhotoURL = await getObjectURL(post.author.profile.profilePhoto); // Generate a presigned URL for the profile picture
-          console.log('Author profile photo URL generated:', profilePhotoURL); // Debugging statement
           post.author.profile.profilePhoto = profilePhotoURL; // Replace with the generated URL
         } else {
           console.log(`No profile photo for author of post ${post._id}`); // Debugging statement if no profile photo is found
