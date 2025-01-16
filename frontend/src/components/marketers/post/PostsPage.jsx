@@ -3,7 +3,7 @@ import axios from 'axios';
 import { MARKETER_API_END_POINT } from "@/utils/constant";
 import RandomSuggestedProfiles from '../RandomSuggestedProfiles';
 import { ThumbsUp, MessageCircle, Share2, Send, Calendar, MapPin, Briefcase, X, BarChart2, FileText, TrendingUpIcon as Trending, Palette, Smile, PenTool, Megaphone, ChevronRight } from 'lucide-react'
-import { TrendingUp, Scale, DollarSign, Image, Users, Wrench, Lightbulb, Clock } from 'lucide-react';
+import { TrendingUp, Scale, DollarSign, Image, Users, Wrench, Lightbulb, Clock, Upload } from 'lucide-react';
 import moment from 'moment';
 import Footer from '@/components/shared/Footer';
 import Navbar from '@/components/shared/Navbar';
@@ -75,7 +75,13 @@ const PostPage = () => {
             </div>
         );
     };
-
+    const handleFileChange = (e) => {
+        const selectedFiles = Array.from(e.target.files || []);
+        setMedia((prev) => ({
+          ...prev,
+          images: [...prev.images, ...selectedFiles],
+        }));
+      };
     const toggleComments = (postId) => {
         setVisibleCommentPostId((prevId) => (prevId === postId ? null : postId));
     };
@@ -347,236 +353,299 @@ const PostPage = () => {
     };
 
     const renderPostTypeFields = () => {
+        const inputClass = "w-full p-2 bg-white text-gray-800 placeholder-gray-400 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+        const labelClass = "block text-sm font-medium text-gray-700 mb-1"
+    
         switch (postType) {
-            case 'media':
-                return (
-                    <>
-                        <label>images (Max 10):</label>
-                        <input
-                            type="file"
-                            name="images"
-                            accept="image/*,video/*"
-                            multiple
-                            onChange={(e) => {
-                                setMedia((prev) => ({
-                                    ...prev,
-                                    images: [...prev.images, ...e.target.files],
-                                }));
-                            }}
-                        />
-                    </>
-                );
-            case 'event':
-                return (
-                    <>
-                        <label>Event Title:</label>
-                        <input
-                            type="text"
-                            onChange={(e) => {
-                                console.log('Event title:', e.target.value);
-                                setAdditionalData((prev) => ({
-                                    ...prev,
-                                    event: { ...prev.event, title: e.target.value },
-                                }));
-                            }}
-                        />
-                        <label>Description:</label>
-                        <textarea
-                            onChange={(e) => {
-                                console.log('Event description:', e.target.value);
-                                setAdditionalData((prev) => ({
-                                    ...prev,
-                                    event: { ...prev.event, description: e.target.value },
-                                }));
-                            }}
-                        />
-                        <label>Date:</label>
-                        <input
-                            type="date"
-                            onChange={(e) => {
-                                console.log('Event date:', e.target.value);
-                                setAdditionalData((prev) => ({
-                                    ...prev,
-                                    event: { ...prev.event, date: e.target.value },
-                                }));
-                            }}
-                        />
-                        <label>Location:</label>
-                        <input
-                            type="text"
-                            onChange={(e) => {
-                                console.log('Event location:', e.target.value);
-                                setAdditionalData((prev) => ({
-                                    ...prev,
-                                    event: { ...prev.event, location: e.target.value },
-                                }));
-                            }}
-                        />
-                    </>
-                );
-            case 'occasion':
-                return (
-                    <>
-                        <label>Occasion Title:</label>
-                        <input
-                            type="text"
-                            onChange={(e) => {
-                                console.log('Occasion title:', e.target.value);
-                                setAdditionalData((prev) => ({
-                                    ...prev,
-                                    occasion: { ...prev.occasion, title: e.target.value },
-                                }));
-                            }}
-                        />
-                        <label>Description:</label>
-                        <textarea
-                            onChange={(e) => {
-                                console.log('Occasion description:', e.target.value);
-                                setAdditionalData((prev) => ({
-                                    ...prev,
-                                    occasion: { ...prev.occasion, description: e.target.value },
-                                }));
-                            }}
-                        />
-                        <label>Date:</label>
-                        <input
-                            type="date"
-                            onChange={(e) => {
-                                console.log('Occasion date:', e.target.value);
-                                setAdditionalData((prev) => ({
-                                    ...prev,
-                                    occasion: { ...prev.occasion, date: e.target.value },
-                                }));
-                            }}
-                        />
-                    </>
-                );
-            case 'text':
-                return (
-                    <>
-                    </>
-                );
-            case 'jobOpening':
-                return (
-                    <>
-                        <label>Job Title:</label>
-                        <input
-                            type="text"
-                            onChange={(e) => {
-                                console.log('Job title:', e.target.value);
-                                setAdditionalData((prev) => ({
-                                    ...prev,
-                                    jobOpening: { ...prev.jobOpening, title: e.target.value },
-                                }));
-                            }}
-                        />
-                        <label>Description:</label>
-                        <textarea
-                            onChange={(e) => {
-                                console.log('Job description:', e.target.value);
-                                setAdditionalData((prev) => ({
-                                    ...prev,
-                                    jobOpening: { ...prev.jobOpening, description: e.target.value },
-                                }));
-                            }}
-                        />
-                        <label>Location:</label>
-                        <input
-                            type="text"
-                            onChange={(e) => {
-                                console.log('Job location:', e.target.value);
-                                setAdditionalData((prev) => ({
-                                    ...prev,
-                                    jobOpening: { ...prev.jobOpening, location: e.target.value },
-                                }));
-                            }}
-                        />
-                        <label>Salary Range:</label>
-                        <input
-                            type="text"
-                            onChange={(e) => {
-                                console.log('Salary range:', e.target.value);
-                                setAdditionalData((prev) => ({
-                                    ...prev,
-                                    jobOpening: { ...prev.jobOpening, salaryRange: e.target.value },
-                                }));
-                            }}
-                        />
-                    </>
-                );
-            case 'poll':
-                return (
-                    <>
-                        <label>Question:</label>
-                        <input
-                            type="text"
-                            onChange={(e) => {
-                                console.log('Poll question:', e.target.value);
-                                setAdditionalData((prev) => ({
-                                    ...prev,
-                                    poll: { ...prev.poll, question: e.target.value },
-                                }));
-                            }}
-                        />
-                        <label>Options (Max 4):</label>
-                        <input
-                            type="text"
-                            placeholder="Option 1"
-                            onChange={(e) => {
-                                console.log('Poll option added:', e.target.value);
-                                setAdditionalData((prev) => ({
-                                    ...prev,
-                                    poll: {
-                                        ...prev.poll,
-                                        options: [...(prev.poll?.options || []), e.target.value],
-                                    },
-                                }));
-                            }}
-                        />
-                        <label>End Date:</label>
-                        <input
-                            type="date"
-                            onChange={(e) => {
-                                console.log('Poll end date:', e.target.value);
-                                setAdditionalData((prev) => ({
-                                    ...prev,
-                                    poll: { ...prev.poll, endDate: e.target.value },
-                                }));
-                            }}
-                        />
-                    </>
-                );
-            case 'document':
-                return (
-                    <>
-                        <label>Document Name:</label>
-                        <input
-                            type="text"
-                            onChange={(e) => {
-                                console.log('Document name:', e.target.value);
-                                setAdditionalData((prev) => ({
-                                    ...prev,
-                                    document: { ...prev.document, name: e.target.value },
-                                }));
-                            }}
-                        />
-                        <label>Document URL:</label>
-                        <input
-                            type="text"
-                            onChange={(e) => {
-                                console.log('Document URL:', e.target.value);
-                                setAdditionalData((prev) => ({
-                                    ...prev,
-                                    document: { ...prev.document, url: e.target.value },
-                                }));
-                            }}
-                        />
-                    </>
-                );
-            default:
-                return null;
+          case 'media':
+            return (
+                <div className="space-y-4">
+                <label className="text-gray-700 font-medium">Images (Max 10):</label>
+                <div className="flex items-center justify-center w-full">
+                  <label
+                    htmlFor="dropzone-file"
+                    className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
+                  >
+                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                      <Upload className="w-10 h-10 mb-3 text-gray-400" />
+                      <p className="mb-2 text-sm text-gray-500">
+                        <span className="font-semibold">Click to upload</span> or drag and drop
+                      </p>
+                      <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB each</p>
+                    </div>
+                    <input
+                      id="dropzone-file"
+                      type="file"
+                      className="hidden"
+                      name="images"
+                      accept="image/*"
+                      multiple
+                      onChange={handleFileChange}
+                    />
+                  </label>
+                </div>
+                {/* Preview Section */}
+                <div className="flex flex-wrap gap-4 mt-4">
+                  {media.images.map((image, index) => (
+                    <div key={index} className="relative w-24 h-24">
+                      <img
+                        src={URL.createObjectURL(image)}
+                        alt={`Preview ${index + 1}`}
+                        className="w-full h-full object-cover rounded-lg"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )
+          case 'event':
+            return (
+              <div className="space-y-4">
+                <div>
+                  <label className={labelClass}>Event Title:</label>
+                  <input
+                    type="text"
+                    className={inputClass}
+                    onChange={(e) => {
+                      setAdditionalData((prev) => ({
+                        ...prev,
+                        event: { ...prev.event, title: e.target.value },
+                      }))
+                    }}
+                  />
+                </div>
+                <div>
+                  <label className={labelClass}>Description:</label>
+                  <textarea
+                    className={inputClass}
+                    rows={3}
+                    onChange={(e) => {
+                      setAdditionalData((prev) => ({
+                        ...prev,
+                        event: { ...prev.event, description: e.target.value },
+                      }))
+                    }}
+                  />
+                </div>
+                <div>
+                  <label className={labelClass}>Date:</label>
+                  <input
+                    type="date"
+                    className={inputClass}
+                    onChange={(e) => {
+                      setAdditionalData((prev) => ({
+                        ...prev,
+                        event: { ...prev.event, date: e.target.value },
+                      }))
+                    }}
+                  />
+                </div>
+                <div>
+                  <label className={labelClass}>Location:</label>
+                  <input
+                    type="text"
+                    className={inputClass}
+                    onChange={(e) => {
+                      setAdditionalData((prev) => ({
+                        ...prev,
+                        event: { ...prev.event, location: e.target.value },
+                      }))
+                    }}
+                  />
+                </div>
+              </div>
+            )
+          case 'occasion':
+            return (
+              <div className="space-y-4">
+                <div>
+                  <label className={labelClass}>Occasion Title:</label>
+                  <input
+                    type="text"
+                    className={inputClass}
+                    onChange={(e) => {
+                      setAdditionalData((prev) => ({
+                        ...prev,
+                        occasion: { ...prev.occasion, title: e.target.value },
+                      }))
+                    }}
+                  />
+                </div>
+                <div>
+                  <label className={labelClass}>Description:</label>
+                  <textarea
+                    className={inputClass}
+                    rows={3}
+                    onChange={(e) => {
+                      setAdditionalData((prev) => ({
+                        ...prev,
+                        occasion: { ...prev.occasion, description: e.target.value },
+                      }))
+                    }}
+                  />
+                </div>
+                <div>
+                  <label className={labelClass}>Date:</label>
+                  <input
+                    type="date"
+                    className={inputClass}
+                    onChange={(e) => {
+                      setAdditionalData((prev) => ({
+                        ...prev,
+                        occasion: { ...prev.occasion, date: e.target.value },
+                      }))
+                    }}
+                  />
+                </div>
+              </div>
+            )
+          case 'jobOpening':
+            return (
+              <div className="space-y-4">
+                <div>
+                  <label className={labelClass}>Job Title:</label>
+                  <input
+                    type="text"
+                    className={inputClass}
+                    onChange={(e) => {
+                      setAdditionalData((prev) => ({
+                        ...prev,
+                        jobOpening: { ...prev.jobOpening, title: e.target.value },
+                      }))
+                    }}
+                  />
+                </div>
+                <div>
+                  <label className={labelClass}>Description:</label>
+                  <textarea
+                    className={inputClass}
+                    rows={3}
+                    onChange={(e) => {
+                      setAdditionalData((prev) => ({
+                        ...prev,
+                        jobOpening: { ...prev.jobOpening, description: e.target.value },
+                      }))
+                    }}
+                  />
+                </div>
+                <div>
+                  <label className={labelClass}>Location:</label>
+                  <input
+                    type="text"
+                    className={inputClass}
+                    onChange={(e) => {
+                      setAdditionalData((prev) => ({
+                        ...prev,
+                        jobOpening: { ...prev.jobOpening, location: e.target.value },
+                      }))
+                    }}
+                  />
+                </div>
+                <div>
+                  <label className={labelClass}>Salary Range:</label>
+                  <input
+                    type="text"
+                    className={inputClass}
+                    onChange={(e) => {
+                      setAdditionalData((prev) => ({
+                        ...prev,
+                        jobOpening: { ...prev.jobOpening, salaryRange: e.target.value },
+                      }))
+                    }}
+                  />
+                </div>
+              </div>
+            )
+          case 'poll':
+            return (
+              <div className="space-y-4">
+                <div>
+                  <label className={labelClass}>Question:</label>
+                  <input
+                    type="text"
+                    className={inputClass}
+                    onChange={(e) => {
+                      setAdditionalData((prev) => ({
+                        ...prev,
+                        poll: { ...prev.poll, question: e.target.value },
+                      }))
+                    }}
+                  />
+                </div>
+                <div>
+                  <label className={labelClass}>Options (Max 4):</label>
+                  {[1, 2, 3, 4].map((num) => (
+                    <input
+                      key={num}
+                      type="text"
+                      className={`${inputClass} mt-2`}
+                      placeholder={`Option ${num}`}
+                      onChange={(e) => {
+                        setAdditionalData((prev) => ({
+                          ...prev,
+                          poll: {
+                            ...prev.poll,
+                            options: [
+                              ...(prev.poll?.options?.slice(0, num - 1) || []),
+                              e.target.value,
+                              ...(prev.poll?.options?.slice(num) || []),
+                            ],
+                          },
+                        }))
+                      }}
+                    />
+                  ))}
+                </div>
+                <div>
+                  <label className={labelClass}>End Date:</label>
+                  <input
+                    type="date"
+                    className={inputClass}
+                    onChange={(e) => {
+                      setAdditionalData((prev) => ({
+                        ...prev,
+                        poll: { ...prev.poll, endDate: e.target.value },
+                      }))
+                    }}
+                  />
+                </div>
+              </div>
+            )
+          case 'document':
+            return (
+              <div className="space-y-4">
+                <div>
+                  <label className={labelClass}>Document Name:</label>
+                  <input
+                    type="text"
+                    className={inputClass}
+                    onChange={(e) => {
+                      setAdditionalData((prev) => ({
+                        ...prev,
+                        document: { ...prev.document, name: e.target.value },
+                      }))
+                    }}
+                  />
+                </div>
+                <div>
+                  <label className={labelClass}>Document URL:</label>
+                  <input
+                    type="text"
+                    className={inputClass}
+                    onChange={(e) => {
+                      setAdditionalData((prev) => ({
+                        ...prev,
+                        document: { ...prev.document, url: e.target.value },
+                      }))
+                    }}
+                  />
+                </div>
+              </div>
+            )
+          default:
+            return null
         }
-    };
+      }
 
     return (
         <div>
