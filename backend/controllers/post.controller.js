@@ -423,6 +423,8 @@ export const replyToComment = async (req, res) => {
 
 export const voteOnPoll = async (req, res) => {
   const { postId, option } = req.body;
+console.log(postId);
+console.log(option);
 
   try {
       const post = await Post.findById(postId);
