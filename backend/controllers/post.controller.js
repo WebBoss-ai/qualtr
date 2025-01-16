@@ -422,8 +422,8 @@ export const replyToComment = async (req, res) => {
 };
 
 export const voteOnPoll = async (req, res) => {
-  const { postId, option } = req.body;
-console.log(postId);
+  const { postId } = req.params;
+  const { option } = req.body;console.log(postId);
 console.log(option);
 
   try {
