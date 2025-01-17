@@ -436,6 +436,33 @@ export const voteOnPoll = async (req, res) => {
           });
       }
 
+      // If the poll has ended, return results
+      if (new Date() > new Date(post.poll.endDate)) {
+          return res.status(400).json({
+              message: 'Poll voting has ended.',
+              success: false,
+              poll: {
+                  question: post.poll.question,
+                  options: post.poll.options,
+                  votes: Object.fromEntries(post.poll.votes), // Convert Map to plain object
+              },
+          });
+      }
+
+      // Check if the user has already voted
+      if (post.poll.voters.includes(userId)) {
+          return res.status(200).json({
+              message: 'You have already voted.',
+              success: true,
+              poll: {
+                  question: post.poll.question,
+                  options: post.poll.options,
+                  votes: Object.fromEntries(post.poll.votes), // Convert Map to plain object
+              },
+          });
+      }
+
+      // If user has not voted, record their vote
       if (!post.poll.options.includes(option)) {
           return res.status(400).json({
               message: 'Invalid option.',
@@ -443,37 +470,16 @@ export const voteOnPoll = async (req, res) => {
           });
       }
 
-      // Check if the poll has ended
-      if (new Date() > new Date(post.poll.endDate)) {
-          return res.status(400).json({
-              message: 'Poll voting has ended.',
-              success: false,
-          });
-      }
-
-      // Check if the user has already voted
-      if (post.poll.voters.includes(userId)) {
-          return res.status(403).json({
-              message: 'You have already voted on this poll.',
-              success: false,
-              poll: {
-                  question: post.poll.question,
-                  options: post.poll.options,
-                  votes: Object.fromEntries(post.poll.votes), // Convert Map to plain object
-                  hasVoted: true, // Mark as voted
-              },
-          });
-      }
-
-      // Increment vote count for the selected option
+      // Increment the vote count
       if (!post.poll.votes.has(option)) {
-          post.poll.votes.set(option, 0); // Initialize vote count if not present
+          post.poll.votes.set(option, 0);
       }
       post.poll.votes.set(option, post.poll.votes.get(option) + 1);
 
       // Add the user to the voters list
       post.poll.voters.push(userId);
 
+      // Save the poll
       await post.save();
 
       return res.status(200).json({
@@ -483,7 +489,6 @@ export const voteOnPoll = async (req, res) => {
               question: post.poll.question,
               options: post.poll.options,
               votes: Object.fromEntries(post.poll.votes), // Convert Map to plain object
-              hasVoted: true, // Mark as voted
           },
       });
   } catch (error) {

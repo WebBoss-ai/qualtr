@@ -35,33 +35,21 @@ const PostPage = () => {
 
     const handleVote = async (postId, option) => {
         try {
-            // Make the POST request using axios
-            const response = await axios.post(`${MARKETER_API_END_POINT}/posts/${postId}/poll/vote`, {
-                option,
-            });
+            const response = await axios.post(
+                `${MARKETER_API_END_POINT}/posts/${postId}/poll/vote`,
+                { option }
+            );
 
-            // Check if the response indicates success
-            const data = response.data; // Axios automatically parses JSON responses
+            const data = response.data;
             if (data.success) {
-                alert('Vote submitted successfully!');
+                alert(data.message); // Notify the user of success
+                window.location.reload();
             } else {
-                alert(data.message || 'Unknown error occurred.');
+                alert(data.message || 'Something went wrong.');
             }
         } catch (error) {
-            // Handle errors
-            if (error.response) {
-                // The request was made, and the server responded with a status code outside of the 2xx range
-                console.error('Server Error:', error.response.data);
-                alert(`Error: ${error.response.status} - ${error.response.data.message || 'Something went wrong'}`);
-            } else if (error.request) {
-                // The request was made, but no response was received
-                console.error('No response received:', error.request);
-                alert('No response from the server. Please try again later.');
-            } else {
-                // Something happened while setting up the request
-                console.error('Error:', error.message);
-                alert('An error occurred while submitting your vote.');
-            }
+            console.error('Error submitting vote:', error);
+            alert('Failed to submit your vote. Please try again later.');
         }
     };
 
@@ -967,68 +955,68 @@ const PostPage = () => {
                                                     </div>
                                                 )}
                                                 <div className="bg-gray-50 shadow-md rounded-md p-4 mb-6">
-                                                    <div className="bg-gray-50 shadow-md rounded-md p-4 mb-6">
-                                                        {post.poll && post.poll.question && (
-                                                            <div>
-                                                                <h4 className="text-lg font-semibold text-gray-800 mb-4">
-                                                                    Poll: {post.poll.question}
-                                                                </h4>
+                                                    {post.poll && post.poll.question && (
+                                                        <div>
+                                                            <h4 className="text-lg font-semibold text-gray-800 mb-4">
+                                                                Poll: {post.poll.question}
+                                                            </h4>
+                                                            {!post.poll.voters?.includes(userId) ? (
+                                                                // Show voting options if the user hasn't voted
                                                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                                                     {post.poll.options.map((option, index) => (
                                                                         <button
                                                                             key={index}
-                                                                            className={`text-sm px-4 py-2 rounded-md focus:outline-none focus:ring-2 transition ${post.poll.hasVoted
-                                                                                    ? "bg-gray-400 text-gray-600 cursor-not-allowed"
-                                                                                    : "bg-blue-500 text-white hover:bg-blue-600 focus:ring-blue-400 focus:ring-opacity-50"
-                                                                                }`}
-                                                                            onClick={() => !post.poll.hasVoted && handleVote(post._id, option)}
-                                                                            disabled={post.poll.hasVoted} // Disable button if user has already voted
+                                                                            className="text-sm px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                                                                            onClick={() => handleVote(post._id, option)}
                                                                         >
                                                                             {option}
                                                                         </button>
                                                                     ))}
                                                                 </div>
-                                                                {post.poll.hasVoted && (
-                                                                    <p className="text-sm text-green-600 mt-4">
-                                                                        You have already voted on this poll. Thank you for your participation!
-                                                                    </p>
-                                                                )}
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                    {post.poll && post.poll.votes && post.poll.hasVoted && (
-                                                        <div className="bg-gray-100 rounded-md p-4 mt-6">
-                                                            <h4 className="text-md font-semibold text-gray-800 mb-2">
-                                                                Poll Results
-                                                            </h4>
-                                                            <ul className="space-y-2">
-                                                                {post.poll.options.map((option, index) => {
-                                                                    const votes = post.poll.votes[option] || 0;
-                                                                    const totalVotes = Object.values(post.poll.votes).reduce((a, b) => a + b, 0);
-                                                                    const percentage = totalVotes ? ((votes / totalVotes) * 100).toFixed(2) : 0;
+                                                            ) : (
+                                                                // Show poll results if the user has already voted
+                                                                <div className="bg-gray-100 rounded-md p-4 mt-6">
+                                                                    <h4 className="text-md font-semibold text-gray-800 mb-2">
+                                                                        Poll Results
+                                                                    </h4>
+                                                                    <ul className="space-y-2">
+                                                                        {post.poll.options.map((option, index) => {
+                                                                            const votes = post.poll.votes[option] || 0;
+                                                                            const totalVotes = Object.values(post.poll.votes).reduce(
+                                                                                (a, b) => a + b,
+                                                                                0
+                                                                            );
+                                                                            const percentage = totalVotes
+                                                                                ? ((votes / totalVotes) * 100).toFixed(2)
+                                                                                : 0;
 
-                                                                    return (
-                                                                        <li key={index} className="text-sm text-gray-700">
-                                                                            <div className="flex items-center justify-between mb-1">
-                                                                                <span>{option}</span>
-                                                                                <span className="text-gray-500">{votes} votes ({percentage}%)</span>
-                                                                            </div>
-                                                                            <div className="w-full bg-gray-300 rounded-full h-2">
-                                                                                <div
-                                                                                    className="bg-blue-500 h-2 rounded-full transition"
-                                                                                    style={{ width: `${percentage}%` }}
-                                                                                ></div>
-                                                                            </div>
-                                                                        </li>
-                                                                    );
-                                                                })}
-                                                            </ul>
-                                                            <p className="text-xs text-gray-500 mt-2">
-                                                                Total votes: {Object.values(post.poll.votes).reduce((a, b) => a + b, 0)}
-                                                            </p>
+                                                                            return (
+                                                                                <li key={index} className="text-sm text-gray-700">
+                                                                                    <div className="flex items-center justify-between mb-1">
+                                                                                        <span>{option}</span>
+                                                                                        <span className="text-gray-500">
+                                                                                            {votes} votes ({percentage}%)
+                                                                                        </span>
+                                                                                    </div>
+                                                                                    <div className="w-full bg-gray-300 rounded-full h-2">
+                                                                                        <div
+                                                                                            className="bg-blue-500 h-2 rounded-full"
+                                                                                            style={{ width: `${percentage}%` }}
+                                                                                        ></div>
+                                                                                    </div>
+                                                                                </li>
+                                                                            );
+                                                                        })}
+                                                                    </ul>
+                                                                    <p className="text-xs text-gray-500 mt-2">
+                                                                        Total votes: {Object.values(post.poll.votes).reduce((a, b) => a + b, 0)}
+                                                                    </p>
+                                                                </div>
+                                                            )}
                                                         </div>
                                                     )}
                                                 </div>
+
 
                                                 {/* Document Section */}
                                                 {post.document && (
