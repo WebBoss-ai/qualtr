@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { MARKETER_API_END_POINT } from '@/utils/constant';
 
-const UserProfilePosts = () => {
-  const { userId } = useParams(); // Get userId from route params
+const UserProfilePosts = ({ userId }) => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
@@ -30,7 +29,9 @@ const UserProfilePosts = () => {
       }
     };
 
-    fetchPosts();
+    if (userId) {
+      fetchPosts();
+    }
   }, [userId]);
 
   const handleCreatePost = () => {
