@@ -315,9 +315,9 @@ export const getUserPosts = async (req, res) => {
 };
 export const getUserProfilePosts = async (req, res) => {
   try {
-    const {userId} = req.params; // Assuming req._id contains the logged-in user's ID
+    const { userId } = req.params; // Extract userId from request params
 
-    console.log('Debug: User ID receivedddddd:', userId);
+    console.log('Debug: User ID received:', userId);
 
     const posts = await Post.find({ author: userId })
       .populate('author', 'profile') // Populate author details
