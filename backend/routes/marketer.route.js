@@ -17,7 +17,7 @@ router.get('/posts/trending', getTrendingPosts);
 router.post('/posts/toggle-trending', toggleTrendingStatus);
 
 router.get('/posts/user',isAuthenticated, getUserPosts);
-router.get('/posts/profile/user', getUserProfilePosts);
+router.get('/posts/profile/user/:userId', getUserProfilePosts);
 router.post('/posts/:postId/like', isAuthenticated, toggleLike);
 router.post('/posts/:postId/comment',isAuthenticated, addComment);
 router.post('/posts/:postId/comment/:commentId/reply',isAuthenticated, replyToComment);

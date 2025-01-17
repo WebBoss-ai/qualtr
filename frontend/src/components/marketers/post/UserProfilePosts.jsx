@@ -12,7 +12,7 @@ const UserProfilePosts = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get(`${MARKETER_API_END_POINT}/posts/profile/user`);
+        const response = await axios.get(`${MARKETER_API_END_POINT}/posts/profile/user/${userId}`);
         const { success, posts, message } = response.data;
 
         if (success) {
