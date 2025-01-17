@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { MARKETER_API_END_POINT } from '@/utils/constant'
 
-const UserPosts = () => {
+const UserProfilePosts = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
@@ -64,4 +64,4 @@ const UserPosts = () => {
   );
 };
 
-export default UserPosts;
+export default UserProfilePosts;

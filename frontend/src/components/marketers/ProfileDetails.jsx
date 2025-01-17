@@ -6,6 +6,7 @@ import { Briefcase, GraduationCap, MapPin, Mail, Phone, Globe, Linkedin, Edit, C
 import Navbar from '../shared/Navbar'
 import Footer from '../shared/Footer'
 import UserPosts from './post/UserPosts'
+import UserProfilePosts from './post/UserProfilePosts'
 
 const formatDate = (month, year) => {
     const date = new Date(`${month} 1, ${year}`);
@@ -220,6 +221,7 @@ const ProfileDetails = () => {
                 </div>
             </div>
             <UserPosts/>
+            <UserProfilePosts/>
             <Footer />
         </div>
     )
