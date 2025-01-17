@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { MARKETER_API_END_POINT } from '@/utils/constant';
 
-const UserProfilePosts = ({ userId }) => {
+const UserProfilePosts = ({ id }) => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
@@ -12,7 +12,7 @@ const UserProfilePosts = ({ userId }) => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get(`${MARKETER_API_END_POINT}/posts/profile/user/${userId}`);
+        const response = await axios.get(`${MARKETER_API_END_POINT}/posts/profile/user/${id}`);
         const { success, posts, message } = response.data;
 
         if (success) {
@@ -29,10 +29,10 @@ const UserProfilePosts = ({ userId }) => {
       }
     };
 
-    if (userId) {
+    if (id) {
       fetchPosts();
     }
-  }, [userId]);
+  }, [id]);
 
   const handleCreatePost = () => {
     navigate('/posts');

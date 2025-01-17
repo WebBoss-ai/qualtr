@@ -12,13 +12,13 @@ const formatDate = (month, year) => {
     const date = new Date(`${month} 1, ${year}`);
     return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 };
-  const { userId } = useParams(); // Get userId from route params
-  console.log('Debug: userId from useParams:', userId);
   
+
 const ProfileDetails = () => {
     const { id } = useParams()
     const [profile, setProfile] = useState(null)
     const [error, setError] = useState(null)
+    console.log('Debug: userId from useParams:', id);
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -223,7 +223,7 @@ const ProfileDetails = () => {
                 </div>
             </div>
             <UserPosts/>
-            <UserProfilePosts userId={userId} />
+            <UserProfilePosts id={id} />
             <Footer />
         </div>
     )

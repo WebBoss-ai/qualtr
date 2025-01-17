@@ -315,11 +315,11 @@ export const getUserPosts = async (req, res) => {
 };
 export const getUserProfilePosts = async (req, res) => {
   try {
-    const { userId } = req.params; // Extract userId from request params
+    const { id } = req.params; // Extract id from request params
 
-    console.log('Debug: User ID received:', userId);
+    console.log('Debug: User ID received:', id);
 
-    const posts = await Post.find({ author: userId })
+    const posts = await Post.find({ author: id })
       .populate('author', 'profile') // Populate author details
       .sort({ createdAt: -1 })
       .lean();
@@ -327,7 +327,7 @@ export const getUserProfilePosts = async (req, res) => {
     console.log('Debug: Posts found:', posts);
 
     if (!posts.length) {
-      console.log('Debug: No posts found for user:', userId);
+      console.log('Debug: No posts found for user:', id);
       return res.status(200).json({
         message: 'No posts found. Start writing your first post on Qualtr!',
         success: true,
@@ -335,7 +335,7 @@ export const getUserProfilePosts = async (req, res) => {
       });
     }
 
-    console.log('Debug: Posts retrieved successfully for user:', userId);
+    console.log('Debug: Posts retrieved successfully for user:', id);
     return res.status(200).json({
       message: 'Posts retrieved successfully.',
       success: true,
