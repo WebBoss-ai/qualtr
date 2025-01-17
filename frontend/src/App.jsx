@@ -52,6 +52,7 @@ import PostsPage from './components/marketers/post/PostsPage'
 import AdminProfiles from './components/marketers/admin/AdminProfiles'
 import AdminToggle from './components/marketers/post/AdminToggle'
 import PostDetails from './components/marketers/post/PostDetails '
+import RichTextEditor from './components/RichTextEditor'
 const appRouter = createBrowserRouter([
   {
     path: '/',
@@ -224,6 +225,10 @@ const appRouter = createBrowserRouter([
   {
     path:"/posts",
     element:<PostsPage /> 
+  },
+  {
+    path:"/text-editor",
+    element:<RichTextEditor /> 
   },
   {
     path:"/post/:id",

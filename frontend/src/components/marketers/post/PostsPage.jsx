@@ -14,6 +14,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { motion } from 'framer-motion';
+import RichTextEditor from '@/components/RichTextEditor';
 
 const PostPage = () => {
     const [posts, setPosts] = useState([]);
@@ -66,14 +67,14 @@ const PostPage = () => {
     };
     const ExpandableText = ({ text, maxLength = 100, className = '' }) => {
         const [isExpanded, setIsExpanded] = useState(false);
-    
+
         const toggleExpand = () => {
             setIsExpanded(!isExpanded);
         };
-    
+
         const isExpandable = text.length > maxLength;
         const displayedText = isExpanded ? text : text.slice(0, maxLength);
-    
+
         return (
             <div>
                 <p className={`${className} inline`}>
@@ -90,7 +91,7 @@ const PostPage = () => {
                 )}
             </div>
         );
-    };  
+    };
     const handleFileChange = (e) => {
         const selectedFiles = Array.from(e.target.files || []);
         setMedia((prev) => ({
@@ -755,15 +756,8 @@ const PostPage = () => {
                                                             <label htmlFor="post-text" className="block text-sm font-medium text-gray-700 mb-1">
                                                                 Post Text
                                                             </label>
-                                                            <textarea
-                                                                id="post-text"
-                                                                value={postText}
-                                                                onChange={(e) => setPostText(e.target.value)}
-                                                                placeholder="Write your post"
-                                                                required
-                                                                className="w-full p-2 bg-white text-gray-800 placeholder-gray-400 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
-                                                                rows={3}
-                                                            />
+                                                            {/* Replace the textarea with the RichTextEditor */}
+                                                            <RichTextEditor content={postText} setContent={setPostText} />
                                                         </div>
                                                         {renderPostTypeFields()}
                                                         <div className="flex justify-end">
@@ -776,6 +770,7 @@ const PostPage = () => {
                                                         </div>
                                                     </form>
                                                 )}
+
                                             </div>
                                             {currentStep > 1 && (
                                                 <button
@@ -1044,115 +1039,115 @@ const PostPage = () => {
                                             {/* Comments Section */}
                                             {visibleCommentPostId === post._id && (
                                                 <div className="mt-4 bg-white rounded-lg border border-gray-200 p-4">
-                                                <h3 className="text-sm font-semibold text-gray-900 mb-3">Comments</h3>
-                                                <div className="space-y-3 max-h-80 overflow-y-auto">
-                                                    {comments.map((comment) => (
-                                                        <div key={comment._id} className="border-b border-gray-100 pb-2">
-                                                            <div className="flex items-start gap-2">
-                                                                <img
-                                                                    src={comment.profile?.profilePhoto || '/default-avatar.png'}
-                                                                    alt={comment.profile?.fullname || 'Anonymous User'}
-                                                                    className="w-8 h-8 rounded-full"
-                                                                />
-                                                                <div>
-                                                                    <p className="text-sm font-medium text-gray-800">
-                                                                        {comment.profile?.fullname || 'Anonymous User'}
-                                                                    </p>
-                                                                    <p className="text-xs text-gray-500">
-                                                                        {comment.profile?.agencyName || ''}
-                                                                    </p>
-                                                                </div>
-                                                            </div>
-                                                            {comment.text && (
-                                                                <ExpandableText
-                                                                    text={comment.text}
-                                                                    maxLength={100}
-                                                                    className="text-sm text-gray-600 mt-2"
-                                                                />
-                                                            )}
-                                                            <div className="flex items-center gap-3 text-xs text-gray-500 mt-1">
-                                                                <button
-                                                                    onClick={() => {
-                                                                        console.log("Setting reply state for comment ID:", comment._id); // Debugging reply state setting
-                                                                        setReply({ commentId: comment._id, text: '' });
-                                                                    }}
-                                                                    className="hover:text-gray-700"
-                                                                >
-                                                                    Reply
-                                                                </button>
-                                                                <span>{moment(comment.createdAt).fromNow()}</span>
-                                                            </div>
-                                            
-                                                            {/* Replies */}
-                                                            {comment.replies.map((reply) => (
-                                                                <div key={reply._id} className="ml-4 mt-3 p-2 bg-gray-50 rounded-md">
-                                                                    <div className="flex items-start gap-2">
-                                                                        <img
-                                                                            src={reply.profile?.profilePhoto || '/default-avatar.png'}
-                                                                            alt={reply.profile?.fullname || 'Anonymous User'}
-                                                                            className="w-6 h-6 rounded-full"
-                                                                        />
-                                                                        <div>
-                                                                            <p className="text-xs font-medium text-gray-800">
-                                                                                {reply.profile?.fullname || 'Anonymous User'}
-                                                                            </p>
-                                                                            <p className="text-xs text-gray-500">{reply.profile?.agencyName || ''}</p>
-                                                                        </div>
-                                                                    </div>
-                                                                    {reply.text && (
-                                                                        <ExpandableText
-                                                                            text={reply.text}
-                                                                            maxLength={100}
-                                                                            className="text-sm text-gray-700 mt-1"
-                                                                        />
-                                                                    )}
-                                                                    <span className="text-xs text-gray-500">{moment(reply.createdAt).fromNow()}</span>
-                                                                </div>
-                                                            ))}
-                                            
-                                                            {/* Reply Input */}
-                                                            {reply.commentId === comment._id && (
-                                                                <div className="mt-2 flex gap-2">
-                                                                    <input
-                                                                        value={reply.text}
-                                                                        onChange={(e) => {
-                                                                            console.log("Updating reply text for comment ID:", comment._id, "New text:", e.target.value); // Debugging input change
-                                                                            setReply({ ...reply, text: e.target.value });
-                                                                        }}
-                                                                        className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
-                                                                        placeholder="Write a reply..."
+                                                    <h3 className="text-sm font-semibold text-gray-900 mb-3">Comments</h3>
+                                                    <div className="space-y-3 max-h-80 overflow-y-auto">
+                                                        {comments.map((comment) => (
+                                                            <div key={comment._id} className="border-b border-gray-100 pb-2">
+                                                                <div className="flex items-start gap-2">
+                                                                    <img
+                                                                        src={comment.profile?.profilePhoto || '/default-avatar.png'}
+                                                                        alt={comment.profile?.fullname || 'Anonymous User'}
+                                                                        className="w-8 h-8 rounded-full"
                                                                     />
+                                                                    <div>
+                                                                        <p className="text-sm font-medium text-gray-800">
+                                                                            {comment.profile?.fullname || 'Anonymous User'}
+                                                                        </p>
+                                                                        <p className="text-xs text-gray-500">
+                                                                            {comment.profile?.agencyName || ''}
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                                {comment.text && (
+                                                                    <ExpandableText
+                                                                        text={comment.text}
+                                                                        maxLength={100}
+                                                                        className="text-sm text-gray-600 mt-2"
+                                                                    />
+                                                                )}
+                                                                <div className="flex items-center gap-3 text-xs text-gray-500 mt-1">
                                                                     <button
                                                                         onClick={() => {
-                                                                            console.log("Submitting reply for comment ID:", comment._id, "Reply text:", reply.text); // Debugging reply submission
-                                                                            replyToComment(comment._id);
+                                                                            console.log("Setting reply state for comment ID:", comment._id); // Debugging reply state setting
+                                                                            setReply({ commentId: comment._id, text: '' });
                                                                         }}
-                                                                        className="px-2 py-1 text-xs bg-gray-800 text-white rounded-md hover:bg-gray-700 transition-colors"
+                                                                        className="hover:text-gray-700"
                                                                     >
                                                                         Reply
                                                                     </button>
+                                                                    <span>{moment(comment.createdAt).fromNow()}</span>
                                                                 </div>
-                                                            )}
-                                                        </div>
-                                                    ))}
+
+                                                                {/* Replies */}
+                                                                {comment.replies.map((reply) => (
+                                                                    <div key={reply._id} className="ml-4 mt-3 p-2 bg-gray-50 rounded-md">
+                                                                        <div className="flex items-start gap-2">
+                                                                            <img
+                                                                                src={reply.profile?.profilePhoto || '/default-avatar.png'}
+                                                                                alt={reply.profile?.fullname || 'Anonymous User'}
+                                                                                className="w-6 h-6 rounded-full"
+                                                                            />
+                                                                            <div>
+                                                                                <p className="text-xs font-medium text-gray-800">
+                                                                                    {reply.profile?.fullname || 'Anonymous User'}
+                                                                                </p>
+                                                                                <p className="text-xs text-gray-500">{reply.profile?.agencyName || ''}</p>
+                                                                            </div>
+                                                                        </div>
+                                                                        {reply.text && (
+                                                                            <ExpandableText
+                                                                                text={reply.text}
+                                                                                maxLength={100}
+                                                                                className="text-sm text-gray-700 mt-1"
+                                                                            />
+                                                                        )}
+                                                                        <span className="text-xs text-gray-500">{moment(reply.createdAt).fromNow()}</span>
+                                                                    </div>
+                                                                ))}
+
+                                                                {/* Reply Input */}
+                                                                {reply.commentId === comment._id && (
+                                                                    <div className="mt-2 flex gap-2">
+                                                                        <input
+                                                                            value={reply.text}
+                                                                            onChange={(e) => {
+                                                                                console.log("Updating reply text for comment ID:", comment._id, "New text:", e.target.value); // Debugging input change
+                                                                                setReply({ ...reply, text: e.target.value });
+                                                                            }}
+                                                                            className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
+                                                                            placeholder="Write a reply..."
+                                                                        />
+                                                                        <button
+                                                                            onClick={() => {
+                                                                                console.log("Submitting reply for comment ID:", comment._id, "Reply text:", reply.text); // Debugging reply submission
+                                                                                replyToComment(comment._id);
+                                                                            }}
+                                                                            className="px-2 py-1 text-xs bg-gray-800 text-white rounded-md hover:bg-gray-700 transition-colors"
+                                                                        >
+                                                                            Reply
+                                                                        </button>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        ))}
+                                                    </div>
+
+                                                    {/* Add Comment */}
+                                                    <div className="mt-3 flex gap-2">
+                                                        <input
+                                                            value={newComment}
+                                                            onChange={(e) => setNewComment(e.target.value)}
+                                                            className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
+                                                            placeholder="Add a comment..."
+                                                        />
+                                                        <button
+                                                            onClick={addComment}
+                                                            className="px-3 py-2 bg-gray-800 text-white text-sm rounded-md hover:bg-gray-700 transition-colors"
+                                                        >
+                                                            <Send size={14} />
+                                                        </button>
+                                                    </div>
                                                 </div>
-                                            
-                                                {/* Add Comment */}
-                                                <div className="mt-3 flex gap-2">
-                                                    <input
-                                                        value={newComment}
-                                                        onChange={(e) => setNewComment(e.target.value)}
-                                                        className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
-                                                        placeholder="Add a comment..."
-                                                    />
-                                                    <button
-                                                        onClick={addComment}
-                                                        className="px-3 py-2 bg-gray-800 text-white text-sm rounded-md hover:bg-gray-700 transition-colors"
-                                                    >
-                                                        <Send size={14} />
-                                                    </button>
-                                                </div>
-                                            </div>                                            
                                             )}
 
                                         </div>
