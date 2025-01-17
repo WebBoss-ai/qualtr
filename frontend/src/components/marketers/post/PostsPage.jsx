@@ -15,6 +15,7 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { motion } from 'framer-motion';
 import RichTextEditor from '@/components/RichTextEditor';
+import parse from 'html-react-parser'; // Import html-react-parser
 
 const PostPage = () => {
     const [posts, setPosts] = useState([]);
@@ -67,18 +68,28 @@ const PostPage = () => {
     };
     const ExpandableText = ({ text, maxLength = 100, className = '' }) => {
         const [isExpanded, setIsExpanded] = useState(false);
-
+    
         const toggleExpand = () => {
             setIsExpanded(!isExpanded);
         };
-
+    
         const isExpandable = text.length > maxLength;
         const displayedText = isExpanded ? text : text.slice(0, maxLength);
-
+    
+        // Function to modify links in the text
+        const modifyLinks = (text) => {
+            const regex = /<a(.*?)href="(.*?)"(.*?)>/g;
+            return text.replace(regex, (match, p1, p2, p3) => {
+                return `<a${p1}href="${p2}" target="_blank" class="text-blue-500 hover:underline"${p3}>`;
+            });
+        };
+    
+        const modifiedText = modifyLinks(displayedText);  // Apply link modifications
         return (
             <div>
                 <p className={`${className} inline`}>
-                    {displayedText}
+                    {/* Use html-react-parser to render HTML with modified links */}
+                    {parse(modifiedText)}
                     {!isExpanded && isExpandable && <span>...</span>}
                 </p>
                 {isExpandable && (
@@ -92,6 +103,7 @@ const PostPage = () => {
             </div>
         );
     };
+
     const handleFileChange = (e) => {
         const selectedFiles = Array.from(e.target.files || []);
         setMedia((prev) => ({
@@ -232,7 +244,6 @@ const PostPage = () => {
                 })
             );
             setUserProfilePhoto(response.data.userProfilePhoto);
-            console.log('User Profile Photo:', response.data.userProfilePhoto);
             setPosts(updatedPosts);
         } catch (error) {
             console.error('Failed to fetch posts:', error);
@@ -812,7 +823,13 @@ const PostPage = () => {
                                                     )}
                                                     <PostTimestamp createdAt={post.createdAt} />
                                                 </div>
-                                                {post.text && <ExpandableText className='text-gray-600 text-sm mb-4' text={post.text} maxLength={200} />}
+                                                {post.text && (
+                                                    <ExpandableText
+                                                        className="text-gray-600 text-sm mb-4"
+                                                        text={post.text}
+                                                        maxLength={200}
+                                                    />
+                                                )}
                                                 {/* Media Section */}
 
                                                 {post.media?.photos?.length > 0 && (
