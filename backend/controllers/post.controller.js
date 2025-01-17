@@ -388,10 +388,14 @@ export const addComment = async (req, res) => {
     if (!digitalMarketer) {
       return res.status(404).json({ message: 'Digital marketer not found' });
     }
+    
+    const profilePhotoURL = digitalMarketer.profile.profilePhoto
+    ? await getObjectURL(digitalMarketer.profile.profilePhoto)
+    : '/default-avatar.png';
 
     const profileData = {
       fullname: digitalMarketer.profile.fullname,
-      profilePhoto: digitalMarketer.profile.profilePhoto,
+      profilePhoto: profilePhotoURL,
       agencyName: digitalMarketer.profile.agencyName,
       location: digitalMarketer.profile.location,
     };
@@ -431,9 +435,13 @@ export const replyToComment = async (req, res) => {
       return res.status(404).json({ message: 'Digital marketer not found' });
     }
 
+    const profilePhotoURL = digitalMarketer.profile.profilePhoto
+    ? await getObjectURL(digitalMarketer.profile.profilePhoto)
+    : '/default-avatar.png';
+
     const profileData = {
       fullname: digitalMarketer.profile.fullname,
-      profilePhoto: digitalMarketer.profile.profilePhoto,
+      profilePhoto: profilePhotoURL,
       agencyName: digitalMarketer.profile.agencyName,
       location: digitalMarketer.profile.location,
     };
