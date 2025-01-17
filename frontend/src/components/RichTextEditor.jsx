@@ -45,56 +45,63 @@ const RichTextEditor = ({ content, setContent }) => {
     <div className="p-4">
       {/* Toolbar */}
       <div className="toolbar mb-2 flex gap-2">
-        <button
-          onClick={() => editor.chain().focus().toggleBold().run()}
-          className={`px-2 py-1 border rounded ${
-            editor.isActive("bold") ? "bg-blue-500 text-white" : ""
-          }`}
-        >
-          Bold
-        </button>
-        <button
-          onClick={() => editor.chain().focus().toggleItalic().run()}
-          className={`px-2 py-1 border rounded ${
-            editor.isActive("italic") ? "bg-blue-500 text-white" : ""
-          }`}
-        >
-          Italic
-        </button>
-        <button
-          onClick={() => editor.chain().focus().toggleUnderline().run()}
-          className={`px-2 py-1 border rounded ${
-            editor.isActive("underline") ? "bg-blue-500 text-white" : ""
-          }`}
-        >
-          Underline
-        </button>
-        <input
-          type="color"
-          onChange={(e) =>
-            editor.chain().focus().setColor(e.target.value).run()
-          }
-          className="px-2 py-1 border rounded"
-        />
-        <button
-          onClick={() => editor.chain().focus().setTextAlign("left").run()}
-          className="px-2 py-1 border rounded"
-        >
-          Align Left
-        </button>
-        <button
-          onClick={() => editor.chain().focus().setTextAlign("center").run()}
-          className="px-2 py-1 border rounded"
-        >
-          Align Center
-        </button>
-        <button
-          onClick={() => editor.chain().focus().setTextAlign("right").run()}
-          className="px-2 py-1 border rounded"
-        >
-          Align Right
-        </button>
-      </div>
+  <button
+    type="button" // Add this
+    onClick={() => editor.chain().focus().toggleBold().run()}
+    className={`px-2 py-1 border rounded ${
+      editor.isActive("bold") ? "bg-blue-500 text-white" : ""
+    }`}
+  >
+    Bold
+  </button>
+  <button
+    type="button" // Add this
+    onClick={() => editor.chain().focus().toggleItalic().run()}
+    className={`px-2 py-1 border rounded ${
+      editor.isActive("italic") ? "bg-blue-500 text-white" : ""
+    }`}
+  >
+    Italic
+  </button>
+  <button
+    type="button" // Add this
+    onClick={() => editor.chain().focus().toggleUnderline().run()}
+    className={`px-2 py-1 border rounded ${
+      editor.isActive("underline") ? "bg-blue-500 text-white" : ""
+    }`}
+  >
+    Underline
+  </button>
+  <input
+    type="color"
+    onChange={(e) =>
+      editor.chain().focus().setColor(e.target.value).run()
+    }
+    className="px-2 py-1 border rounded"
+  />
+  <button
+    type="button" // Add this
+    onClick={() => editor.chain().focus().setTextAlign("left").run()}
+    className="px-2 py-1 border rounded"
+  >
+    Align Left
+  </button>
+  <button
+    type="button" // Add this
+    onClick={() => editor.chain().focus().setTextAlign("center").run()}
+    className="px-2 py-1 border rounded"
+  >
+    Align Center
+  </button>
+  <button
+    type="button" // Add this
+    onClick={() => editor.chain().focus().setTextAlign("right").run()}
+    className="px-2 py-1 border rounded"
+  >
+    Align Right
+  </button>
+</div>
+
 
       {/* Editor */}
       <div className="border p-2 rounded-md">
