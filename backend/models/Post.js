@@ -113,11 +113,24 @@ const commentSchema = new mongoose.Schema(
     {
         user: { type: mongoose.Schema.Types.ObjectId, ref: 'DigitalMarketer', required: true },
         text: { type: String, required: true },
+        taggedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'DigitalMarketer' }],
+        profile: {
+            fullname: { type: String },
+            profilePhoto: { type: String },
+            agencyName: { type: String },
+            location: { type: String },
+          },
         replies: [
             {
                 user: { type: mongoose.Schema.Types.ObjectId, ref: 'DigitalMarketer', required: true },
                 text: { type: String, required: true },
                 taggedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'DigitalMarketer' }],
+                profile: {
+                    fullname: { type: String },
+                    profilePhoto: { type: String },
+                    agencyName: { type: String },
+                    location: { type: String },
+                  },
             },
         ],
         taggedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'DigitalMarketer' }],

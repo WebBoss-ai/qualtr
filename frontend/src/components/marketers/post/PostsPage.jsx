@@ -913,82 +913,84 @@ const PostPage = () => {
                                                         )}
                                                     </div>
                                                 )}
-                                                {post.poll && post.poll.question && (
-                                                    <motion.div
-                                                        initial={{ opacity: 0, y: 20 }}
-                                                        animate={{ opacity: 1, y: 0 }}
-                                                        transition={{ duration: 0.5 }}
-                                                        className="bg-white border border-gray-200 border-[0.5px] rounded-xl p-6 mb-8"
-                                                    >
-                                                        {post.poll && post.poll.question && (
-                                                            <div>
-                                                                <h4 className="text-sm font-semibold text-gray-900 mb-2 flex items-center">
-                                                                    <BarChart2 className="w-4 h-4 mr-1" /> {post.poll.question}
-                                                                </h4>
-                                                                {!post.poll.voters?.includes(userId) ? (
-                                                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                                                        {post.poll.options.map((option, index) => (
-                                                                            <motion.button
-                                                                                key={index}
-                                                                                whileHover={{ scale: 1.02 }}
-                                                                                whileTap={{ scale: 0.98 }}
-                                                                                className="text-sm px-6 py-3 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors duration-200 ease-in-out shadow-sm border border-gray-200"
-                                                                                onClick={() => handleVote(post._id, option)}
-                                                                            >
-                                                                                {option}
-                                                                            </motion.button>
-                                                                        ))}
-                                                                    </div>
-                                                                ) : (
-                                                                    <motion.div
-                                                                        initial={{ opacity: 0 }}
-                                                                        animate={{ opacity: 1 }}
-                                                                        transition={{ duration: 0.5 }}
-                                                                        className="bg-gray-50 rounded-lg p-6 mt-6"
-                                                                    >
-                                                                        <h4 className="text-xl font-semibold text-gray-900 mb-4">
-                                                                            Poll Results
-                                                                        </h4>
-                                                                        <ul className="space-y-4">
-                                                                            {post.poll.options.map((option, index) => {
-                                                                                const votes = post.poll.votes[option] || 0;
-                                                                                const totalVotes = Object.values(post.poll.votes).reduce(
-                                                                                    (a, b) => a + b,
-                                                                                    0
-                                                                                );
-                                                                                const percentage = totalVotes
-                                                                                    ? ((votes / totalVotes) * 100).toFixed(1)
-                                                                                    : 0;
+                                                <div className='mt-3'>
+                                                    {post.poll && post.poll.question && (
+                                                        <motion.div
+                                                            initial={{ opacity: 0, y: 20 }}
+                                                            animate={{ opacity: 1, y: 0 }}
+                                                            transition={{ duration: 0.5 }}
+                                                            className="bg-white border border-gray-200 border-[0.5px] rounded-xl p-6 mb-8"
+                                                        >
+                                                            {post.poll && post.poll.question && (
+                                                                <div>
+                                                                    <h4 className="text-sm font-semibold text-gray-900 mb-2 flex items-center">
+                                                                        <BarChart2 className="w-4 h-4 mr-1" /> {post.poll.question}
+                                                                    </h4>
+                                                                    {!post.poll.voters?.includes(userId) ? (
+                                                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                                            {post.poll.options.map((option, index) => (
+                                                                                <motion.button
+                                                                                    key={index}
+                                                                                    whileHover={{ scale: 1.02 }}
+                                                                                    whileTap={{ scale: 0.98 }}
+                                                                                    className="text-sm px-6 py-3 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors duration-200 ease-in-out shadow-sm border border-gray-200"
+                                                                                    onClick={() => handleVote(post._id, option)}
+                                                                                >
+                                                                                    {option}
+                                                                                </motion.button>
+                                                                            ))}
+                                                                        </div>
+                                                                    ) : (
+                                                                        <motion.div
+                                                                            initial={{ opacity: 0 }}
+                                                                            animate={{ opacity: 1 }}
+                                                                            transition={{ duration: 0.5 }}
+                                                                            className="bg-gray-50 rounded-lg p-6 mt-6"
+                                                                        >
+                                                                            <h4 className="text-xl font-semibold text-gray-900 mb-4">
+                                                                                Poll Results
+                                                                            </h4>
+                                                                            <ul className="space-y-4">
+                                                                                {post.poll.options.map((option, index) => {
+                                                                                    const votes = post.poll.votes[option] || 0;
+                                                                                    const totalVotes = Object.values(post.poll.votes).reduce(
+                                                                                        (a, b) => a + b,
+                                                                                        0
+                                                                                    );
+                                                                                    const percentage = totalVotes
+                                                                                        ? ((votes / totalVotes) * 100).toFixed(1)
+                                                                                        : 0;
 
-                                                                                return (
-                                                                                    <li key={index} className="text-sm text-gray-700">
-                                                                                        <div className="flex items-center justify-between mb-2">
-                                                                                            <span className="font-medium">{option}</span>
-                                                                                            <span className="text-gray-500">
-                                                                                                {votes} votes ({percentage}%)
-                                                                                            </span>
-                                                                                        </div>
-                                                                                        <div className="relative w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-                                                                                            <motion.div
-                                                                                                initial={{ width: 0 }}
-                                                                                                animate={{ width: `${percentage}%` }}
-                                                                                                transition={{ duration: 0.5, ease: "easeOut" }}
-                                                                                                className="absolute top-0 left-0 h-full bg-gradient-to-r from-gray-400 to-gray-600"
-                                                                                            />
-                                                                                        </div>
-                                                                                    </li>
-                                                                                );
-                                                                            })}
-                                                                        </ul>
-                                                                        <p className="text-xs text-gray-500 mt-4">
-                                                                            Total votes: {Object.values(post.poll.votes).reduce((a, b) => a + b, 0)}
-                                                                        </p>
-                                                                    </motion.div>
-                                                                )}
-                                                            </div>
-                                                        )}
-                                                    </motion.div>
-                                                )}
+                                                                                    return (
+                                                                                        <li key={index} className="text-sm text-gray-700">
+                                                                                            <div className="flex items-center justify-between mb-2">
+                                                                                                <span className="font-medium">{option}</span>
+                                                                                                <span className="text-gray-500">
+                                                                                                    {votes} votes ({percentage}%)
+                                                                                                </span>
+                                                                                            </div>
+                                                                                            <div className="relative w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                                                                                                <motion.div
+                                                                                                    initial={{ width: 0 }}
+                                                                                                    animate={{ width: `${percentage}%` }}
+                                                                                                    transition={{ duration: 0.5, ease: "easeOut" }}
+                                                                                                    className="absolute top-0 left-0 h-full bg-gradient-to-r from-gray-400 to-gray-600"
+                                                                                                />
+                                                                                            </div>
+                                                                                        </li>
+                                                                                    );
+                                                                                })}
+                                                                            </ul>
+                                                                            <p className="text-xs text-gray-500 mt-4">
+                                                                                Total votes: {Object.values(post.poll.votes).reduce((a, b) => a + b, 0)}
+                                                                            </p>
+                                                                        </motion.div>
+                                                                    )}
+                                                                </div>
+                                                            )}
+                                                        </motion.div>
+                                                    )}
+                                                </div>
                                                 {/* Document Section */}
                                                 {post.document && (
                                                     <div className="bg-gray-50 rounded-md p-3 mb-4">
@@ -1041,79 +1043,93 @@ const PostPage = () => {
                                                     </button>
                                                 </div>
                                             </div>
-                                            {/* Comments section */}
-                                            {visibleCommentPostId === post._id && ( // Only show if this post's ID matches the visibleCommentPostId
+                                            {/* Comments Section */}
+                                            {visibleCommentPostId === post._id && (
                                                 <div className="mt-4 bg-white rounded-lg border border-gray-200 p-4">
                                                     <h3 className="text-sm font-semibold text-gray-900 mb-3">Comments</h3>
                                                     <div className="space-y-3 max-h-80 overflow-y-auto">
-                                                        {post.comments.map((comment) => {
-                                                            return (
-                                                                <div key={comment._id} className="border-b border-gray-100 pb-2">
-                                                                    <p className="text-sm text-gray-800 mb-1">{comment.text}</p>
-                                                                    <p className="text-sm text-gray-800 mb-1">
-                                                                        {comment.user?.profile?.fullname || 'Anonymous User'}
-                                                                    </p>
-                                                                    <div className="flex items-center gap-3 text-xs text-gray-500">
-                                                                        <button
-                                                                            onClick={() =>
+                                                        {post.comments.map((comment) => (
+                                                            <div key={comment._id} className="border-b border-gray-100 pb-2">
+                                                                <div className="flex items-start gap-2">
+                                                                    <img
+                                                                        src={comment.profile?.profilePhoto || '/default-avatar.png'}
+                                                                        alt={comment.profile?.fullname || 'Anonymous User'}
+                                                                        className="w-8 h-8 rounded-full"
+                                                                    />
+                                                                    <div>
+                                                                        <p className="text-sm font-medium text-gray-800">
+                                                                            {comment.profile?.fullname || 'Anonymous User'}
+                                                                        </p>
+                                                                        <p className="text-xs text-gray-500">
+                                                                            {comment.profile?.agencyName || ''}
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                                <p className="text-sm text-gray-800 mt-2">{comment.text}</p>
+                                                                <div className="flex items-center gap-3 text-xs text-gray-500 mt-1">
+                                                                    <button
+                                                                        onClick={() =>
+                                                                            setReply({
+                                                                                commentId: comment._id,
+                                                                                text: '',
+                                                                                postId: post._id,
+                                                                            })
+                                                                        }
+                                                                        className="hover:text-gray-700"
+                                                                    >
+                                                                        Reply
+                                                                    </button>
+                                                                    <span>{moment(comment.createdAt).fromNow()}</span>
+                                                                </div>
+
+                                                                {/* Replies */}
+                                                                {comment.replies.map((reply) => (
+                                                                    <div key={reply._id} className="ml-4 mt-3 p-2 bg-gray-50 rounded-md">
+                                                                        <div className="flex items-start gap-2">
+                                                                            <img
+                                                                                src={reply.profile?.profilePhoto || '/default-avatar.png'}
+                                                                                alt={reply.profile?.fullname || 'Anonymous User'}
+                                                                                className="w-6 h-6 rounded-full"
+                                                                            />
+                                                                            <div>
+                                                                                <p className="text-xs font-medium text-gray-800">
+                                                                                    {reply.profile?.fullname || 'Anonymous User'}
+                                                                                </p>
+                                                                                <p className="text-xs text-gray-500">{reply.profile?.agencyName || ''}</p>
+                                                                            </div>
+                                                                        </div>
+                                                                        <p className="text-xs text-gray-800 mt-1">{reply.text}</p>
+                                                                        <span className="text-xs text-gray-500">{moment(reply.createdAt).fromNow()}</span>
+                                                                    </div>
+                                                                ))}
+
+                                                                {/* Reply Input */}
+                                                                {reply.commentId === comment._id && (
+                                                                    <div className="mt-2 flex gap-2">
+                                                                        <input
+                                                                            value={reply.text}
+                                                                            onChange={(e) =>
                                                                                 setReply({
-                                                                                    commentId: comment._id,
-                                                                                    text: '',
+                                                                                    ...reply,
+                                                                                    text: e.target.value,
                                                                                     postId: post._id,
                                                                                 })
                                                                             }
-                                                                            className="hover:text-gray-700"
+                                                                            className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
+                                                                            placeholder="Write a reply..."
+                                                                        />
+                                                                        <button
+                                                                            onClick={() =>
+                                                                                replyToComment(reply.postId, reply.commentId, reply.text)
+                                                                            }
+                                                                            className="px-2 py-1 text-xs bg-gray-800 text-white rounded-md hover:bg-gray-700 transition-colors"
                                                                         >
                                                                             Reply
                                                                         </button>
-                                                                        <span>{moment(comment.createdAt).fromNow()}</span>
                                                                     </div>
-
-                                                                    {/* Replies */}
-                                                                    {comment.replies.map((reply) => (
-                                                                        <div
-                                                                            key={reply._id}
-                                                                            className="ml-4 mt-1 p-2 bg-gray-50 rounded-md"
-                                                                        >
-                                                                            <p className="text-xs text-gray-800">{reply.text}</p>
-                                                                            <span className="text-xs text-gray-500">
-                                                                                {moment(reply.createdAt).fromNow()}
-                                                                            </span>
-                                                                        </div>
-                                                                    ))}
-
-                                                                    {/* Reply Input */}
-                                                                    {reply.commentId === comment._id && (
-                                                                        <div className="mt-2 flex gap-2">
-                                                                            <input
-                                                                                value={reply.text}
-                                                                                onChange={(e) =>
-                                                                                    setReply({
-                                                                                        ...reply,
-                                                                                        text: e.target.value,
-                                                                                        postId: post._id,
-                                                                                    })
-                                                                                }
-                                                                                className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
-                                                                                placeholder="Write a reply..."
-                                                                            />
-                                                                            <button
-                                                                                onClick={() =>
-                                                                                    replyToComment(
-                                                                                        reply.postId,
-                                                                                        reply.commentId,
-                                                                                        reply.text
-                                                                                    )
-                                                                                }
-                                                                                className="px-2 py-1 text-xs bg-gray-800 text-white rounded-md hover:bg-gray-700 transition-colors"
-                                                                            >
-                                                                                Reply
-                                                                            </button>
-                                                                        </div>
-                                                                    )}
-                                                                </div>
-                                                            );
-                                                        })}
+                                                                )}
+                                                            </div>
+                                                        ))}
                                                     </div>
 
                                                     {/* Add Comment */}
@@ -1125,7 +1141,7 @@ const PostPage = () => {
                                                             placeholder="Add a comment..."
                                                         />
                                                         <button
-                                                            onClick={() => addComment(post._id, newComment)} // Pass post._id for the current post
+                                                            onClick={() => addComment(post._id, newComment)}
                                                             className="px-3 py-2 bg-gray-800 text-white text-sm rounded-md hover:bg-gray-700 transition-colors"
                                                         >
                                                             <Send size={14} />
@@ -1133,6 +1149,7 @@ const PostPage = () => {
                                                     </div>
                                                 </div>
                                             )}
+
                                         </div>
                                     ))
                                 ) : (

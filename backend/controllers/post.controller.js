@@ -380,17 +380,33 @@ export const addComment = async (req, res) => {
 
   try {
     const post = await Post.findById(postId);
-
     if (!post) {
       return res.status(404).json({ message: 'Post not found' });
     }
 
-    post.comments.push({ user: userId, text, taggedUsers });
+    const digitalMarketer = await DigitalMarketer.findById(userId);
+    if (!digitalMarketer) {
+      return res.status(404).json({ message: 'Digital marketer not found' });
+    }
+
+    const profileData = {
+      fullname: digitalMarketer.profile.fullname,
+      profilePhoto: digitalMarketer.profile.profilePhoto,
+      agencyName: digitalMarketer.profile.agencyName,
+      location: digitalMarketer.profile.location,
+    };
+
+    post.comments.push({
+      user: userId,
+      text,
+      taggedUsers,
+      profile: profileData,
+    });
     await post.save();
 
     res.status(200).json({ success: true, message: 'Comment added', post });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Internal server error' });
+    res.status(500).json({ success: false, message: 'Internal server error', error: error.message });
   }
 };
 
@@ -401,23 +417,38 @@ export const replyToComment = async (req, res) => {
 
   try {
     const post = await Post.findById(postId);
-
     if (!post) {
       return res.status(404).json({ message: 'Post not found' });
     }
 
     const comment = post.comments.id(commentId);
-
     if (!comment) {
       return res.status(404).json({ message: 'Comment not found' });
     }
 
-    comment.replies.push({ user: userId, text, taggedUsers });
+    const digitalMarketer = await DigitalMarketer.findById(userId);
+    if (!digitalMarketer) {
+      return res.status(404).json({ message: 'Digital marketer not found' });
+    }
+
+    const profileData = {
+      fullname: digitalMarketer.profile.fullname,
+      profilePhoto: digitalMarketer.profile.profilePhoto,
+      agencyName: digitalMarketer.profile.agencyName,
+      location: digitalMarketer.profile.location,
+    };
+
+    comment.replies.push({
+      user: userId,
+      text,
+      taggedUsers,
+      profile: profileData,
+    });
     await post.save();
 
     res.status(200).json({ success: true, message: 'Reply added', post });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Internal server error' });
+    res.status(500).json({ success: false, message: 'Internal server error', error: error.message });
   }
 };
 
