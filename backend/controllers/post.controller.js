@@ -424,7 +424,7 @@ export const replyToComment = async (req, res) => {
 export const voteOnPoll = async (req, res) => {
   const { postId } = req.params;
   const { option } = req.body;
-  const userId = req.id; // Assuming user ID is available in `req.user`
+  const userId = req.id; // Assuming user ID is available in `req.id`
 
   try {
       const post = await Post.findById(postId);
@@ -456,6 +456,12 @@ export const voteOnPoll = async (req, res) => {
           return res.status(403).json({
               message: 'You have already voted on this poll.',
               success: false,
+              poll: {
+                  question: post.poll.question,
+                  options: post.poll.options,
+                  votes: Object.fromEntries(post.poll.votes), // Convert Map to plain object
+                  hasVoted: true, // Mark as voted
+              },
           });
       }
 
@@ -477,6 +483,7 @@ export const voteOnPoll = async (req, res) => {
               question: post.poll.question,
               options: post.poll.options,
               votes: Object.fromEntries(post.poll.votes), // Convert Map to plain object
+              hasVoted: true, // Mark as voted
           },
       });
   } catch (error) {
@@ -488,9 +495,10 @@ export const voteOnPoll = async (req, res) => {
   }
 };
 
-export const getPollResults = async (req, res) => {
+export const getPostWithPoll = async (req, res) => {
   const { postId } = req.params;
-  const hasVoted = post.poll.voters.includes(req.user._id);
+  const userId = req.id;
+
   try {
       const post = await Post.findById(postId);
 
@@ -501,18 +509,21 @@ export const getPollResults = async (req, res) => {
           });
       }
 
+      const hasVoted = post.poll.voters.includes(userId);
+
       return res.status(200).json({
-        message: 'Poll data retrieved successfully.',
-        success: true,
-        poll: {
-            question: post.poll.question,
-            options: post.poll.options,
-            votes: Object.fromEntries(post.poll.votes),
-            hasVoted,
-        },
-    });
+          success: true,
+          post: {
+              ...post.toObject(),
+              poll: {
+                  ...post.poll,
+                  votes: Object.fromEntries(post.poll.votes), // Convert Map to plain object
+                  hasVoted, // Add hasVoted field
+              },
+          },
+      });
   } catch (error) {
-      console.error('Error fetching poll results:', error);
+      console.error('Error fetching post with poll:', error);
       return res.status(500).json({
           message: 'Internal server error.',
           success: false,
