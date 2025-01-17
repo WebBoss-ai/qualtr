@@ -16,6 +16,7 @@ import "swiper/css/pagination";
 import { motion } from 'framer-motion';
 import RichTextEditor from '@/components/RichTextEditor';
 import parse from 'html-react-parser'; // Import html-react-parser
+import DOMPurify from 'dompurify';
 
 const PostPage = () => {
     const [posts, setPosts] = useState([]);
@@ -68,27 +69,42 @@ const PostPage = () => {
     };
     const ExpandableText = ({ text, maxLength = 100, className = '' }) => {
         const [isExpanded, setIsExpanded] = useState(false);
-    
+
         const toggleExpand = () => {
             setIsExpanded(!isExpanded);
         };
-    
+
         const isExpandable = text.length > maxLength;
         const displayedText = isExpanded ? text : text.slice(0, maxLength);
-    
-        // Function to modify links in the text
-        const modifyLinks = (text) => {
-            const regex = /<a(.*?)href="(.*?)"(.*?)>/g;
-            return text.replace(regex, (match, p1, p2, p3) => {
+
+        // Function to modify links and sanitize text
+        const modifyLinks = (rawText) => {
+            // Match URLs but ensure that they are not followed immediately by </p>
+            const urlRegex = /(\bhttps?:\/\/[^\s]+)(?=\s*(?!<\/p>))/g;
+        
+            // Replace plain URLs with anchor tags
+            let withLinks = rawText.replace(urlRegex, (url) => {
+                return `<a href="${url}" target="_blank" class="text-blue-500 hover:underline">${url}</a>`;
+            });
+        
+            // Update existing <a> tags to include target="_blank" and styling
+            const anchorRegex = /<a(.*?)href="(.*?)"(.*?)>/g;
+            const enhancedLinks = withLinks.replace(anchorRegex, (match, p1, p2, p3) => {
                 return `<a${p1}href="${p2}" target="_blank" class="text-blue-500 hover:underline"${p3}>`;
             });
+        
+            // Sanitize the final text to avoid rendering malicious or invalid HTML
+            return DOMPurify.sanitize(enhancedLinks);
         };
-    
-        const modifiedText = modifyLinks(displayedText);  // Apply link modifications
+        
+        
+
+        const modifiedText = modifyLinks(displayedText); // Apply link modifications and sanitize
+
         return (
             <div>
                 <p className={`${className} inline`}>
-                    {/* Use html-react-parser to render HTML with modified links */}
+                    {/* Use html-react-parser to render sanitized and modified HTML */}
                     {parse(modifiedText)}
                     {!isExpanded && isExpandable && <span>...</span>}
                 </p>
@@ -103,6 +119,7 @@ const PostPage = () => {
             </div>
         );
     };
+
 
     const handleFileChange = (e) => {
         const selectedFiles = Array.from(e.target.files || []);

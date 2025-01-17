@@ -5,6 +5,7 @@ import { MARKETER_API_END_POINT } from '@/utils/constant'
 import { Briefcase, GraduationCap, MapPin, Mail, Phone, Globe, Linkedin, Edit, Calendar, CheckCircle } from 'lucide-react'
 import Navbar from '../shared/Navbar'
 import Footer from '../shared/Footer'
+import UserPosts from './post/UserPosts'
 
 const formatDate = (month, year) => {
     const date = new Date(`${month} 1, ${year}`);
@@ -218,6 +219,7 @@ const ProfileDetails = () => {
                     </div>
                 </div>
             </div>
+            <UserPosts/>
             <Footer />
         </div>
     )

@@ -277,6 +277,37 @@ export const getPostById = async (req, res) => {
   }
 };
 
+export const getUserPosts = async (req, res) => {
+  try {
+    const userId = req._id; // Assuming req._id contains the logged-in user's ID
+
+    const posts = await Post.find({ author: userId })
+      .populate('author', 'profile') // Populate author details
+      .sort({ createdAt: -1 })
+      .lean();
+
+    if (!posts.length) {
+      return res.status(200).json({
+        message: 'No posts found. Start writing your first post on Qualtr!',
+        success: true,
+        posts: [],
+      });
+    }
+
+    return res.status(200).json({
+      message: 'Posts retrieved successfully.',
+      success: true,
+      posts,
+    });
+  } catch (error) {
+    console.error('Error retrieving user posts:', error);
+    return res.status(500).json({
+      message: 'Internal server error.',
+      success: false,
+    });
+  }
+};
+
 export const getTrendingPosts = async (req, res) => {
   try {
     const trendingPosts = await Post.find({ trending: true })
