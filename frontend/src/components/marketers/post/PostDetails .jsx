@@ -472,8 +472,6 @@ const PostDetails = () => {
                                             )}
                                         </div>
                                     ))}
-
-
                                 </div>
                                 <div className="mt-3 flex gap-2">
                                     <input
