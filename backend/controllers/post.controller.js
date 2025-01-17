@@ -281,12 +281,17 @@ export const getUserPosts = async (req, res) => {
   try {
     const userId = req._id; // Assuming req._id contains the logged-in user's ID
 
+    console.log('Debug: User ID received:', userId);
+
     const posts = await Post.find({ author: userId })
       .populate('author', 'profile') // Populate author details
       .sort({ createdAt: -1 })
       .lean();
 
+    console.log('Debug: Posts found:', posts);
+
     if (!posts.length) {
+      console.log('Debug: No posts found for user:', userId);
       return res.status(200).json({
         message: 'No posts found. Start writing your first post on Qualtr!',
         success: true,
@@ -294,6 +299,7 @@ export const getUserPosts = async (req, res) => {
       });
     }
 
+    console.log('Debug: Posts retrieved successfully for user:', userId);
     return res.status(200).json({
       message: 'Posts retrieved successfully.',
       success: true,
