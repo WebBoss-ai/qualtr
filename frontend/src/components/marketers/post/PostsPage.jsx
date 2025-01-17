@@ -13,7 +13,7 @@ import { Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-
+import { motion } from 'framer-motion';
 
 const PostPage = () => {
     const [posts, setPosts] = useState([]);
@@ -34,6 +34,7 @@ const PostPage = () => {
     const [showModal, setShowModal] = useState(false)
 
     const handleVote = async (postId, option) => {
+        if (!userId) return setShowModal(true);
         try {
             const response = await axios.post(
                 `${MARKETER_API_END_POINT}/posts/${postId}/poll/vote`,
@@ -66,7 +67,6 @@ const PostPage = () => {
     const ExpandableText = ({ text, maxLength = 100 }) => {
         const [isExpanded, setIsExpanded] = useState(false);
         const contentRef = useRef(null);
-
         const toggleExpand = () => {
             setIsExpanded(!isExpanded);
         };
@@ -105,7 +105,6 @@ const PostPage = () => {
     const toggleComments = (postId) => {
         setVisibleCommentPostId((prevId) => (prevId === postId ? null : postId));
     };
-
     const LoginModal = ({ isOpen, onClose }) => {
         if (!isOpen) return null
 
@@ -138,21 +137,12 @@ const PostPage = () => {
             </div>
         )
     }
-
     const toggleLike = async (postId) => {
         if (!userId) {
-            console.log('User not logged in. Showing login modal...');
             return setShowModal(true); // Show login modal if user is not logged in
         }
-
-        console.log('Attempting to toggle like for post ID:', postId);
-
         try {
             const response = await axios.post(`${MARKETER_API_END_POINT}/posts/${postId}/like`);
-
-            console.log('API response received:', response.data);
-
-            // Update the state for the specific post
             setPosts((prevPosts) =>
                 prevPosts.map((post) =>
                     post._id === postId
@@ -167,13 +157,13 @@ const PostPage = () => {
                 )
             );
             window.location.reload();
-            console.log('Post state updated successfully');
         } catch (error) {
             console.error('Error toggling like:', error);
             console.error('Error response:', error.response?.data || 'No error response from server');
             console.error('Error config:', error.config);
         }
-    }; const categories = [
+    };
+    const categories = [
         { name: 'Trending', icon: TrendingUp, href: '/trending' },
         { name: 'Startup Essentials', icon: Briefcase, href: '/category/startup-essentials' },
         { name: 'Marketing & Branding', icon: Megaphone, href: '/category/marketing-branding' },
@@ -221,8 +211,6 @@ const PostPage = () => {
         try {
             // Fetch all posts
             const response = await axios.get(`${MARKETER_API_END_POINT}/posts`);
-            console.log('Posts fetched successfully:', response.data);
-
             const posts = response.data.posts || [];
 
             // Fetch likes and comments for each post
@@ -254,7 +242,6 @@ const PostPage = () => {
             setPosts([]);
         }
     };
-
     const addComment = async (postId, commentText) => {
         if (!userId) return setShowModal(true);
 
@@ -278,10 +265,8 @@ const PostPage = () => {
             console.error('Error adding comment:', error);
         }
     };
-
     const replyToComment = async (postId, commentId, replyText) => {
         if (!userId) return setShowModal(true);
-
         try {
             const response = await axios.post(
                 `${MARKETER_API_END_POINT}/posts/${postId}/comment/${commentId}/reply`,
@@ -306,25 +291,23 @@ const PostPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Form submission started...');
-
+        if (!userId) {
+            setShowModal(true);
+            return;
+        }
         const formData = new FormData();
         formData.append('category', postCategory);
         formData.append('text', postText);
 
-        // Append media files (photos and videos)
         for (let file of media.images) {
-            console.log('Appending photo:', file.name);
             formData.append('images', file);
         }
         for (let file of media.videos) {
-            console.log('Appending video:', file.name);
             formData.append('videos', file);
         }
 
         // Append additional fields
         if (additionalData.event) {
-            console.log('Appending event:', additionalData.event);
             formData.append('event[title]', additionalData.event.title || '');
             formData.append('event[description]', additionalData.event.description || '');
             formData.append('event[date]', additionalData.event.date || '');
@@ -332,14 +315,12 @@ const PostPage = () => {
         }
 
         if (additionalData.occasion) {
-            console.log('Appending occasion:', additionalData.occasion);
             formData.append('occasion[title]', additionalData.occasion.title || '');
             formData.append('occasion[description]', additionalData.occasion.description || '');
             formData.append('occasion[date]', additionalData.occasion.date || '');
         }
 
         if (additionalData.jobOpening) {
-            console.log('Appending jobOpening:', additionalData.jobOpening);
             formData.append('jobOpening[title]', additionalData.jobOpening.title || '');
             formData.append('jobOpening[description]', additionalData.jobOpening.description || '');
             formData.append('jobOpening[location]', additionalData.jobOpening.location || '');
@@ -347,7 +328,6 @@ const PostPage = () => {
         }
 
         if (additionalData.poll) {
-            console.log('Appending poll:', additionalData.poll);
             formData.append('poll[question]', additionalData.poll.question || '');
             additionalData.poll.options.forEach((option, index) => {
                 formData.append(`poll[options][${index}]`, option);
@@ -356,7 +336,6 @@ const PostPage = () => {
         }
 
         if (additionalData.document) {
-            console.log('Appending document:', additionalData.document);
             formData.append('document[name]', additionalData.document.name || '');
             formData.append('document[url]', additionalData.document.url || '');
         }
@@ -365,7 +344,6 @@ const PostPage = () => {
             const response = await axios.post(`${MARKETER_API_END_POINT}/posts`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
-            console.log('Post created successfully:', response.data);
             fetchPosts(); // Refresh posts after submission
         } catch (error) {
             console.error('Failed to create post:', error);
@@ -954,32 +932,42 @@ const PostPage = () => {
                                                         )}
                                                     </div>
                                                 )}
-                                                <div className="bg-gray-50 shadow-md rounded-md p-4 mb-6">
+                                                <motion.div
+                                                    initial={{ opacity: 0, y: 20 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    transition={{ duration: 0.5 }}
+                                                    className="bg-white shadow-lg rounded-xl p-6 mb-8"
+                                                >
                                                     {post.poll && post.poll.question && (
                                                         <div>
-                                                            <h4 className="text-lg font-semibold text-gray-800 mb-4">
-                                                                Poll: {post.poll.question}
+                                                            <h4 className="text-2xl font-bold text-gray-900 mb-6">
+                                                                {post.poll.question}
                                                             </h4>
                                                             {!post.poll.voters?.includes(userId) ? (
-                                                                // Show voting options if the user hasn't voted
                                                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                                                     {post.poll.options.map((option, index) => (
-                                                                        <button
+                                                                        <motion.button
                                                                             key={index}
-                                                                            className="text-sm px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                                                                            whileHover={{ scale: 1.02 }}
+                                                                            whileTap={{ scale: 0.98 }}
+                                                                            className="text-sm px-6 py-3 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors duration-200 ease-in-out shadow-sm border border-gray-200"
                                                                             onClick={() => handleVote(post._id, option)}
                                                                         >
                                                                             {option}
-                                                                        </button>
+                                                                        </motion.button>
                                                                     ))}
                                                                 </div>
                                                             ) : (
-                                                                // Show poll results if the user has already voted
-                                                                <div className="bg-gray-100 rounded-md p-4 mt-6">
-                                                                    <h4 className="text-md font-semibold text-gray-800 mb-2">
+                                                                <motion.div
+                                                                    initial={{ opacity: 0 }}
+                                                                    animate={{ opacity: 1 }}
+                                                                    transition={{ duration: 0.5 }}
+                                                                    className="bg-gray-50 rounded-lg p-6 mt-6"
+                                                                >
+                                                                    <h4 className="text-xl font-semibold text-gray-900 mb-4">
                                                                         Poll Results
                                                                     </h4>
-                                                                    <ul className="space-y-2">
+                                                                    <ul className="space-y-4">
                                                                         {post.poll.options.map((option, index) => {
                                                                             const votes = post.poll.votes[option] || 0;
                                                                             const totalVotes = Object.values(post.poll.votes).reduce(
@@ -987,37 +975,37 @@ const PostPage = () => {
                                                                                 0
                                                                             );
                                                                             const percentage = totalVotes
-                                                                                ? ((votes / totalVotes) * 100).toFixed(2)
+                                                                                ? ((votes / totalVotes) * 100).toFixed(1)
                                                                                 : 0;
 
                                                                             return (
                                                                                 <li key={index} className="text-sm text-gray-700">
-                                                                                    <div className="flex items-center justify-between mb-1">
-                                                                                        <span>{option}</span>
+                                                                                    <div className="flex items-center justify-between mb-2">
+                                                                                        <span className="font-medium">{option}</span>
                                                                                         <span className="text-gray-500">
                                                                                             {votes} votes ({percentage}%)
                                                                                         </span>
                                                                                     </div>
-                                                                                    <div className="w-full bg-gray-300 rounded-full h-2">
-                                                                                        <div
-                                                                                            className="bg-blue-500 h-2 rounded-full"
-                                                                                            style={{ width: `${percentage}%` }}
-                                                                                        ></div>
+                                                                                    <div className="relative w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                                                                                        <motion.div
+                                                                                            initial={{ width: 0 }}
+                                                                                            animate={{ width: `${percentage}%` }}
+                                                                                            transition={{ duration: 0.5, ease: "easeOut" }}
+                                                                                            className="absolute top-0 left-0 h-full bg-gradient-to-r from-gray-400 to-gray-600"
+                                                                                        />
                                                                                     </div>
                                                                                 </li>
                                                                             );
                                                                         })}
                                                                     </ul>
-                                                                    <p className="text-xs text-gray-500 mt-2">
+                                                                    <p className="text-xs text-gray-500 mt-4">
                                                                         Total votes: {Object.values(post.poll.votes).reduce((a, b) => a + b, 0)}
                                                                     </p>
-                                                                </div>
+                                                                </motion.div>
                                                             )}
                                                         </div>
                                                     )}
-                                                </div>
-
-
+                                                </motion.div>
                                                 {/* Document Section */}
                                                 {post.document && (
                                                     <div className="bg-gray-50 rounded-md p-3 mb-4">
