@@ -64,37 +64,33 @@ const PostPage = () => {
             </div>
         );
     };
-    const ExpandableText = ({ text, maxLength = 100 }) => {
+    const ExpandableText = ({ text, maxLength = 100, className = '' }) => {
         const [isExpanded, setIsExpanded] = useState(false);
-        const contentRef = useRef(null);
+    
         const toggleExpand = () => {
             setIsExpanded(!isExpanded);
         };
-
+    
+        const isExpandable = text.length > maxLength;
+        const displayedText = isExpanded ? text : text.slice(0, maxLength);
+    
         return (
             <div>
-                <div
-                    ref={contentRef}
-                    className={`overflow-hidden transition-all duration-300`}
-                    style={{
-                        maxHeight: isExpanded ? `${contentRef.current?.scrollHeight}px` : '40px',
-                    }}
-                >
-                    <p className="text-gray-700 text-sm mb-4">
-                        {text}
-                    </p>
-                </div>
-                {text.length > maxLength && (
+                <p className={`${className} inline`}>
+                    {displayedText}
+                    {!isExpanded && isExpandable && <span>...</span>}
+                </p>
+                {isExpandable && (
                     <button
                         onClick={toggleExpand}
-                        className="text-blue-500 text-sm font-medium hover:underline focus:outline-none"
+                        className="text-blue-500 text-sm font-medium hover:underline focus:outline-none inline ml-1"
                     >
                         {isExpanded ? 'Read Less' : 'Read More'}
                     </button>
                 )}
             </div>
         );
-    };
+    };  
     const handleFileChange = (e) => {
         const selectedFiles = Array.from(e.target.files || []);
         setMedia((prev) => ({
@@ -821,9 +817,11 @@ const PostPage = () => {
                                                     )}
                                                     <PostTimestamp createdAt={post.createdAt} />
                                                 </div>
-                                                {post.text && <ExpandableText text={post.text} maxLength={100} />}                                                {/* Media Section */}
+                                                {post.text && <ExpandableText className='text-gray-600 text-sm mb-4' text={post.text} maxLength={200} />}
+                                                {/* Media Section */}
+
                                                 {post.media?.photos?.length > 0 && (
-                                                    <div className="mb-4">
+                                                    <div className="mb-4 mt-4">
                                                         <Swiper
                                                             modules={[Navigation, Pagination]} // Add navigation and pagination modules
                                                             spaceBetween={10}
@@ -1046,108 +1044,115 @@ const PostPage = () => {
                                             {/* Comments Section */}
                                             {visibleCommentPostId === post._id && (
                                                 <div className="mt-4 bg-white rounded-lg border border-gray-200 p-4">
-                                                    <h3 className="text-sm font-semibold text-gray-900 mb-3">Comments</h3>
-                                                    <div className="space-y-3 max-h-80 overflow-y-auto">
-                                                        {post.comments.map((comment) => (
-                                                            <div key={comment._id} className="border-b border-gray-100 pb-2">
-                                                                <div className="flex items-start gap-2">
-                                                                    <img
-                                                                        src={comment.profile?.profilePhoto || '/default-avatar.png'}
-                                                                        alt={comment.profile?.fullname || 'Anonymous User'}
-                                                                        className="w-8 h-8 rounded-full"
-                                                                    />
-                                                                    <div>
-                                                                        <p className="text-sm font-medium text-gray-800">
-                                                                            {comment.profile?.fullname || 'Anonymous User'}
-                                                                        </p>
-                                                                        <p className="text-xs text-gray-500">
-                                                                            {comment.profile?.agencyName || ''}
-                                                                        </p>
-                                                                    </div>
+                                                <h3 className="text-sm font-semibold text-gray-900 mb-3">Comments</h3>
+                                                <div className="space-y-3 max-h-80 overflow-y-auto">
+                                                    {comments.map((comment) => (
+                                                        <div key={comment._id} className="border-b border-gray-100 pb-2">
+                                                            <div className="flex items-start gap-2">
+                                                                <img
+                                                                    src={comment.profile?.profilePhoto || '/default-avatar.png'}
+                                                                    alt={comment.profile?.fullname || 'Anonymous User'}
+                                                                    className="w-8 h-8 rounded-full"
+                                                                />
+                                                                <div>
+                                                                    <p className="text-sm font-medium text-gray-800">
+                                                                        {comment.profile?.fullname || 'Anonymous User'}
+                                                                    </p>
+                                                                    <p className="text-xs text-gray-500">
+                                                                        {comment.profile?.agencyName || ''}
+                                                                    </p>
                                                                 </div>
-                                                                <p className="text-sm text-gray-800 mt-2">{comment.text}</p>
-                                                                <div className="flex items-center gap-3 text-xs text-gray-500 mt-1">
+                                                            </div>
+                                                            {comment.text && (
+                                                                <ExpandableText
+                                                                    text={comment.text}
+                                                                    maxLength={100}
+                                                                    className="text-sm text-gray-600 mt-2"
+                                                                />
+                                                            )}
+                                                            <div className="flex items-center gap-3 text-xs text-gray-500 mt-1">
+                                                                <button
+                                                                    onClick={() => {
+                                                                        console.log("Setting reply state for comment ID:", comment._id); // Debugging reply state setting
+                                                                        setReply({ commentId: comment._id, text: '' });
+                                                                    }}
+                                                                    className="hover:text-gray-700"
+                                                                >
+                                                                    Reply
+                                                                </button>
+                                                                <span>{moment(comment.createdAt).fromNow()}</span>
+                                                            </div>
+                                            
+                                                            {/* Replies */}
+                                                            {comment.replies.map((reply) => (
+                                                                <div key={reply._id} className="ml-4 mt-3 p-2 bg-gray-50 rounded-md">
+                                                                    <div className="flex items-start gap-2">
+                                                                        <img
+                                                                            src={reply.profile?.profilePhoto || '/default-avatar.png'}
+                                                                            alt={reply.profile?.fullname || 'Anonymous User'}
+                                                                            className="w-6 h-6 rounded-full"
+                                                                        />
+                                                                        <div>
+                                                                            <p className="text-xs font-medium text-gray-800">
+                                                                                {reply.profile?.fullname || 'Anonymous User'}
+                                                                            </p>
+                                                                            <p className="text-xs text-gray-500">{reply.profile?.agencyName || ''}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                    {reply.text && (
+                                                                        <ExpandableText
+                                                                            text={reply.text}
+                                                                            maxLength={100}
+                                                                            className="text-sm text-gray-700 mt-1"
+                                                                        />
+                                                                    )}
+                                                                    <span className="text-xs text-gray-500">{moment(reply.createdAt).fromNow()}</span>
+                                                                </div>
+                                                            ))}
+                                            
+                                                            {/* Reply Input */}
+                                                            {reply.commentId === comment._id && (
+                                                                <div className="mt-2 flex gap-2">
+                                                                    <input
+                                                                        value={reply.text}
+                                                                        onChange={(e) => {
+                                                                            console.log("Updating reply text for comment ID:", comment._id, "New text:", e.target.value); // Debugging input change
+                                                                            setReply({ ...reply, text: e.target.value });
+                                                                        }}
+                                                                        className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
+                                                                        placeholder="Write a reply..."
+                                                                    />
                                                                     <button
-                                                                        onClick={() =>
-                                                                            setReply({
-                                                                                commentId: comment._id,
-                                                                                text: '',
-                                                                                postId: post._id,
-                                                                            })
-                                                                        }
-                                                                        className="hover:text-gray-700"
+                                                                        onClick={() => {
+                                                                            console.log("Submitting reply for comment ID:", comment._id, "Reply text:", reply.text); // Debugging reply submission
+                                                                            replyToComment(comment._id);
+                                                                        }}
+                                                                        className="px-2 py-1 text-xs bg-gray-800 text-white rounded-md hover:bg-gray-700 transition-colors"
                                                                     >
                                                                         Reply
                                                                     </button>
-                                                                    <span>{moment(comment.createdAt).fromNow()}</span>
                                                                 </div>
-
-                                                                {/* Replies */}
-                                                                {comment.replies.map((reply) => (
-                                                                    <div key={reply._id} className="ml-4 mt-3 p-2 bg-gray-50 rounded-md">
-                                                                        <div className="flex items-start gap-2">
-                                                                            <img
-                                                                                src={reply.profile?.profilePhoto || '/default-avatar.png'}
-                                                                                alt={reply.profile?.fullname || 'Anonymous User'}
-                                                                                className="w-6 h-6 rounded-full"
-                                                                            />
-                                                                            <div>
-                                                                                <p className="text-xs font-medium text-gray-800">
-                                                                                    {reply.profile?.fullname || 'Anonymous User'}
-                                                                                </p>
-                                                                                <p className="text-xs text-gray-500">{reply.profile?.agencyName || ''}</p>
-                                                                            </div>
-                                                                        </div>
-                                                                        <p className="text-xs text-gray-800 mt-1">{reply.text}</p>
-                                                                        <span className="text-xs text-gray-500">{moment(reply.createdAt).fromNow()}</span>
-                                                                    </div>
-                                                                ))}
-
-                                                                {/* Reply Input */}
-                                                                {reply.commentId === comment._id && (
-                                                                    <div className="mt-2 flex gap-2">
-                                                                        <input
-                                                                            value={reply.text}
-                                                                            onChange={(e) =>
-                                                                                setReply({
-                                                                                    ...reply,
-                                                                                    text: e.target.value,
-                                                                                    postId: post._id,
-                                                                                })
-                                                                            }
-                                                                            className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
-                                                                            placeholder="Write a reply..."
-                                                                        />
-                                                                        <button
-                                                                            onClick={() =>
-                                                                                replyToComment(reply.postId, reply.commentId, reply.text)
-                                                                            }
-                                                                            className="px-2 py-1 text-xs bg-gray-800 text-white rounded-md hover:bg-gray-700 transition-colors"
-                                                                        >
-                                                                            Reply
-                                                                        </button>
-                                                                    </div>
-                                                                )}
-                                                            </div>
-                                                        ))}
-                                                    </div>
-
-                                                    {/* Add Comment */}
-                                                    <div className="mt-3 flex gap-2">
-                                                        <input
-                                                            value={newComment}
-                                                            onChange={(e) => setNewComment(e.target.value)}
-                                                            className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
-                                                            placeholder="Add a comment..."
-                                                        />
-                                                        <button
-                                                            onClick={() => addComment(post._id, newComment)}
-                                                            className="px-3 py-2 bg-gray-800 text-white text-sm rounded-md hover:bg-gray-700 transition-colors"
-                                                        >
-                                                            <Send size={14} />
-                                                        </button>
-                                                    </div>
+                                                            )}
+                                                        </div>
+                                                    ))}
                                                 </div>
+                                            
+                                                {/* Add Comment */}
+                                                <div className="mt-3 flex gap-2">
+                                                    <input
+                                                        value={newComment}
+                                                        onChange={(e) => setNewComment(e.target.value)}
+                                                        className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
+                                                        placeholder="Add a comment..."
+                                                    />
+                                                    <button
+                                                        onClick={addComment}
+                                                        className="px-3 py-2 bg-gray-800 text-white text-sm rounded-md hover:bg-gray-700 transition-colors"
+                                                    >
+                                                        <Send size={14} />
+                                                    </button>
+                                                </div>
+                                            </div>                                            
                                             )}
 
                                         </div>

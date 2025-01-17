@@ -152,6 +152,9 @@ export const getAllPosts = async (req, res) => {
     } else {
       console.log('No profile photo for logged-in user');
     }
+    const totalComments = post.comments.length;
+    const totalReplies = post.comments.reduce((acc, comment) => acc + comment.replies.length, 0);
+    const totalCommentsAndReplies = totalComments + totalReplies;
 
     const postsWithMediaAndAuthorData = await Promise.all(
       posts.map(async (post) => {
