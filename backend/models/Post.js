@@ -131,6 +131,7 @@ const commentSchema = new mongoose.Schema(
                     agencyName: { type: String },
                     location: { type: String },
                   },
+                  createdAt: { type: Date, default: Date.now },
             },
         ],
         taggedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'DigitalMarketer' }],
