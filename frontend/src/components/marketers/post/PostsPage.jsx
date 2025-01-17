@@ -913,99 +913,82 @@ const PostPage = () => {
                                                         )}
                                                     </div>
                                                 )}
-
-                                                {/* Poll Section */}
                                                 {post.poll && post.poll.question && (
-                                                    <div className="bg-gray-50 rounded-md p-3 mb-4">
-                                                        <h4 className="text-sm font-semibold text-gray-900 mb-2 flex items-center">
-                                                            <BarChart2 className="w-4 h-4 mr-1" /> Poll
-                                                        </h4>
-                                                        <p className="text-sm font-medium text-gray-700">{post.poll.question}</p>
-                                                        {post.poll.options && (
-                                                            <ul className="mt-2 space-y-1">
-                                                                {post.poll.options.map((option, index) => (
-                                                                    <li key={index} className="text-xs text-gray-600">
-                                                                        {option}
-                                                                    </li>
-                                                                ))}
-                                                            </ul>
-                                                        )}
-                                                    </div>
-                                                )}
-                                                <motion.div
-                                                    initial={{ opacity: 0, y: 20 }}
-                                                    animate={{ opacity: 1, y: 0 }}
-                                                    transition={{ duration: 0.5 }}
-                                                    className="bg-white shadow-lg rounded-xl p-6 mb-8"
-                                                >
-                                                    {post.poll && post.poll.question && (
-                                                        <div>
-                                                            <h4 className="text-2xl font-bold text-gray-900 mb-6">
-                                                                {post.poll.question}
-                                                            </h4>
-                                                            {!post.poll.voters?.includes(userId) ? (
-                                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                                                    {post.poll.options.map((option, index) => (
-                                                                        <motion.button
-                                                                            key={index}
-                                                                            whileHover={{ scale: 1.02 }}
-                                                                            whileTap={{ scale: 0.98 }}
-                                                                            className="text-sm px-6 py-3 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors duration-200 ease-in-out shadow-sm border border-gray-200"
-                                                                            onClick={() => handleVote(post._id, option)}
-                                                                        >
-                                                                            {option}
-                                                                        </motion.button>
-                                                                    ))}
-                                                                </div>
-                                                            ) : (
-                                                                <motion.div
-                                                                    initial={{ opacity: 0 }}
-                                                                    animate={{ opacity: 1 }}
-                                                                    transition={{ duration: 0.5 }}
-                                                                    className="bg-gray-50 rounded-lg p-6 mt-6"
-                                                                >
-                                                                    <h4 className="text-xl font-semibold text-gray-900 mb-4">
-                                                                        Poll Results
-                                                                    </h4>
-                                                                    <ul className="space-y-4">
-                                                                        {post.poll.options.map((option, index) => {
-                                                                            const votes = post.poll.votes[option] || 0;
-                                                                            const totalVotes = Object.values(post.poll.votes).reduce(
-                                                                                (a, b) => a + b,
-                                                                                0
-                                                                            );
-                                                                            const percentage = totalVotes
-                                                                                ? ((votes / totalVotes) * 100).toFixed(1)
-                                                                                : 0;
+                                                    <motion.div
+                                                        initial={{ opacity: 0, y: 20 }}
+                                                        animate={{ opacity: 1, y: 0 }}
+                                                        transition={{ duration: 0.5 }}
+                                                        className="bg-white border border-gray-200 border-[0.5px] rounded-xl p-6 mb-8"
+                                                    >
+                                                        {post.poll && post.poll.question && (
+                                                            <div>
+                                                                <h4 className="text-sm font-semibold text-gray-900 mb-2 flex items-center">
+                                                                    <BarChart2 className="w-4 h-4 mr-1" /> {post.poll.question}
+                                                                </h4>
+                                                                {!post.poll.voters?.includes(userId) ? (
+                                                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                                        {post.poll.options.map((option, index) => (
+                                                                            <motion.button
+                                                                                key={index}
+                                                                                whileHover={{ scale: 1.02 }}
+                                                                                whileTap={{ scale: 0.98 }}
+                                                                                className="text-sm px-6 py-3 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors duration-200 ease-in-out shadow-sm border border-gray-200"
+                                                                                onClick={() => handleVote(post._id, option)}
+                                                                            >
+                                                                                {option}
+                                                                            </motion.button>
+                                                                        ))}
+                                                                    </div>
+                                                                ) : (
+                                                                    <motion.div
+                                                                        initial={{ opacity: 0 }}
+                                                                        animate={{ opacity: 1 }}
+                                                                        transition={{ duration: 0.5 }}
+                                                                        className="bg-gray-50 rounded-lg p-6 mt-6"
+                                                                    >
+                                                                        <h4 className="text-xl font-semibold text-gray-900 mb-4">
+                                                                            Poll Results
+                                                                        </h4>
+                                                                        <ul className="space-y-4">
+                                                                            {post.poll.options.map((option, index) => {
+                                                                                const votes = post.poll.votes[option] || 0;
+                                                                                const totalVotes = Object.values(post.poll.votes).reduce(
+                                                                                    (a, b) => a + b,
+                                                                                    0
+                                                                                );
+                                                                                const percentage = totalVotes
+                                                                                    ? ((votes / totalVotes) * 100).toFixed(1)
+                                                                                    : 0;
 
-                                                                            return (
-                                                                                <li key={index} className="text-sm text-gray-700">
-                                                                                    <div className="flex items-center justify-between mb-2">
-                                                                                        <span className="font-medium">{option}</span>
-                                                                                        <span className="text-gray-500">
-                                                                                            {votes} votes ({percentage}%)
-                                                                                        </span>
-                                                                                    </div>
-                                                                                    <div className="relative w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-                                                                                        <motion.div
-                                                                                            initial={{ width: 0 }}
-                                                                                            animate={{ width: `${percentage}%` }}
-                                                                                            transition={{ duration: 0.5, ease: "easeOut" }}
-                                                                                            className="absolute top-0 left-0 h-full bg-gradient-to-r from-gray-400 to-gray-600"
-                                                                                        />
-                                                                                    </div>
-                                                                                </li>
-                                                                            );
-                                                                        })}
-                                                                    </ul>
-                                                                    <p className="text-xs text-gray-500 mt-4">
-                                                                        Total votes: {Object.values(post.poll.votes).reduce((a, b) => a + b, 0)}
-                                                                    </p>
-                                                                </motion.div>
-                                                            )}
-                                                        </div>
-                                                    )}
-                                                </motion.div>
+                                                                                return (
+                                                                                    <li key={index} className="text-sm text-gray-700">
+                                                                                        <div className="flex items-center justify-between mb-2">
+                                                                                            <span className="font-medium">{option}</span>
+                                                                                            <span className="text-gray-500">
+                                                                                                {votes} votes ({percentage}%)
+                                                                                            </span>
+                                                                                        </div>
+                                                                                        <div className="relative w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                                                                                            <motion.div
+                                                                                                initial={{ width: 0 }}
+                                                                                                animate={{ width: `${percentage}%` }}
+                                                                                                transition={{ duration: 0.5, ease: "easeOut" }}
+                                                                                                className="absolute top-0 left-0 h-full bg-gradient-to-r from-gray-400 to-gray-600"
+                                                                                            />
+                                                                                        </div>
+                                                                                    </li>
+                                                                                );
+                                                                            })}
+                                                                        </ul>
+                                                                        <p className="text-xs text-gray-500 mt-4">
+                                                                            Total votes: {Object.values(post.poll.votes).reduce((a, b) => a + b, 0)}
+                                                                        </p>
+                                                                    </motion.div>
+                                                                )}
+                                                            </div>
+                                                        )}
+                                                    </motion.div>
+                                                )}
                                                 {/* Document Section */}
                                                 {post.document && (
                                                     <div className="bg-gray-50 rounded-md p-3 mb-4">
@@ -1153,7 +1136,16 @@ const PostPage = () => {
                                         </div>
                                     ))
                                 ) : (
-                                    <p className="text-gray-700 text-center py-8">No posts available</p>
+                                    <div className="text-center py-8">
+                                        <p className="text-gray-700 text-lg">Building your business vision... please wait</p>
+                                        <div className="flex justify-center items-center space-x-2 mt-4">
+                                            <svg className="animate-spin h-12 w-12 text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50">
+                                                <circle className="opacity-25" cx="25" cy="25" r="20" stroke="currentColor" stroke-width="4"></circle>
+                                                <path className="opacity-75" fill="currentColor" d="M25 5c-1.4 0-2.6 1-2.6 2.4 0 1.3 1.1 2.4 2.4 2.4s2.4-1.1 2.4-2.4C27.6 6.1 26.4 5 25 5zM25 15c-1.4 0-2.6 1-2.6 2.4 0 1.3 1.1 2.4 2.4 2.4s2.4-1.1 2.4-2.4c0-1.3-1.1-2.4-2.4-2.4zM25 25c-1.4 0-2.6 1-2.6 2.4 0 1.3 1.1 2.4 2.4 2.4s2.4-1.1 2.4-2.4c0-1.3-1.1-2.4-2.4-2.4zM25 35c-1.4 0-2.6 1-2.6 2.4 0 1.3 1.1 2.4 2.4 2.4s2.4-1.1 2.4-2.4c0-1.3-1.1-2.4-2.4-2.4zM25 45c-1.4 0-2.6 1-2.6 2.4 0 1.3 1.1 2.4 2.4 2.4s2.4-1.1 2.4-2.4c0-1.3-1.1-2.4-2.4-2.4z"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+
                                 )}
                             </div>
 
