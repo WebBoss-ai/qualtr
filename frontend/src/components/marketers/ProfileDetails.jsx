@@ -144,6 +144,8 @@ const ProfileDetails = () => {
                                 </div>
                             </div>
                         </div>
+
+                        <UserProfilePosts id={id} />
                     </div>
 
                     {/* Sidebar */}
@@ -222,8 +224,6 @@ const ProfileDetails = () => {
                     </div>
                 </div>
             </div>
-            <UserPosts/>
-            <UserProfilePosts id={id} />
             <Footer />
         </div>
     )
