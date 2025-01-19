@@ -211,6 +211,93 @@ export const getAllPosts = async (req, res) => {
   }
 };
 
+export const getAllPostsAuthor = async (req, res) => {
+  try {
+    const { authorId } = req.params; // Get the author ID from the URL parameter
+
+    // Check if the logged-in user belongs to the DigitalMarketer model
+    const digitalMarketer = await DigitalMarketer.findOne({ user: req._id });
+
+    if (!digitalMarketer) {
+      return res.status(403).json({
+        message: 'You must be a Digital Marketer to access this resource.',
+        success: false,
+      });
+    }
+
+    console.log('Logged-in user is a Digital Marketer:', digitalMarketer);
+
+    const posts = await Post.find({ author: authorId }) // Only fetch posts by the specified author ID
+      .populate('author', 'profile') // Populate the full profile object
+      .sort({ createdAt: -1 })
+      .lean(); // Use lean for better performance since no modifications are needed to the Mongoose document
+
+    // Process logged-in user's profile photo
+    let loggedInUserProfilePhoto = null;
+    if (digitalMarketer) {
+      loggedInUserProfilePhoto = await getObjectURL(digitalMarketer.profile.profilePhoto); // Generate a presigned URL for the user's profile picture
+    } else {
+      console.log('No profile photo for logged-in user');
+    }
+
+    const postsWithMediaAndAuthorData = await Promise.all(
+      posts.map(async (post) => {
+        // Process author profile photo URL
+        if (post.author?.profile?.profilePhoto) {
+          const profilePhotoURL = await getObjectURL(post.author.profile.profilePhoto);
+          post.author.profile.profilePhoto = profilePhotoURL;
+        }
+
+        // Process media (photos and videos)
+        if (post.media) {
+          if (post.media.photos?.length > 0) {
+            post.media.photos = await Promise.all(
+              post.media.photos
+                .filter((photo) => photo && photo.url)
+                .map(async (photo) => {
+                  const s3Key = photo.url.split('amazonaws.com/')[1];
+                  return {
+                    ...photo,
+                    url: await generatePostImageUrl(s3Key),
+                  };
+                })
+            );
+          }
+
+          if (post.media.videos?.length > 0) {
+            post.media.videos = await Promise.all(
+              post.media.videos
+                .filter((video) => video && video.url)
+                .map(async (video) => {
+                  const s3Key = video.url.split('amazonaws.com/')[1];
+                  return {
+                    ...video,
+                    url: await generatePostVideoUrl(s3Key),
+                  };
+                })
+            );
+          }
+        }
+
+        return post;
+      })
+    );
+
+    return res.status(200).json({
+      message: 'Posts retrieved successfully.',
+      success: true,
+      posts: postsWithMediaAndAuthorData,
+      userProfilePhoto: loggedInUserProfilePhoto, // Include the logged-in user's profile photo URL
+    });
+  } catch (error) {
+    console.error('Error retrieving posts:', error);
+    return res.status(500).json({
+      message: 'Internal server error.',
+      success: false,
+    });
+  }
+};
+
 export const getPostById = async (req, res) => {
   const { id } = req.params;
 
