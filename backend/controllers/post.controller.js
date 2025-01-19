@@ -211,11 +211,11 @@ export const getAllPosts = async (req, res) => {
   }
 };
 
-export const getAllPostsAuthor = async (req, res) => {
+export const getAllPostsByAuthor = async (req, res) => {
   try {
-    const { authorId } = req.params; // Get the author ID from the URL parameter
+    const { authorId } = req.params; // Get authorId from the URL parameter
 
-    // Check if the logged-in user belongs to the DigitalMarketer model
+    // Check if the logged-in user is a Digital Marketer
     const digitalMarketer = await DigitalMarketer.findOne({ user: req._id });
 
     if (!digitalMarketer) {
@@ -227,54 +227,41 @@ export const getAllPostsAuthor = async (req, res) => {
 
     console.log('Logged-in user is a Digital Marketer:', digitalMarketer);
 
-    const posts = await Post.find({ author: authorId }) // Only fetch posts by the specified author ID
+    // Find posts authored by the specified authorId
+    const posts = await Post.find({ 'author._id': authorId }) // Match posts with the given authorId
       .populate('author', 'profile') // Populate the full profile object
       .sort({ createdAt: -1 })
-      .lean(); // Use lean for better performance since no modifications are needed to the Mongoose document
+      .lean();
 
     // Process logged-in user's profile photo
     let loggedInUserProfilePhoto = null;
     if (digitalMarketer) {
-      loggedInUserProfilePhoto = await getObjectURL(digitalMarketer.profile.profilePhoto); // Generate a presigned URL for the user's profile picture
-    } else {
-      console.log('No profile photo for logged-in user');
+      loggedInUserProfilePhoto = await getObjectURL(digitalMarketer.profile.profilePhoto); // Generate presigned URL for the user's profile picture
     }
 
     const postsWithMediaAndAuthorData = await Promise.all(
       posts.map(async (post) => {
-        // Process author profile photo URL
         if (post.author?.profile?.profilePhoto) {
           const profilePhotoURL = await getObjectURL(post.author.profile.profilePhoto);
           post.author.profile.profilePhoto = profilePhotoURL;
         }
 
-        // Process media (photos and videos)
         if (post.media) {
           if (post.media.photos?.length > 0) {
             post.media.photos = await Promise.all(
-              post.media.photos
-                .filter((photo) => photo && photo.url)
-                .map(async (photo) => {
-                  const s3Key = photo.url.split('amazonaws.com/')[1];
-                  return {
-                    ...photo,
-                    url: await generatePostImageUrl(s3Key),
-                  };
-                })
+              post.media.photos.map(async (photo) => {
+                const s3Key = photo.url.split('amazonaws.com/')[1];
+                return { ...photo, url: await generatePostImageUrl(s3Key) };
+              })
             );
           }
 
           if (post.media.videos?.length > 0) {
             post.media.videos = await Promise.all(
-              post.media.videos
-                .filter((video) => video && video.url)
-                .map(async (video) => {
-                  const s3Key = video.url.split('amazonaws.com/')[1];
-                  return {
-                    ...video,
-                    url: await generatePostVideoUrl(s3Key),
-                  };
-                })
+              post.media.videos.map(async (video) => {
+                const s3Key = video.url.split('amazonaws.com/')[1];
+                return { ...video, url: await generatePostVideoUrl(s3Key) };
+              })
             );
           }
         }
@@ -287,7 +274,7 @@ export const getAllPostsAuthor = async (req, res) => {
       message: 'Posts retrieved successfully.',
       success: true,
       posts: postsWithMediaAndAuthorData,
-      userProfilePhoto: loggedInUserProfilePhoto, // Include the logged-in user's profile photo URL
+      userProfilePhoto: loggedInUserProfilePhoto,
     });
   } catch (error) {
     console.error('Error retrieving posts:', error);
@@ -626,18 +613,24 @@ export const voteOnPoll = async (req, res) => {
   const { option } = req.body;
   const userId = req.id; // Assuming user ID is available in `req.id`
 
+  console.log(`[DEBUG] Incoming request to vote on poll. Post ID: ${postId}, User ID: ${userId}, Option: ${option}`);
+
   try {
+      // Fetch the post
       const post = await Post.findById(postId);
+      console.log(`[DEBUG] Fetched post: ${post ? JSON.stringify(post.poll) : 'Post not found'}`);
 
       if (!post || !post.poll) {
+          console.warn(`[WARN] Post or poll not found for Post ID: ${postId}`);
           return res.status(404).json({
               message: 'Post or poll not found.',
               success: false,
           });
       }
 
-      // If the poll has ended, return results
+      // Check if the poll has ended
       if (new Date() > new Date(post.poll.endDate)) {
+          console.info(`[INFO] Poll voting has ended for Post ID: ${postId}`);
           return res.status(400).json({
               message: 'Poll voting has ended.',
               success: false,
@@ -651,6 +644,7 @@ export const voteOnPoll = async (req, res) => {
 
       // Check if the user has already voted
       if (post.poll.voters.includes(userId)) {
+          console.info(`[INFO] User ${userId} has already voted on Post ID: ${postId}`);
           return res.status(200).json({
               message: 'You have already voted.',
               success: true,
@@ -662,8 +656,9 @@ export const voteOnPoll = async (req, res) => {
           });
       }
 
-      // If user has not voted, record their vote
+      // Validate the selected option
       if (!post.poll.options.includes(option)) {
+          console.warn(`[WARN] Invalid voting option '${option}' for Post ID: ${postId}`);
           return res.status(400).json({
               message: 'Invalid option.',
               success: false,
@@ -672,15 +667,19 @@ export const voteOnPoll = async (req, res) => {
 
       // Increment the vote count
       if (!post.poll.votes.has(option)) {
+          console.log(`[DEBUG] Initializing vote count for option '${option}'`);
           post.poll.votes.set(option, 0);
       }
       post.poll.votes.set(option, post.poll.votes.get(option) + 1);
+      console.log(`[DEBUG] Updated vote count for option '${option}': ${post.poll.votes.get(option)}`);
 
       // Add the user to the voters list
       post.poll.voters.push(userId);
+      console.log(`[DEBUG] Added user ${userId} to voters list.`);
 
       // Save the poll
       await post.save();
+      console.log(`[DEBUG] Poll saved successfully for Post ID: ${postId}`);
 
       return res.status(200).json({
           message: 'Vote submitted successfully.',
@@ -692,7 +691,7 @@ export const voteOnPoll = async (req, res) => {
           },
       });
   } catch (error) {
-      console.error('Error voting on poll:', error);
+      console.error(`[ERROR] Error voting on poll for Post ID: ${postId}`, error);
       return res.status(500).json({
           message: 'Internal server error.',
           success: false,

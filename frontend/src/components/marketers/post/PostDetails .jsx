@@ -7,6 +7,8 @@ import { ThumbsUp, MessageCircle, Share2, Send, Calendar, MapPin, Briefcase, Bar
 import moment from 'moment';
 import Navbar from '@/components/shared/Navbar'
 import Footer from '@/components/shared/Footer'
+import parse from 'html-react-parser'; // Import html-react-parser
+import DOMPurify from 'dompurify';
 
 const LoginModal = ({ isOpen, onClose }) => {
     if (!isOpen) return null
@@ -41,32 +43,57 @@ const LoginModal = ({ isOpen, onClose }) => {
     )
 }
 const ExpandableText = ({ text, maxLength = 100, className = '' }) => {
-        const [isExpanded, setIsExpanded] = useState(false);
-    
-        const toggleExpand = () => {
-            setIsExpanded(!isExpanded);
-        };
-    
-        const isExpandable = text.length > maxLength;
-        const displayedText = isExpanded ? text : text.slice(0, maxLength);
-    
-        return (
-            <div>
-                <p className={`${className} inline`}>
-                    {displayedText}
-                    {!isExpanded && isExpandable && <span>...</span>}
-                </p>
-                {isExpandable && (
-                    <button
-                        onClick={toggleExpand}
-                        className="text-blue-500 text-sm font-medium hover:underline focus:outline-none inline ml-1"
-                    >
-                        {isExpanded ? 'Read Less' : 'Read More'}
-                    </button>
-                )}
-            </div>
-        );
-    }; 
+    const [isExpanded, setIsExpanded] = useState(false);
+
+    const toggleExpand = () => {
+        setIsExpanded(!isExpanded);
+    };
+
+    const isExpandable = text.length > maxLength;
+    const displayedText = isExpanded ? text : text.slice(0, maxLength);
+
+    // Function to modify links and sanitize text
+    const modifyLinks = (rawText) => {
+        // Match URLs but ensure that they are not followed immediately by </p>
+        const urlRegex = /(\bhttps?:\/\/[^\s]+)(?=\s*(?!<\/p>))/g;
+
+        // Replace plain URLs with anchor tags
+        let withLinks = rawText.replace(urlRegex, (url) => {
+            return `<a href="${url}" target="_blank" class="text-blue-500 hover:underline">${url}</a>`;
+        });
+
+        // Update existing <a> tags to include target="_blank" and styling
+        const anchorRegex = /<a(.*?)href="(.*?)"(.*?)>/g;
+        const enhancedLinks = withLinks.replace(anchorRegex, (match, p1, p2, p3) => {
+            return `<a${p1}href="${p2}" target="_blank" class="text-blue-500 hover:underline"${p3}>`;
+        });
+
+        // Sanitize the final text to avoid rendering malicious or invalid HTML
+        return DOMPurify.sanitize(enhancedLinks);
+    };
+
+
+
+    const modifiedText = modifyLinks(displayedText); // Apply link modifications and sanitize
+
+    return (
+        <div>
+            <p className={`${className} inline`}>
+                {/* Use html-react-parser to render sanitized and modified HTML */}
+                {parse(modifiedText)}
+                {!isExpanded && isExpandable && <span>...</span>}
+            </p>
+            {isExpandable && (
+                <button
+                    onClick={toggleExpand}
+                    className="text-blue-500 text-sm font-medium hover:underline focus:outline-none inline ml-1"
+                >
+                    {isExpanded ? 'Read Less' : 'Read More'}
+                </button>
+            )}
+        </div>
+    );
+};
 
 const ImageGallery = ({ images }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -262,8 +289,13 @@ const PostDetails = () => {
                                 </div>
 
                                 {/* Post content */}
-                                <p className="text-sm text-gray-700 mb-3">{post?.text || 'No content available'}</p>
-
+                                {post.text && (
+                                    <ExpandableText
+                                        className="text-gray-600 text-sm mb-4"
+                                        text={post.text}
+                                        maxLength={200}
+                                    />
+                                )}
                                 {/* Media */}
                                 {post?.media?.photos?.length > 0 && (
                                     <div className="mb-3 flex justify-center">

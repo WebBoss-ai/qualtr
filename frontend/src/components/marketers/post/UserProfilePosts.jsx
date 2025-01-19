@@ -6,6 +6,7 @@ import { Clock, ThumbsUp, MessageCircle, Eye, ChevronRight } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns';
 import parse from 'html-react-parser';
 import DOMPurify from 'dompurify';
+import { useParams } from 'react-router-dom';
 
 const UserProfilePosts = ({ id }) => {
     const [posts, setPosts] = useState([]);
@@ -123,7 +124,7 @@ const UserProfilePosts = ({ id }) => {
                     </div>
                     <div className="text-center">
                         <button
-                            onClick={() => navigate('/all-posts')}
+                            onClick={() => navigate(`/all-posts/${id}`)}
                             className="w-full py-2 border-t border-b bg-white text-gray-1000 hover:bg-gray-200 flex justify-center items-center space-x-2 transition-all duration-300"
                         >
                             <span>View All Posts</span>
