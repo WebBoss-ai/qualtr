@@ -234,20 +234,26 @@ const PostPage = () => {
 
     const fetchPosts = async () => {
         const storedUserId = localStorage.getItem('userId');
+        console.log("Stored User ID:", storedUserId); // Debugging: check the user ID retrieved from localStorage
         setUserId(storedUserId);
-
+    
         try {
             // Fetch all posts
+            console.log("Fetching all posts for authorId:", authorId); // Debugging: log authorId being used for fetching posts
             const response = await axios.get(`${MARKETER_API_END_POINT}/all-posts/${authorId}`);
+            console.log("Posts response:", response); // Debugging: log the entire response received for posts
             const posts = response.data.posts || [];
-
+            console.log("Posts data:", posts); // Debugging: check the list of posts received
+    
             // Fetch likes and comments for each post
             const updatedPosts = await Promise.all(
                 posts.map(async (post) => {
+                    console.log(`Fetching details for post ID: ${post._id}`); // Debugging: log each post being processed
                     try {
                         const postResponse = await axios.get(`${MARKETER_API_END_POINT}/post/${post._id}`);
+                        console.log(`Post response for ${post._id}:`, postResponse); // Debugging: log the response for each individual post
                         const fetchedPost = postResponse.data.post;
-
+    
                         return {
                             ...post,
                             likes: {
@@ -262,6 +268,7 @@ const PostPage = () => {
                     }
                 })
             );
+            console.log("Updated posts with likes and comments:", updatedPosts); // Debugging: log the updated posts with likes and comments
             setUserProfilePhoto(response.data.userProfilePhoto);
             setPosts(updatedPosts);
         } catch (error) {
@@ -269,6 +276,7 @@ const PostPage = () => {
             setPosts([]);
         }
     };
+    
     const addComment = async (postId, commentText) => {
         if (!userId) return setShowModal(true);
 

@@ -81,23 +81,23 @@ const PostPage = () => {
         const modifyLinks = (rawText) => {
             // Match URLs but ensure that they are not followed immediately by </p>
             const urlRegex = /(\bhttps?:\/\/[^\s]+)(?=\s*(?!<\/p>))/g;
-        
+
             // Replace plain URLs with anchor tags
             let withLinks = rawText.replace(urlRegex, (url) => {
                 return `<a href="${url}" target="_blank" class="text-blue-500 hover:underline">${url}</a>`;
             });
-        
+
             // Update existing <a> tags to include target="_blank" and styling
             const anchorRegex = /<a(.*?)href="(.*?)"(.*?)>/g;
             const enhancedLinks = withLinks.replace(anchorRegex, (match, p1, p2, p3) => {
                 return `<a${p1}href="${p2}" target="_blank" class="text-blue-500 hover:underline"${p3}>`;
             });
-        
+
             // Sanitize the final text to avoid rendering malicious or invalid HTML
             return DOMPurify.sanitize(enhancedLinks);
         };
-        
-        
+
+
 
         const modifiedText = modifyLinks(displayedText); // Apply link modifications and sanitize
 
@@ -940,20 +940,72 @@ const PostPage = () => {
                                                         )}
                                                     </div>
                                                 )}
-                                                <div className='mt-3'>
-                                                    {post.poll && post.poll.question && (
+                                                <div className="mt-3">
+                                                    {post.poll && post.poll.question && post.poll.options && Array.isArray(post.poll.options) && (
                                                         <motion.div
                                                             initial={{ opacity: 0, y: 20 }}
                                                             animate={{ opacity: 1, y: 0 }}
                                                             transition={{ duration: 0.5 }}
                                                             className="bg-white border border-gray-200 border-[0.5px] rounded-xl p-6 mb-8"
                                                         >
-                                                            {post.poll && post.poll.question && (
-                                                                <div>
-                                                                    <h4 className="text-sm font-semibold text-gray-900 mb-2 flex items-center">
-                                                                        <BarChart2 className="w-4 h-4 mr-1" /> {post.poll.question}
-                                                                    </h4>
-                                                                    {!post.poll.voters?.includes(userId) ? (
+                                                            <div>
+                                                                <h4 className="text-sm font-semibold text-gray-900 mb-2 flex items-center">
+                                                                    <BarChart2 className="w-4 h-4 mr-1" /> {post.poll.question}
+                                                                </h4>
+
+                                                                {/* Check if poll has ended */}
+                                                                {new Date() > new Date(post.poll.endDate) ? (
+                                                                    <motion.div
+                                                                        initial={{ opacity: 0 }}
+                                                                        animate={{ opacity: 1 }}
+                                                                        transition={{ duration: 0.5 }}
+                                                                        className="bg-gray-50 rounded-lg p-6 mt-6"
+                                                                    >
+                                                                        <p className="text-red-600 font-medium text-center mb-4">
+                                                                            Poll ended! Keep looking on other posts on Qualtr.
+                                                                        </p>
+
+                                                                        <h4 className="text-xl font-semibold text-gray-900 mb-4">
+                                                                            Poll Results
+                                                                        </h4>
+                                                                        <ul className="space-y-4">
+                                                                            {post.poll.options.map((option, index) => {
+                                                                                const votes = post.poll.votes?.[option] || 0;
+                                                                                const totalVotes = Object.values(post.poll.votes || {}).reduce(
+                                                                                    (a, b) => a + b,
+                                                                                    0
+                                                                                );
+                                                                                const percentage = totalVotes
+                                                                                    ? ((votes / totalVotes) * 100).toFixed(1)
+                                                                                    : 0;
+
+                                                                                return (
+                                                                                    <li key={index} className="text-sm text-gray-700">
+                                                                                        <div className="flex items-center justify-between mb-2">
+                                                                                            <span className="font-medium">{option}</span>
+                                                                                            <span className="text-gray-500">
+                                                                                                {votes} votes ({percentage}%)
+                                                                                            </span>
+                                                                                        </div>
+                                                                                        <div className="relative w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                                                                                            <motion.div
+                                                                                                initial={{ width: 0 }}
+                                                                                                animate={{ width: `${percentage}%` }}
+                                                                                                transition={{ duration: 0.5, ease: "easeOut" }}
+                                                                                                className="absolute top-0 left-0 h-full bg-gradient-to-r from-gray-400 to-gray-600"
+                                                                                            />
+                                                                                        </div>
+                                                                                    </li>
+                                                                                );
+                                                                            })}
+                                                                        </ul>
+                                                                        <p className="text-xs text-gray-500 mt-4">
+                                                                            Total votes: {Object.values(post.poll.votes || {}).reduce((a, b) => a + b, 0)}
+                                                                        </p>
+                                                                    </motion.div>
+                                                                ) : (
+                                                                    // Show voting options if poll is active and user hasn't voted
+                                                                    !post.poll.voters?.includes(userId) ? (
                                                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                                                             {post.poll.options.map((option, index) => (
                                                                                 <motion.button
@@ -979,8 +1031,8 @@ const PostPage = () => {
                                                                             </h4>
                                                                             <ul className="space-y-4">
                                                                                 {post.poll.options.map((option, index) => {
-                                                                                    const votes = post.poll.votes[option] || 0;
-                                                                                    const totalVotes = Object.values(post.poll.votes).reduce(
+                                                                                    const votes = post.poll.votes?.[option] || 0;
+                                                                                    const totalVotes = Object.values(post.poll.votes || {}).reduce(
                                                                                         (a, b) => a + b,
                                                                                         0
                                                                                     );
@@ -1009,15 +1061,16 @@ const PostPage = () => {
                                                                                 })}
                                                                             </ul>
                                                                             <p className="text-xs text-gray-500 mt-4">
-                                                                                Total votes: {Object.values(post.poll.votes).reduce((a, b) => a + b, 0)}
+                                                                                Total votes: {Object.values(post.poll.votes || {}).reduce((a, b) => a + b, 0)}
                                                                             </p>
                                                                         </motion.div>
-                                                                    )}
-                                                                </div>
-                                                            )}
+                                                                    )
+                                                                )}
+                                                            </div>
                                                         </motion.div>
                                                     )}
                                                 </div>
+
                                                 {/* Document Section */}
                                                 {post.document && (
                                                     <div className="bg-gray-50 rounded-md p-3 mb-4">
