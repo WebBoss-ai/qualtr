@@ -230,8 +230,8 @@ export const getAllPostsByAuthor = async (req, res) => {
 
     // Find posts authored by the specified authorId
     console.log('Fetching posts for authorId:', authorId); // Debugging: Log the fetch attempt
-    const posts = await Post.find({ author: authorId });
-    .populate('author', 'profile') // Populate the full profile object
+    const posts = await Post.find({ author: authorId })
+      .populate('author', 'profile')// Populate the full profile object
       .sort({ createdAt: -1 })
       .lean();
 
