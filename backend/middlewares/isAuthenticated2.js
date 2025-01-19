@@ -2,32 +2,20 @@ import jwt from "jsonwebtoken";
 
 const isAuthenticated2 = async (req, res, next) => {
     try {
-        const token = req.cookies.token;
-        console.log(token);
-
-        // If no token, allow the request to proceed as a non-authenticated user
+        const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
+        
         if (!token) {
             req.id = null; // No user ID for unauthenticated users
-            return next(); // Proceed to the next middleware or controller
+            return next();
         }
 
-        // If token exists, verify it and extract user info
-        const decode = await jwt.verify(token, process.env.JWT_SECRET);
-        if (!decode) {
-            return res.status(401).json({
-                message: "Invalid token",
-                success: false,
-            });
-        }
-
+        const decode = jwt.verify(token, process.env.JWT_SECRET);
         req.id = decode.userId; // Attach user ID for authenticated users
-        next(); // Proceed to the next middleware or controller
+        next();
     } catch (error) {
-        console.log(error);
-        return res.status(500).json({
-            message: 'Internal server error.',
-            success: false,
-        });
+        console.error('Error in authentication:', error.message);
+        req.id = null; // Fallback for invalid token
+        next(); // Allow access but mark as unauthenticated
     }
 };
 

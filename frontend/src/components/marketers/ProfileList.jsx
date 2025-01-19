@@ -121,18 +121,22 @@ const ProfileList = () => {
 
   const fetchProfiles = async (filters = {}) => {
     try {
-      const token = localStorage.getItem('token')
-      if (!token) return
+        const token = localStorage.getItem('token'); // Retrieve token from local storage
 
-      const response = await axios.get(`${MARKETER_API_END_POINT}/profiles`, {
-        headers: { Authorization: `Bearer ${token}` },
-        params: filters,
-      })
-      setProfiles(response.data.profiles)
+        const headers = token
+            ? { Authorization: `Bearer ${token}` }
+            : {}; // Use empty headers for unauthenticated users
+
+        const response = await axios.get(`${MARKETER_API_END_POINT}/profiles`, {
+            headers,
+            params: filters,
+        });
+
+        setProfiles(response.data.profiles);
     } catch (error) {
-      console.error('Error fetching profiles:', error)
+        console.error('Error fetching profiles:', error.message);
     }
-  }
+};
 
   useEffect(() => {
     const token = localStorage.getItem('token')

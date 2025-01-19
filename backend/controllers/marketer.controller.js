@@ -692,7 +692,7 @@ export const getAllProfiles = async (req, res) => {
 
         res.status(200).json({ success: true, message: 'Profiles retrieved successfully.', profiles });
     } catch (error) {
-        console.error(error);
+        console.error('Error fetching profiles:', error.message);
         res.status(500).json({ success: false, message: 'Internal server error.' });
     }
 };
