@@ -214,35 +214,41 @@ export const getAllPosts = async (req, res) => {
 export const getAllPostsByAuthor = async (req, res) => {
   try {
     const { authorId } = req.params; // Get authorId from the URL parameter
+    console.log('Received authorId:', authorId); // Debugging: Log the authorId
 
     // Check if the logged-in user is a Digital Marketer
     const digitalMarketer = await DigitalMarketer.findOne({ user: req._id });
+    console.log('Digital Marketer found:', digitalMarketer); // Debugging: Log if digitalMarketer is found
 
     if (!digitalMarketer) {
+      console.log('User is not a Digital Marketer. Returning 403.'); // Debugging: Log if user is not a Digital Marketer
       return res.status(403).json({
         message: 'You must be a Digital Marketer to access this resource.',
         success: false,
       });
     }
 
-    console.log('Logged-in user is a Digital Marketer:', digitalMarketer);
-
     // Find posts authored by the specified authorId
+    console.log('Fetching posts for authorId:', authorId); // Debugging: Log the fetch attempt
     const posts = await Post.find({ 'author._id': authorId }) // Match posts with the given authorId
       .populate('author', 'profile') // Populate the full profile object
       .sort({ createdAt: -1 })
       .lean();
 
+    console.log('Posts retrieved:', posts.length); // Debugging: Log the number of posts retrieved
+
     // Process logged-in user's profile photo
     let loggedInUserProfilePhoto = null;
     if (digitalMarketer) {
       loggedInUserProfilePhoto = await getObjectURL(digitalMarketer.profile.profilePhoto); // Generate presigned URL for the user's profile picture
+      console.log('Logged-in user profile photo URL:', loggedInUserProfilePhoto); // Debugging: Log the profile photo URL
     }
 
     const postsWithMediaAndAuthorData = await Promise.all(
       posts.map(async (post) => {
         if (post.author?.profile?.profilePhoto) {
           const profilePhotoURL = await getObjectURL(post.author.profile.profilePhoto);
+          console.log(`Post ${post._id} author profile photo URL:`, profilePhotoURL); // Debugging: Log each post's author profile photo URL
           post.author.profile.profilePhoto = profilePhotoURL;
         }
 
@@ -251,7 +257,9 @@ export const getAllPostsByAuthor = async (req, res) => {
             post.media.photos = await Promise.all(
               post.media.photos.map(async (photo) => {
                 const s3Key = photo.url.split('amazonaws.com/')[1];
-                return { ...photo, url: await generatePostImageUrl(s3Key) };
+                const photoUrl = await generatePostImageUrl(s3Key);
+                console.log(`Post ${post._id} photo URL generated:`, photoUrl); // Debugging: Log the generated photo URL
+                return { ...photo, url: photoUrl };
               })
             );
           }
@@ -260,7 +268,9 @@ export const getAllPostsByAuthor = async (req, res) => {
             post.media.videos = await Promise.all(
               post.media.videos.map(async (video) => {
                 const s3Key = video.url.split('amazonaws.com/')[1];
-                return { ...video, url: await generatePostVideoUrl(s3Key) };
+                const videoUrl = await generatePostVideoUrl(s3Key);
+                console.log(`Post ${post._id} video URL generated:`, videoUrl); // Debugging: Log the generated video URL
+                return { ...video, url: videoUrl };
               })
             );
           }
@@ -270,6 +280,8 @@ export const getAllPostsByAuthor = async (req, res) => {
       })
     );
 
+    console.log('Processed posts with media and author data:', postsWithMediaAndAuthorData.length); // Debugging: Log the number of processed posts
+
     return res.status(200).json({
       message: 'Posts retrieved successfully.',
       success: true,
@@ -277,7 +289,7 @@ export const getAllPostsByAuthor = async (req, res) => {
       userProfilePhoto: loggedInUserProfilePhoto,
     });
   } catch (error) {
-    console.error('Error retrieving posts:', error);
+    console.error('Error retrieving posts:', error); // Debugging: Log error if an exception occurs
     return res.status(500).json({
       message: 'Internal server error.',
       success: false,
