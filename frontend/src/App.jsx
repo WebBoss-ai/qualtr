@@ -61,6 +61,7 @@ import SalesCustomerAcquisitionPosts from './components/marketers/post/CategoryP
 import TechnologyToolsPosts from './components/marketers/post/CategoryPosts/TechnologyToolsPosts'
 import StartupEssentialsPosts from './components/marketers/post/CategoryPosts/StartupEssentialsPosts'
 import MarketingBrandingPosts from './components/marketers/post/CategoryPosts/MarketingBrandingPosts'
+import TrendingPostsSection from './components/marketers/post/CategoryPosts/TrendingPostsSection'
 const appRouter = createBrowserRouter([
   {
     path: '/',
@@ -233,6 +234,10 @@ const appRouter = createBrowserRouter([
   {
     path:"/posts",
     element:<PostsPage /> 
+  },
+  {
+    path:"/trending",
+    element:<TrendingPostsSection /> 
   },
   {
     path:"/posts/inspirations",

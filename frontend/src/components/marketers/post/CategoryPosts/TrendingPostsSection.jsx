@@ -18,7 +18,7 @@ import RichTextEditor from '@/components/RichTextEditor';
 import parse from 'html-react-parser'; // Import html-react-parser
 import DOMPurify from 'dompurify';
 
-const TechnologyToolsPosts = () => {
+const TrendingPostsSection = () => {
     const [posts, setPosts] = useState([]);
     const [visibleCommentPostId, setVisibleCommentPostId] = useState(null); // Track the post ID for the visible comments section
     const [isExpanded, setIsExpanded] = useState(false)
@@ -236,7 +236,7 @@ const TechnologyToolsPosts = () => {
 
         try {
             // Fetch all posts
-            const response = await axios.get(`${MARKETER_API_END_POINT}/posts/technology-tools`);
+            const response = await axios.get(`${MARKETER_API_END_POINT}/posts/trending`);
             const posts = response.data.posts || [];
 
             // Fetch likes and comments for each post
@@ -1276,4 +1276,4 @@ const TechnologyToolsPosts = () => {
     );
 };
 
-export default TechnologyToolsPosts;
+export default TrendingPostsSection;

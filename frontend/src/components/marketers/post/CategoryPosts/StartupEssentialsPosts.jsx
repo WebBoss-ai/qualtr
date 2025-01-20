@@ -191,13 +191,13 @@ const StartupEssentialsPosts = () => {
     };
     const categories = [
         { name: 'Trending', icon: TrendingUp, href: '/trending' },
-        { name: 'Startup Essentials', icon: Briefcase, href: '/category/startup-essentials' },
-        { name: 'Marketing & Branding', icon: Megaphone, href: '/category/marketing-branding' },
-        { name: 'Legal & Compliance', icon: Scale, href: '/category/legal-compliance' },
-        { name: 'Finance & Investment', icon: DollarSign, href: '/category/finance-investment' },
-        { name: 'Sales & Customer Acquisition', icon: Users, href: '/category/sales-customer-acquisition' },
-        { name: 'Technology & Tools', icon: Wrench, href: '/category/technology-tools' },
-        { name: 'Inspirations', icon: Lightbulb, href: '/category/inspirations' },
+        { name: 'Startup Essentials', icon: Briefcase, href: '/posts/startup-essentials' },
+        { name: 'Marketing & Branding', icon: Megaphone, href: '/posts/marketing-branding' },
+        { name: 'Legal & Compliance', icon: Scale, href: '/posts/legal-compliance' },
+        { name: 'Finance & Investment', icon: DollarSign, href: '/posts/finance-investment' },
+        { name: 'Sales & Customer Acquisition', icon: Users, href: '/posts/sales-customer-acquisition' },
+        { name: 'Technology & Tools', icon: Wrench, href: '/posts/technology-tools' },
+        { name: 'Inspirations', icon: Lightbulb, href: '/posts/inspirations' },
         // { name: 'Brand Strategy & Identity', icon: Palette, href: '/category/brand-strategy-identity' },
         // { name: 'Memes & Marketing Fun', icon: Smile, href: '/category/memes-marketing-fun' },
         // { name: 'Content Creation & Design', icon: PenTool, href: '/category/content-creation-design' },
@@ -231,45 +231,21 @@ const StartupEssentialsPosts = () => {
     }, []);
 
     const fetchPosts = async () => {
-        console.log('Starting fetchPosts function...');
-    
-        // Retrieve the user ID from localStorage
         const storedUserId = localStorage.getItem('userId');
-        if (!storedUserId) {
-            console.error('No user ID found in localStorage.');
-            return;
-        }
-        console.log('Retrieved stored user ID:', storedUserId);
-    
         setUserId(storedUserId);
-    
+
         try {
-            console.log(`Fetching posts from: ${MARKETER_API_END_POINT}/posts/startup-essentials`);
-            
             // Fetch all posts
             const response = await axios.get(`${MARKETER_API_END_POINT}/posts/startup-essentials`);
-            console.log('Posts response received:', response.data);
-    
             const posts = response.data.posts || [];
-            console.log(`Number of posts retrieved: ${posts.length}`);
-    
+
             // Fetch likes and comments for each post
             const updatedPosts = await Promise.all(
                 posts.map(async (post) => {
-                    console.log(`Processing post ID: ${post._id}`);
-    
                     try {
-                        console.log(`Fetching details for post ID: ${post._id}`);
-                        
                         const postResponse = await axios.get(`${MARKETER_API_END_POINT}/post/${post._id}`);
-                        console.log(`Details for post ID ${post._id} received:`, postResponse.data);
-    
                         const fetchedPost = postResponse.data.post;
-                        console.log(`Likes and comments for post ID ${post._id}:`, {
-                            likes: fetchedPost.likes,
-                            comments: fetchedPost.comments,
-                        });
-    
+
                         return {
                             ...post,
                             likes: {
@@ -279,30 +255,18 @@ const StartupEssentialsPosts = () => {
                             comments: fetchedPost.comments || [],
                         };
                     } catch (error) {
-                        console.error(`Failed to fetch details for post ID ${post._id}:`, error);
+                        console.error(`Failed to fetch details for post ${post._id}:`, error);
                         return post; // Return original post if fetching details fails
                     }
                 })
             );
-    
-            console.log('All posts processed. Setting user profile photo and posts.');
-    
-            // Set user profile photo
             setUserProfilePhoto(response.data.userProfilePhoto);
-            console.log('User profile photo set:', response.data.userProfilePhoto);
-    
-            // Set posts
             setPosts(updatedPosts);
-            console.log('Posts state updated successfully.');
-    
         } catch (error) {
             console.error('Failed to fetch posts:', error);
-    
-            // Set empty posts array on failure
             setPosts([]);
         }
     };
-    
     const addComment = async (postId, commentText) => {
         if (!userId) return setShowModal(true);
 
@@ -1284,7 +1248,7 @@ const StartupEssentialsPosts = () => {
                                     ))
                                 ) : (
                                     <div className="text-center py-8">
-                                        <p className="text-gray-700 text-lg">Building your business vision... please wait</p>
+                                        <p className="text-gray-700 text-lg">No posts yet! Share your ideas and inspire the community!</p>
                                         <div className="flex justify-center items-center space-x-2 mt-4">
                                             <svg className="animate-spin h-12 w-12 text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50">
                                                 <circle className="opacity-25" cx="25" cy="25" r="20" stroke="currentColor" strokeWidth="4"></circle>

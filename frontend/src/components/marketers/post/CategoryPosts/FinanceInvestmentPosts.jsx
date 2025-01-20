@@ -191,13 +191,13 @@ const FinanceInvestmentPosts = () => {
     };
     const categories = [
         { name: 'Trending', icon: TrendingUp, href: '/trending' },
-        { name: 'Startup Essentials', icon: Briefcase, href: '/category/startup-essentials' },
-        { name: 'Marketing & Branding', icon: Megaphone, href: '/category/marketing-branding' },
-        { name: 'Legal & Compliance', icon: Scale, href: '/category/legal-compliance' },
-        { name: 'Finance & Investment', icon: DollarSign, href: '/category/finance-investment' },
-        { name: 'Sales & Customer Acquisition', icon: Users, href: '/category/sales-customer-acquisition' },
-        { name: 'Technology & Tools', icon: Wrench, href: '/category/technology-tools' },
-        { name: 'Inspirations', icon: Lightbulb, href: '/category/inspirations' },
+        { name: 'Startup Essentials', icon: Briefcase, href: '/posts/startup-essentials' },
+        { name: 'Marketing & Branding', icon: Megaphone, href: '/posts/marketing-branding' },
+        { name: 'Legal & Compliance', icon: Scale, href: '/posts/legal-compliance' },
+        { name: 'Finance & Investment', icon: DollarSign, href: '/posts/finance-investment' },
+        { name: 'Sales & Customer Acquisition', icon: Users, href: '/posts/sales-customer-acquisition' },
+        { name: 'Technology & Tools', icon: Wrench, href: '/posts/technology-tools' },
+        { name: 'Inspirations', icon: Lightbulb, href: '/posts/inspirations' },
         // { name: 'Brand Strategy & Identity', icon: Palette, href: '/category/brand-strategy-identity' },
         // { name: 'Memes & Marketing Fun', icon: Smile, href: '/category/memes-marketing-fun' },
         // { name: 'Content Creation & Design', icon: PenTool, href: '/category/content-creation-design' },
@@ -1248,7 +1248,7 @@ const FinanceInvestmentPosts = () => {
                                     ))
                                 ) : (
                                     <div className="text-center py-8">
-                                        <p className="text-gray-700 text-lg">Building your business vision... please wait</p>
+                                        <p className="text-gray-700 text-lg">No posts yet! Share your ideas and inspire the community!</p>
                                         <div className="flex justify-center items-center space-x-2 mt-4">
                                             <svg className="animate-spin h-12 w-12 text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50">
                                                 <circle className="opacity-25" cx="25" cy="25" r="20" stroke="currentColor" strokeWidth="4"></circle>

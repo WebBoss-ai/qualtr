@@ -439,18 +439,56 @@ export const getUserProfilePosts = async (req, res) => {
 export const getTrendingPosts = async (req, res) => {
   try {
     const trendingPosts = await Post.find({ trending: true })
-      .populate('author', 'profile.fullname profile.agencyName profile.profilePhoto');
+      .populate('author', 'profile') // Populate the full profile object
+      .lean(); // Use lean for better performance since no modifications are needed
 
     // Shuffle the posts array
     const shuffledPosts = trendingPosts.sort(() => Math.random() - 0.5);
 
     const postsWithMediaUrls = await Promise.all(
       shuffledPosts.map(async (post) => {
+        // Process author profile photo URL
+        if (post.author?.profile?.profilePhoto) {
+          const profilePhotoURL = await getObjectURL(post.author.profile.profilePhoto);
+          post.author.profile.profilePhoto = profilePhotoURL;
+        }
+
+        // Process media (photos and videos)
+        if (post.media) {
+          if (post.media.photos?.length > 0) {
+            post.media.photos = await Promise.all(
+              post.media.photos
+                .filter((photo) => photo && photo.url)
+                .map(async (photo) => {
+                  const s3Key = photo.url.split('amazonaws.com/')[1];
+                  return {
+                    ...photo,
+                    url: await generatePostImageUrl(s3Key),
+                  };
+                })
+            );
+          }
+
+          if (post.media.videos?.length > 0) {
+            post.media.videos = await Promise.all(
+              post.media.videos
+                .filter((video) => video && video.url)
+                .map(async (video) => {
+                  const s3Key = video.url.split('amazonaws.com/')[1];
+                  return {
+                    ...video,
+                    url: await generatePostVideoUrl(s3Key),
+                  };
+                })
+            );
+          }
+        }
+
         // Format the time posted
         const timeAgo = moment(post.createdAt).fromNow();
 
         return {
-          ...post.toObject(),
+          ...post,
           timeAgo, // Adding formatted time
           profileLink: `/marketer-profile/${post.author._id}`, // Link to author's profile
         };
