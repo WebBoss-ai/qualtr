@@ -821,8 +821,8 @@ const TrendingPostsSection = () => {
                                                         <div className="flex items-center">
                                                             {post.author.profile.profilePhoto && (
                                                                 <img
-                                                                    src={post.author.profile.profilePhoto || "/placeholder.svg"}
-                                                                    alt={post.author.profile.fullname}
+                                                                    src={post.author?.profile?.profilePhoto || "/placeholder.svg"}
+                                                                    alt={post.author?.profile?.fullname}
                                                                     className="w-10 h-10 rounded-full mr-3"
                                                                 />
                                                             )}
@@ -1132,8 +1132,8 @@ const TrendingPostsSection = () => {
                                                             <div key={comment._id} className="border-b border-gray-100 pb-2">
                                                                 <div className="flex items-start gap-2">
                                                                     <img
-                                                                        src={comment.profile.profilePhoto || '/default-avatar.png'}
-                                                                        alt={comment.profile.fullname || 'Anonymous User'}
+                                                                        src={comment.profile?.profilePhoto || '/default-avatar.png'}
+                                                                        alt={comment.profile?.fullname || 'Anonymous User'}
                                                                         className="w-8 h-8 rounded-full"
                                                                     />
                                                                     <div>
