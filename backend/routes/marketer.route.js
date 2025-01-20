@@ -4,6 +4,16 @@ import isAuthenticated from '../middlewares/isAuthenticated.js';
 import upload from "../middlewares/multer.js";
 import { addComment, createPost, getAllPosts, getPostById, voteOnPoll, getUserProfilePosts, getTrendingPosts, replyToComment, toggleLike, toggleTrendingStatus, getUserPosts, getAllPostsByAuthor } from '../controllers/post.controller.js';
 import isAuthenticated2 from '../middlewares/isAuthenticated2.js';
+import {
+    getStartupEssentialsPosts,
+    getMarketingBrandingPosts,
+    getLegalCompliancePosts,
+    getFinanceInvestmentPosts,
+    getSalesCustomerAcquisitionPosts,
+    getTechnologyToolsPosts,
+    getInspirationsPosts,
+  } from '../controllers/post.controller.js';
+
 const router = express.Router();
 
 router.post('/register', register);
@@ -24,6 +34,13 @@ router.post('/posts/:postId/comment',isAuthenticated, addComment);
 router.post('/posts/:postId/comment/:commentId/reply',isAuthenticated, replyToComment);
 router.post('/posts/:postId/poll/vote', isAuthenticated, voteOnPoll);
 
+router.get('/posts/startup-essentials', getStartupEssentialsPosts);
+router.get('/posts/marketing-branding', getMarketingBrandingPosts);
+router.get('/posts/legal-compliance', getLegalCompliancePosts);
+router.get('/posts/finance-investment', getFinanceInvestmentPosts);
+router.get('/posts/sales-customer-acquisition', getSalesCustomerAcquisitionPosts);
+router.get('/posts/technology-tools', getTechnologyToolsPosts);
+router.get('/posts/inspirations', getInspirationsPosts);
 
 router.get('/profile/:id', viewProfile);
 

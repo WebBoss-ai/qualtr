@@ -54,6 +54,13 @@ import AdminToggle from './components/marketers/post/AdminToggle'
 import PostDetails from './components/marketers/post/PostDetails '
 import RichTextEditor from './components/RichTextEditor'
 import UserAllPosts from './components/marketers/post/UserAllPosts'
+import InspirationsPosts from './components/marketers/post/CategoryPosts/InspirationsPosts'
+import FinanceInvestmentPosts from './components/marketers/post/CategoryPosts/FinanceInvestmentPosts'
+import LegalCompliancePosts from './components/marketers/post/CategoryPosts/LegalCompliancePosts'
+import SalesCustomerAcquisitionPosts from './components/marketers/post/CategoryPosts/SalesCustomerAcquisitionPosts'
+import TechnologyToolsPosts from './components/marketers/post/CategoryPosts/TechnologyToolsPosts'
+import StartupEssentialsPosts from './components/marketers/post/CategoryPosts/StartupEssentialsPosts'
+import MarketingBrandingPosts from './components/marketers/post/CategoryPosts/MarketingBrandingPosts'
 const appRouter = createBrowserRouter([
   {
     path: '/',
@@ -226,6 +233,34 @@ const appRouter = createBrowserRouter([
   {
     path:"/posts",
     element:<PostsPage /> 
+  },
+  {
+    path:"/posts/inspirations",
+    element:<InspirationsPosts /> 
+  },
+  {
+    path:"/posts/finance-investment",
+    element:<FinanceInvestmentPosts /> 
+  },
+  {
+    path:"/posts/legal-compliance",
+    element:<LegalCompliancePosts /> 
+  },
+  {
+    path:"/posts/sales-customer-acquisition",
+    element:<SalesCustomerAcquisitionPosts /> 
+  },
+  {
+    path:"/posts/technology-tools",
+    element:<TechnologyToolsPosts /> 
+  },
+  {
+    path:"/posts/startup-essentials",
+    element:<StartupEssentialsPosts /> 
+  },
+  {
+    path:"/posts/marketing-branding",
+    element:<MarketingBrandingPosts /> 
   },
   {
     path:"/text-editor",

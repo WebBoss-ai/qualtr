@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { MARKETER_API_END_POINT } from "@/utils/constant";
-import RandomSuggestedProfiles from '../RandomSuggestedProfiles';
+import RandomSuggestedProfiles from '../../RandomSuggestedProfiles';
 import { ThumbsUp, MessageCircle, Share2, Send, Calendar, MapPin, Briefcase, X, BarChart2, FileText, TrendingUpIcon as Trending, Palette, Smile, PenTool, Megaphone, ChevronRight } from 'lucide-react'
 import { TrendingUp, Scale, DollarSign, Image, Users, Wrench, Lightbulb, Clock, Upload } from 'lucide-react';
 import moment from 'moment';
@@ -17,9 +17,8 @@ import { motion } from 'framer-motion';
 import RichTextEditor from '@/components/RichTextEditor';
 import parse from 'html-react-parser'; // Import html-react-parser
 import DOMPurify from 'dompurify';
-import { useParams } from 'react-router-dom';
 
-const PostPage = () => {
+const FinanceInvestmentPosts = () => {
     const [posts, setPosts] = useState([]);
     const [visibleCommentPostId, setVisibleCommentPostId] = useState(null); // Track the post ID for the visible comments section
     const [isExpanded, setIsExpanded] = useState(false)
@@ -36,7 +35,6 @@ const PostPage = () => {
     const [reply, setReply] = useState({ commentId: null, text: '' })
     const [userId, setUserId] = useState(null)
     const [showModal, setShowModal] = useState(false)
-    const { authorId } = useParams();
 
     const handleVote = async (postId, option) => {
         if (!userId) return setShowModal(true);
@@ -238,7 +236,7 @@ const PostPage = () => {
 
         try {
             // Fetch all posts
-            const response = await axios.get(`${MARKETER_API_END_POINT}/all-posts/${authorId}`);
+            const response = await axios.get(`${MARKETER_API_END_POINT}/posts/finance-investment`);
             const posts = response.data.posts || [];
 
             // Fetch likes and comments for each post
@@ -262,7 +260,6 @@ const PostPage = () => {
                     }
                 })
             );
-
             setUserProfilePhoto(response.data.userProfilePhoto);
             setPosts(updatedPosts);
         } catch (error) {
@@ -943,20 +940,72 @@ const PostPage = () => {
                                                         )}
                                                     </div>
                                                 )}
-                                                <div className='mt-3'>
-                                                    {post.poll && post.poll.question && (
+                                                <div className="mt-3">
+                                                    {post.poll && post.poll.question && post.poll.options && Array.isArray(post.poll.options) && (
                                                         <motion.div
                                                             initial={{ opacity: 0, y: 20 }}
                                                             animate={{ opacity: 1, y: 0 }}
                                                             transition={{ duration: 0.5 }}
                                                             className="bg-white border border-gray-200 border-[0.5px] rounded-xl p-6 mb-8"
                                                         >
-                                                            {post.poll && post.poll.question && (
-                                                                <div>
-                                                                    <h4 className="text-sm font-semibold text-gray-900 mb-2 flex items-center">
-                                                                        <BarChart2 className="w-4 h-4 mr-1" /> {post.poll.question}
-                                                                    </h4>
-                                                                    {!post.poll.voters?.includes(userId) ? (
+                                                            <div>
+                                                                <h4 className="text-sm font-semibold text-gray-900 mb-2 flex items-center">
+                                                                    <BarChart2 className="w-4 h-4 mr-1" /> {post.poll.question}
+                                                                </h4>
+
+                                                                {/* Check if poll has ended */}
+                                                                {new Date() > new Date(post.poll.endDate) ? (
+                                                                    <motion.div
+                                                                        initial={{ opacity: 0 }}
+                                                                        animate={{ opacity: 1 }}
+                                                                        transition={{ duration: 0.5 }}
+                                                                        className="bg-gray-50 rounded-lg p-6 mt-6"
+                                                                    >
+                                                                        <p className="text-red-600 font-medium text-center mb-4">
+                                                                            Poll ended! Keep looking on other posts on Qualtr.
+                                                                        </p>
+
+                                                                        <h4 className="text-xl font-semibold text-gray-900 mb-4">
+                                                                            Poll Results
+                                                                        </h4>
+                                                                        <ul className="space-y-4">
+                                                                            {post.poll.options.map((option, index) => {
+                                                                                const votes = post.poll.votes?.[option] || 0;
+                                                                                const totalVotes = Object.values(post.poll.votes || {}).reduce(
+                                                                                    (a, b) => a + b,
+                                                                                    0
+                                                                                );
+                                                                                const percentage = totalVotes
+                                                                                    ? ((votes / totalVotes) * 100).toFixed(1)
+                                                                                    : 0;
+
+                                                                                return (
+                                                                                    <li key={index} className="text-sm text-gray-700">
+                                                                                        <div className="flex items-center justify-between mb-2">
+                                                                                            <span className="font-medium">{option}</span>
+                                                                                            <span className="text-gray-500">
+                                                                                                {votes} votes ({percentage}%)
+                                                                                            </span>
+                                                                                        </div>
+                                                                                        <div className="relative w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                                                                                            <motion.div
+                                                                                                initial={{ width: 0 }}
+                                                                                                animate={{ width: `${percentage}%` }}
+                                                                                                transition={{ duration: 0.5, ease: "easeOut" }}
+                                                                                                className="absolute top-0 left-0 h-full bg-gradient-to-r from-gray-400 to-gray-600"
+                                                                                            />
+                                                                                        </div>
+                                                                                    </li>
+                                                                                );
+                                                                            })}
+                                                                        </ul>
+                                                                        <p className="text-xs text-gray-500 mt-4">
+                                                                            Total votes: {Object.values(post.poll.votes || {}).reduce((a, b) => a + b, 0)}
+                                                                        </p>
+                                                                    </motion.div>
+                                                                ) : (
+                                                                    // Show voting options if poll is active and user hasn't voted
+                                                                    !post.poll.voters?.includes(userId) ? (
                                                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                                                             {post.poll.options.map((option, index) => (
                                                                                 <motion.button
@@ -982,8 +1031,8 @@ const PostPage = () => {
                                                                             </h4>
                                                                             <ul className="space-y-4">
                                                                                 {post.poll.options.map((option, index) => {
-                                                                                    const votes = post.poll.votes[option] || 0;
-                                                                                    const totalVotes = Object.values(post.poll.votes).reduce(
+                                                                                    const votes = post.poll.votes?.[option] || 0;
+                                                                                    const totalVotes = Object.values(post.poll.votes || {}).reduce(
                                                                                         (a, b) => a + b,
                                                                                         0
                                                                                     );
@@ -1012,15 +1061,16 @@ const PostPage = () => {
                                                                                 })}
                                                                             </ul>
                                                                             <p className="text-xs text-gray-500 mt-4">
-                                                                                Total votes: {Object.values(post.poll.votes).reduce((a, b) => a + b, 0)}
+                                                                                Total votes: {Object.values(post.poll.votes || {}).reduce((a, b) => a + b, 0)}
                                                                             </p>
                                                                         </motion.div>
-                                                                    )}
-                                                                </div>
-                                                            )}
+                                                                    )
+                                                                )}
+                                                            </div>
                                                         </motion.div>
                                                     )}
                                                 </div>
+
                                                 {/* Document Section */}
                                                 {post.document && (
                                                     <div className="bg-gray-50 rounded-md p-3 mb-4">
@@ -1082,8 +1132,8 @@ const PostPage = () => {
                                                             <div key={comment._id} className="border-b border-gray-100 pb-2">
                                                                 <div className="flex items-start gap-2">
                                                                     <img
-                                                                        src={comment.profile?.profilePhoto || '/default-avatar.png'}
-                                                                        alt={comment.profile?.fullname || 'Anonymous User'}
+                                                                        src={comment.profile.profilePhoto || '/default-avatar.png'}
+                                                                        alt={comment.profile.fullname || 'Anonymous User'}
                                                                         className="w-8 h-8 rounded-full"
                                                                     />
                                                                     <div>
@@ -1226,4 +1276,4 @@ const PostPage = () => {
     );
 };
 
-export default PostPage;
+export default FinanceInvestmentPosts;

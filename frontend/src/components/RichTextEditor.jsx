@@ -9,13 +9,22 @@ import Italic from "@tiptap/extension-italic";
 import Underline from "@tiptap/extension-underline";
 import Color from "@tiptap/extension-color";
 import TextAlign from "@tiptap/extension-text-align";
+import { BoldIcon, ItalicIcon, UnderlineIcon, AlignLeft, AlignCenter, AlignRight, Palette } from 'lucide-react';
 
 const RichTextEditor = ({ content, setContent }) => {
     const editor = useEditor({
         extensions: [
             StarterKit,
             TextStyle,
-            Bold,
+            Bold.extend({
+                addOptions() {
+                    return {
+                        HTMLAttributes: {
+                            style: 'font-weight: 500;',
+                        },
+                    };
+                },
+            }),
             Italic,
             Underline,
             Color.configure({ types: ["textStyle"] }),
@@ -41,68 +50,75 @@ const RichTextEditor = ({ content, setContent }) => {
         },
     });
 
+    const ToolbarButton = ({ onClick, isActive, icon: Icon }) => (
+        <button
+            type="button"
+            onClick={onClick}
+            className={`p-2 rounded-md transition-all duration-200 ease-in-out ${
+                isActive 
+                    ? "bg-gray-800 text-white" 
+                    : "text-gray-600 hover:bg-gray-200"
+            }`}
+        >
+            <Icon size={18} />
+        </button>
+    );
+
     return (
-        <div className="p-4">
+        <div className="bg-white rounded-lg overflow-hidden">
             {/* Toolbar */}
-            <div className="toolbar mb-2 flex gap-2">
-                <button
-                    type="button" // Add this
+            <div className="toolbar p-2 bg-gray-100 border-b border-gray-200 flex items-center gap-1">
+                <ToolbarButton
                     onClick={() => editor.chain().focus().toggleBold().run()}
-                    className={`px-2 py-1 border rounded ${editor.isActive("bold") ? "bg-blue-500 text-white" : ""
-                        }`}
-                >
-                    Bold
-                </button>
-                <button
-                    type="button" // Add this
-                    onClick={() => editor.chain().focus().toggleItalic().run()}
-                    className={`px-2 py-1 border rounded ${editor.isActive("italic") ? "bg-blue-500 text-white" : ""
-                        }`}
-                >
-                    Italic
-                </button>
-                <button
-                    type="button" // Add this
-                    onClick={() => editor.chain().focus().toggleUnderline().run()}
-                    className={`px-2 py-1 border rounded ${editor.isActive("underline") ? "bg-blue-500 text-white" : ""
-                        }`}
-                >
-                    Underline
-                </button>
-                <input
-                    type="color"
-                    onChange={(e) =>
-                        editor.chain().focus().setColor(e.target.value).run()
-                    }
-                    className="px-2 py-1 border rounded"
+                    isActive={editor.isActive("bold")}
+                    icon={BoldIcon}
                 />
-                <button
-                    type="button" // Add this
+                <ToolbarButton
+                    onClick={() => editor.chain().focus().toggleItalic().run()}
+                    isActive={editor.isActive("italic")}
+                    icon={ItalicIcon}
+                />
+                <ToolbarButton
+                    onClick={() => editor.chain().focus().toggleUnderline().run()}
+                    isActive={editor.isActive("underline")}
+                    icon={UnderlineIcon}
+                />
+                <div className="relative">
+                    <ToolbarButton
+                        onClick={() => {}}
+                        isActive={false}
+                        icon={Palette}
+                    />
+                    <input
+                        type="color"
+                        onChange={(e) => editor.chain().focus().setColor(e.target.value).run()}
+                        className="absolute inset-0 opacity-0 cursor-pointer"
+                    />
+                </div>
+                <div className="h-6 w-px bg-gray-300 mx-1" />
+                <ToolbarButton
                     onClick={() => editor.chain().focus().setTextAlign("left").run()}
-                    className="px-2 py-1 border rounded"
-                >
-                    Align Left
-                </button>
-                <button
-                    type="button" // Add this
+                    isActive={editor.isActive({ textAlign: "left" })}
+                    icon={AlignLeft}
+                />
+                <ToolbarButton
                     onClick={() => editor.chain().focus().setTextAlign("center").run()}
-                    className="px-2 py-1 border rounded"
-                >
-                    Align Center
-                </button>
-                <button
-                    type="button" // Add this
+                    isActive={editor.isActive({ textAlign: "center" })}
+                    icon={AlignCenter}
+                />
+                <ToolbarButton
                     onClick={() => editor.chain().focus().setTextAlign("right").run()}
-                    className="px-2 py-1 border rounded"
-                >
-                    Align Right
-                </button>
+                    isActive={editor.isActive({ textAlign: "right" })}
+                    icon={AlignRight}
+                />
             </div>
 
-
             {/* Editor */}
-            <div className="border p-2 rounded-md">
-                <EditorContent editor={editor} />
+            <div className="p-4">
+                <EditorContent 
+                    editor={editor} 
+                    className="prose max-w-none focus:outline-none"
+                />
             </div>
         </div>
     );

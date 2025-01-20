@@ -191,26 +191,26 @@ const PostPage = () => {
     };
     const categories = [
         { name: 'Trending', icon: TrendingUp, href: '/trending' },
-        { name: 'Startup Essentials', icon: Briefcase, href: '/category/startup-essentials' },
-        { name: 'Marketing & Branding', icon: Megaphone, href: '/category/marketing-branding' },
-        { name: 'Legal & Compliance', icon: Scale, href: '/category/legal-compliance' },
-        { name: 'Finance & Investment', icon: DollarSign, href: '/category/finance-investment' },
-        { name: 'Sales & Customer Acquisition', icon: Users, href: '/category/sales-customer-acquisition' },
-        { name: 'Technology & Tools', icon: Wrench, href: '/category/technology-tools' },
-        { name: 'Inspirations', icon: Lightbulb, href: '/category/inspirations' },
+        { name: 'Startup Essentials', icon: Briefcase, href: '/posts/startup-essentials' },
+        { name: 'Marketing & Branding', icon: Megaphone, href: '/posts/marketing-branding' },
+        { name: 'Legal & Compliance', icon: Scale, href: '/posts/legal-compliance' },
+        { name: 'Finance & Investment', icon: DollarSign, href: '/posts/finance-investment' },
+        { name: 'Sales & Customer Acquisition', icon: Users, href: '/posts/sales-customer-acquisition' },
+        { name: 'Technology & Tools', icon: Wrench, href: '/posts/technology-tools' },
+        { name: 'Inspirations', icon: Lightbulb, href: '/posts/inspirations' },
         // { name: 'Brand Strategy & Identity', icon: Palette, href: '/category/brand-strategy-identity' },
         // { name: 'Memes & Marketing Fun', icon: Smile, href: '/category/memes-marketing-fun' },
         // { name: 'Content Creation & Design', icon: PenTool, href: '/category/content-creation-design' },
         // { name: 'Digital Marketing', icon: Megaphone, href: '/category/digital-marketing' },
     ]
     const categories2 = [
-        { name: 'Startup Essentials', icon: Briefcase, href: '/category/startup-essentials' },
-        { name: 'Marketing & Branding', icon: Megaphone, href: '/category/marketing-branding' },
-        { name: 'Legal & Compliance', icon: Scale, href: '/category/legal-compliance' },
-        { name: 'Finance & Investment', icon: DollarSign, href: '/category/finance-investment' },
-        { name: 'Sales & Customer Acquisition', icon: Users, href: '/category/sales-customer-acquisition' },
-        { name: 'Technology & Tools', icon: Wrench, href: '/category/technology-tools' },
-        { name: 'Inspirations', icon: Lightbulb, href: '/category/inspirations' },
+        { name: 'Startup Essentials', icon: Briefcase, href: '/posts/startup-essentials' },
+        { name: 'Marketing & Branding', icon: Megaphone, href: '/posts/marketing-branding' },
+        { name: 'Legal & Compliance', icon: Scale, href: '/posts/legal-compliance' },
+        { name: 'Finance & Investment', icon: DollarSign, href: '/posts/finance-investment' },
+        { name: 'Sales & Customer Acquisition', icon: Users, href: '/posts/sales-customer-acquisition' },
+        { name: 'Technology & Tools', icon: Wrench, href: '/posts/technology-tools' },
+        { name: 'Inspirations', icon: Lightbulb, href: '/posts/inspirations' },
         // { name: 'Brand Strategy & Identity', icon: Palette, href: '/category/brand-strategy-identity' },
         // { name: 'Memes & Marketing Fun', icon: Smile, href: '/category/memes-marketing-fun' },
         // { name: 'Content Creation & Design', icon: PenTool, href: '/category/content-creation-design' },
@@ -1132,8 +1132,8 @@ const PostPage = () => {
                                                             <div key={comment._id} className="border-b border-gray-100 pb-2">
                                                                 <div className="flex items-start gap-2">
                                                                     <img
-                                                                        src={comment.profile?.profilePhoto || '/default-avatar.png'}
-                                                                        alt={comment.profile?.fullname || 'Anonymous User'}
+                                                                        src={comment.profile.profilePhoto || '/default-avatar.png'}
+                                                                        alt={comment.profile.fullname || 'Anonymous User'}
                                                                         className="w-8 h-8 rounded-full"
                                                                     />
                                                                     <div>
