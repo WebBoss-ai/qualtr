@@ -36,6 +36,10 @@ const StartupEssentialsPosts = () => {
     const [userId, setUserId] = useState(null)
     const [showModal, setShowModal] = useState(false)
 
+    const [showPostSuccessModal, setShowPostSuccessModal] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [modalMessage, setModalMessage] = useState('');
+
     const handleVote = async (postId, option) => {
         if (!userId) return setShowModal(true);
         try {
@@ -320,6 +324,9 @@ const StartupEssentialsPosts = () => {
             setShowModal(true);
             return;
         }
+
+        setIsSubmitting(true); // Disable button and show "Posting..."
+
         const formData = new FormData();
         formData.append('category', postCategory);
         formData.append('text', postText);
@@ -369,9 +376,23 @@ const StartupEssentialsPosts = () => {
             const response = await axios.post(`${MARKETER_API_END_POINT}/posts`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
-            fetchPosts(); // Refresh posts after submission
+
+            // Reset the form fields
+            setPostCategory('');
+            setPostText('');
+            setMedia({ images: [], videos: [] });
+            setAdditionalData({});
+
+            // Show modal
+            setModalMessage('Thanks for posting on Qualtr!');
+            setShowPostSuccessModal(true);
+
+            // Refresh posts
+            fetchPosts();
         } catch (error) {
             console.error('Failed to create post:', error);
+        } finally {
+            setIsSubmitting(false); // Enable button again
         }
     };
 
@@ -791,9 +812,11 @@ const StartupEssentialsPosts = () => {
                                                         <div className="flex justify-end">
                                                             <button
                                                                 type="submit"
-                                                                className="px-4 py-2 bg-gray-800 text-white text-sm font-medium rounded-md hover:bg-gray-700 transition-colors duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-500"
+                                                                className={`px-4 py-2 text-white text-sm font-medium rounded-md transition-colors duration-150 ease-in-out focus:outline-none focus:ring-2 ${isSubmitting ? 'bg-gray-500 cursor-not-allowed' : 'bg-gray-800 hover:bg-gray-700'
+                                                                    }`}
+                                                                disabled={isSubmitting}
                                                             >
-                                                                Create Post
+                                                                {isSubmitting ? 'Posting...' : 'Create Post'}
                                                             </button>
                                                         </div>
                                                     </form>
@@ -1271,6 +1294,20 @@ const StartupEssentialsPosts = () => {
                 </div>
             </div>
             <LoginModal isOpen={showModal} onClose={() => setShowModal(false)} />
+            {showPostSuccessModal && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                    <div className="bg-white p-6 rounded-md shadow-md text-center">
+                        <h2 className="text-lg font-semibold mb-4">{modalMessage}</h2>
+                        <button
+                            onClick={() => setShowPostSuccessModal(false)}
+                            className="px-4 py-2 bg-gray-800 text-white text-sm font-medium rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            )}
+
             <Footer />
         </div >
     );

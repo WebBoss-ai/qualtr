@@ -17,6 +17,7 @@ import { motion } from 'framer-motion';
 import RichTextEditor from '@/components/RichTextEditor';
 import parse from 'html-react-parser'; // Import html-react-parser
 import DOMPurify from 'dompurify';
+import ShareModal from './ShareModal';
 
 const PostPage = () => {
     const [posts, setPosts] = useState([]);
@@ -35,7 +36,7 @@ const PostPage = () => {
     const [reply, setReply] = useState({ commentId: null, text: '' })
     const [userId, setUserId] = useState(null)
     const [showModal, setShowModal] = useState(false)
-
+    const [showShareModal, setShowShareModal] = useState(false);
     const [showPostSuccessModal, setShowPostSuccessModal] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
@@ -1142,11 +1143,19 @@ const PostPage = () => {
                                                     </button>
 
                                                     {/* Share Button */}
-                                                    <button className="flex items-center gap-1 px-3 py-1 rounded-full text-xs hover:bg-gray-100 text-gray-700">
+                                                    <button
+                                                        className="flex items-center gap-1 px-3 py-1 rounded-full text-xs hover:bg-gray-100 text-gray-700"
+                                                        onClick={() => setShowShareModal(true)}
+                                                    >
                                                         <Share2 size={14} />
                                                         <span>Share</span>
                                                     </button>
                                                 </div>
+                                                <ShareModal
+                                                        isOpen={showShareModal}
+                                                        onClose={() => setShowShareModal(false)}
+                                                        sharingLink={post.sharingLink} // Pass the sharing link
+                                                    />
                                             </div>
                                             {/* Comments Section */}
                                             {visibleCommentPostId === post._id && (
@@ -1296,6 +1305,7 @@ const PostPage = () => {
                 </div>
             </div>
             <LoginModal isOpen={showModal} onClose={() => setShowModal(false)} />
+
             {showPostSuccessModal && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                     <div className="bg-white p-6 rounded-md shadow-md text-center">

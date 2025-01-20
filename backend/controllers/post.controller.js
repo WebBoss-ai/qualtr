@@ -160,6 +160,7 @@ export const getAllPosts = async (req, res) => {
           const profilePhotoURL = await getObjectURL(post.author.profile.profilePhoto);
           post.author.profile.profilePhoto = profilePhotoURL;
         }
+        const sharingLink = `https://qualtr.com/posts/${post._id}`;
 
         // Process media (photos and videos)
         if (post.media) {
@@ -192,7 +193,7 @@ export const getAllPosts = async (req, res) => {
           }
         }
 
-        return post;
+        return { ...post, sharingLink };
       })
     );
 
