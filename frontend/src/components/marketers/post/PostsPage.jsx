@@ -1150,12 +1150,12 @@ const PostPage = () => {
                                                         <Share2 size={14} />
                                                         <span>Share</span>
                                                     </button>
-                                                </div>
-                                                <ShareModal
+                                                    <ShareModal
                                                         isOpen={showShareModal}
                                                         onClose={() => setShowShareModal(false)}
                                                         sharingLink={post.sharingLink} // Pass the sharing link
                                                     />
+                                                </div>
                                             </div>
                                             {/* Comments Section */}
                                             {visibleCommentPostId === post._id && (
