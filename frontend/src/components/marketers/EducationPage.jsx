@@ -3,7 +3,7 @@ import axios from "axios";
 import { MARKETER_API_END_POINT } from "@/utils/constant";
 import { PlusCircle, Edit2, Trash2, X } from 'lucide-react'
 
-const EducationPage = ({ profileData, fetchProfileData }) => {
+const EducationPage = ({ profileData, fetchProfile }) => {
     const [editingEducation, setEditingEducation] = useState(null);
     const [updatedEducation, setUpdatedEducation] = useState({});
 
@@ -38,7 +38,7 @@ const EducationPage = ({ profileData, fetchProfileData }) => {
             });
 
             if (response.data.success) {
-                fetchProfileData();
+                fetchProfile();
                 setEditingEducation(null);
             }
         } catch (error) {
@@ -51,7 +51,7 @@ const EducationPage = ({ profileData, fetchProfileData }) => {
             const response = await axios.delete(`${MARKETER_API_END_POINT}/delete-education/${educationId}`);
 
             if (response.data.success) {
-                fetchProfileData();
+                fetchProfile();
             }
         } catch (error) {
             console.error("Error deleting education:", error);
