@@ -12,8 +12,8 @@ import { useNavigate } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 
 const categories = [
-    'SEO', 'Content Marketing', 'Social Media Marketing', 'PPC', 
-    'Email Marketing', 'Affiliate Marketing', 'Video Marketing', 
+    'SEO', 'Content Marketing', 'Social Media Marketing', 'PPC',
+    'Email Marketing', 'Affiliate Marketing', 'Video Marketing',
     'Influencer Marketing', 'Mobile Marketing', 'Analytics'
 ];
 
@@ -188,52 +188,52 @@ export default PostJob;
 
 
 <section style={styles.section}>
-<p style={styles.sectionTitle}>Features</p>
-<h2 style={styles.sectionHeading}>
-    Our <span style={{ color: '#17B169' }}>Services</span> for Your Business Growth
-</h2>
-<p style={styles.heroSubtitle}>
-    We bridge the gap between brands and top-tier digital marketing agencies, offering tailored solutions for your business needs.
-</p>
+    <p style={styles.sectionTitle}>Features</p>
+    <h2 style={styles.sectionHeading}>
+        Our <span style={{ color: '#17B169' }}>Services</span> for Your Business Growth
+    </h2>
+    <p style={styles.heroSubtitle}>
+        We bridge the gap between brands and top-tier digital marketing agencies, offering tailored solutions for your business needs.
+    </p>
 
-<div style={styles.featureGrid}>
-    {[
-        { icon: '🏷️', title: 'Branding and Identity', description: 'Collaborate with agencies to craft a strong, unique brand identity that connects with your target audience and stands out in the market.' },
-        { icon: '📱', title: 'Social Media Marketing', description: 'Engage with creative agencies to develop effective social media strategies that boost your online presence and foster community growth.' },
-        { icon: '🔍', title: 'Search Engine Optimization (SEO)', description: 'Work with specialists to optimize your website and increase organic visibility, driving long-term success in search engine rankings.' },
-        { icon: '💰', title: 'Pay-Per-Click (PPC) Advertising', description: 'Partner with certified experts to launch targeted ad campaigns that drive high-quality traffic and measurable results.' },
-        { icon: '✍️', title: 'Content Marketing', description: 'Create meaningful content through agencies to attract, engage, and convert your audience, building trust and authority in your industry.' },
-        { icon: '📧', title: 'Email Marketing', description: 'Build and nurture relationships with tailored email campaigns designed to increase customer loyalty and drive conversions.' },
-    ].map((feature, index) => (
-        <div key={index} style={styles.featureItem}>
-            <div style={styles.featureIcon}>{feature.icon}</div>
-            <div style={styles.featureContent}>
-                <h3 style={styles.featureTitle}>{feature.title}</h3>
-                <p style={styles.featureDescription}>{feature.description}</p>
+    <div style={styles.featureGrid}>
+        {[
+            { icon: '🏷️', title: 'Branding and Identity', description: 'Collaborate with agencies to craft a strong, unique brand identity that connects with your target audience and stands out in the market.' },
+            { icon: '📱', title: 'Social Media Marketing', description: 'Engage with creative agencies to develop effective social media strategies that boost your online presence and foster community growth.' },
+            { icon: '🔍', title: 'Search Engine Optimization (SEO)', description: 'Work with specialists to optimize your website and increase organic visibility, driving long-term success in search engine rankings.' },
+            { icon: '💰', title: 'Pay-Per-Click (PPC) Advertising', description: 'Partner with certified experts to launch targeted ad campaigns that drive high-quality traffic and measurable results.' },
+            { icon: '✍️', title: 'Content Marketing', description: 'Create meaningful content through agencies to attract, engage, and convert your audience, building trust and authority in your industry.' },
+            { icon: '📧', title: 'Email Marketing', description: 'Build and nurture relationships with tailored email campaigns designed to increase customer loyalty and drive conversions.' },
+        ].map((feature, index) => (
+            <div key={index} style={styles.featureItem}>
+                <div style={styles.featureIcon}>{feature.icon}</div>
+                <div style={styles.featureContent}>
+                    <h3 style={styles.featureTitle}>{feature.title}</h3>
+                    <p style={styles.featureDescription}>{feature.description}</p>
+                </div>
             </div>
-        </div>
-    ))}
-</div>
+        ))}
+    </div>
 </section>
 
-{/* News and updates Section */}
+{/* News and updates Section */ }
 <section className="mb-16 mt-12">
-<h2 className="text-2xl font-bold mb-6">News and updates</h2>
-<div className="bg-green-700 text-white p-6 rounded-lg flex items-center justify-between">
-  <div>
-    <h3 className="text-xl font-bold mb-2">2023 Impact Report</h3>
-    <p>See how Qualtr is transforming the digital marketing landscape</p>
-  </div>
-  <button className="bg-white text-green-700 px-4 py-2 rounded-full font-semibold">
-    Read the report
-  </button>
-</div>
+    <h2 className="text-2xl font-bold mb-6">News and updates</h2>
+    <div className="bg-green-700 text-white p-6 rounded-lg flex items-center justify-between">
+        <div>
+            <h3 className="text-xl font-bold mb-2">2023 Impact Report</h3>
+            <p>See how Qualtr is transforming the digital marketing landscape</p>
+        </div>
+        <button className="bg-white text-green-700 px-4 py-2 rounded-full font-semibold">
+            Read the report
+        </button>
+    </div>
 </section>
 
 
 
 
-                {/* Features Section */}
+{/* Features Section */ }
                 <section className="py-20 px-4 md:px-8 lg:px-16 bg-gray-50">
                     <div className="max-w-7xl mx-auto">
                         <h2 className="text-3xl md:text-4xl font-bold mb-4 text-center">
@@ -266,3 +266,244 @@ export default PostJob;
                             <AvatarImage src={profile?.profile?.profilePhoto || 'https://via.placeholder.com/150'} alt="profile" />
                         </Avatar>
                         
+
+
+
+
+                                    <ExperiencesPage profileData={profileData} setProfileData={setProfileData} />
+                                    <EducationPage profileData={profileData} setProfileData={setProfileData} />
+                        
+                                    <button onClick={() =>setModalOpen1(true)}>Edit Experience</button>
+                                    <ExperiencesModal
+                                        isOpen={isModalOpen1}
+                                        onClose={() => setModalOpen1(false)}
+                                        initialExperiences={experiences}
+                                        experiences={selectedExperiences}
+                                    />
+                        
+                                    <button onClick={() => setModalOpen2(true)}>Edit Education</button>
+                                    <EducationModal
+                                        isOpen={isModalOpen2}
+                                        onClose={() => setModalOpen2(false)}
+                                        initialEducation={education}
+                                        education={selectedEducation}
+                                    />
+
+
+
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { MARKETER_API_END_POINT } from '@/utils/constant';
+import ExperiencesModal from './ExperiencesModal';
+import EducationModal from './EducationModal';
+import ExperiencesPage from './ExperiencesPage';
+import EducationPage from './EducationPage';
+
+const MarketerUpdateProfile = () => {
+    const [profileData, setProfileData] = useState({
+        fullname: '',
+        phoneNumber: '',
+        agencyName: '',
+        bio: '',
+        skills: '',
+        location: '',
+        profilePhoto: '',
+        experiences: [],
+        education: [],
+    });
+
+    const [selectedExperiences, setSelectedExperiences] = useState(null);
+    const [selectedEducation, setSelectedEducation] = useState(null);
+
+    const [isModalOpen1, setModalOpen1] = useState(false);
+    const experiences = []; // Fetch or pass initial experiences
+
+    const [isModalOpen2, setModalOpen2] = useState(false);
+    const education = []; // Fetch or pass initial experiences
+
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(null);
+
+    const token = localStorage.getItem('token');
+
+    const decodeToken = (token) => {
+        try {
+            const payload = token.split('.')[1];
+            const decodedPayload = atob(payload);
+            return JSON.parse(decodedPayload);
+        } catch (error) {
+            throw new Error('Invalid or expired token. Please log in again.');
+        }
+    };
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            setLoading(true);
+            setError(null);
+            setSuccess(null);
+
+            try {
+                if (!token) {
+                    throw new Error('Token is not available. Please log in.');
+                }
+
+                const decodedToken = decodeToken(token);
+                const userId = decodedToken.userId;
+                if (!userId) {
+                    throw new Error('User ID is not found in the token.');
+                }
+
+                const endpoint = `${MARKETER_API_END_POINT}/profile/${userId}`;
+                const res = await axios.get(endpoint, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                setProfileData(res.data.profile || {
+                    fullname: '',
+                    phoneNumber: '',
+                    agencyName: '',
+                    bio: '',
+                    skills: '',
+                    location: '',
+                    profilePhoto: '',
+                    experiences: [],
+                    education: [],
+                });
+                setSuccess('Profile loaded successfully.');
+            } catch (error) {
+                setError(error.response?.data?.message || error.message || 'Failed to load profile data.');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProfile();
+    }, [token]);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setProfileData((prevData) => ({ ...prevData, [name]: value }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setError(null);
+        setSuccess(null);
+
+        try {
+            const formData = new FormData();
+            for (const key in profileData) {
+                if (key === 'profilePhoto' && profileData[key]) {
+                    formData.append(key, profileData[key]);
+                } else {
+                    formData.append(key, profileData[key]);
+                }
+            }
+
+            const res = await axios.post(`${MARKETER_API_END_POINT}/profile/update`, formData, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            setSuccess('Profile updated successfully!');
+        } catch (error) {
+            setError(error.response?.data?.message || 'Failed to update profile. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div>
+            <h2>Update Profile</h2>
+            {loading && <p>Loading...</p>}
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+            {success && <p style={{ color: 'green' }}>{success}</p>}
+
+            <form onSubmit={handleSubmit}>
+                <input
+                    type="text"
+                    name="fullname"
+                    value={profileData.fullname}
+                    onChange={handleChange}
+                    placeholder="Full Name"
+                    required
+                />
+                <input
+                    type="text"
+                    name="phoneNumber"
+                    value={profileData.phoneNumber}
+                    onChange={handleChange}
+                    placeholder="Phone Number"
+                    required
+                />
+                <input
+                    type="text"
+                    name="agencyName"
+                    value={profileData.agencyName}
+                    onChange={handleChange}
+                    placeholder="Agency Name"
+                    required
+                />
+                <textarea
+                    name="bio"
+                    value={profileData.bio}
+                    onChange={handleChange}
+                    placeholder="Bio"
+                />
+                <input
+                    type="text"
+                    name="skills"
+                    value={profileData.skills}
+                    onChange={handleChange}
+                    placeholder="Skills (comma separated)"
+                />
+                <input
+                    type="text"
+                    name="location"
+                    value={profileData.location}
+                    onChange={handleChange}
+                    placeholder="Location"
+                />
+                <input
+                    type="file"
+                    name="profilePhoto"
+                    onChange={(e) =>
+                        setProfileData((prevData) => ({
+                            ...prevData,
+                            profilePhoto: e.target.files[0],
+                        }))
+                    }
+                />
+                <button type="submit" disabled={loading}>Update Profile</button>
+            </form>
+
+            <ExperiencesPage profileData={profileData} setProfileData={setProfileData} />
+            <EducationPage profileData={profileData} setProfileData={setProfileData} />
+
+            <button onClick={() => setModalOpen1(true)}>Edit Experience</button>
+            <ExperiencesModal
+                isOpen={isModalOpen1}
+                onClose={() => setModalOpen1(false)}
+                initialExperiences={experiences}
+                experiences={selectedExperiences}
+            />
+
+            <button onClick={() => setModalOpen2(true)}>Edit Education</button>
+            <EducationModal
+                isOpen={isModalOpen2}
+                onClose={() => setModalOpen2(false)}
+                initialEducation={education}
+                education={selectedEducation}
+            />
+        </div>
+    );
+};
+
+export default MarketerUpdateProfile;
