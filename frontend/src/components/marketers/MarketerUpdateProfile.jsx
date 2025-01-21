@@ -295,8 +295,8 @@ const EnhancedMarketerProfile = () => {
 
                     {/* Sidebar - 30% */}
                     <div className="lg:w-[30%]">
-                        <ExperiencesPage profileData={profileData} setProfileData={setProfileData} />
-                        <EducationPage profileData={profileData} setProfileData={setProfileData} />
+                        <ExperiencesPage profileData={profileData} setProfileData={setProfileData} fetchProfile={fetchProfile} />
+                        <EducationPage profileData={profileData} setProfileData={setProfileData} fetchProfile={fetchProfile} />
 
                         <button onClick={() => setModalOpen1(true)}>Edit Experience</button>
                         <ExperiencesModal
