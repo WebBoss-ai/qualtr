@@ -46,21 +46,29 @@ const ExperiencesPage = ({ profileData, fetchProfileData }) => {
 
     const handleSaveEdit = async () => {
         try {
+            console.log("Attempting to update experience...");
+            console.log("Editing Experience ID:", editingExperience?._id);
+            console.log("Updated Experience Data:", updatedExperience);
+    
             const response = await axios.put(`${MARKETER_API_END_POINT}/edit-experience`, {
                 experienceId: editingExperience._id,
                 updatedExperience,
-            })
-
+            });
+    
+            console.log("Response from server:", response);
+    
             if (response.data.success) {
-                fetchProfileData()
-                setEditingExperience(null)
+                console.log("Experience updated successfully!");
+                fetchProfileData();
+                setEditingExperience(null);
             } else {
-                console.error("Error in saving edit:", response.data.message)
+                console.error("Error in saving edit:", response.data.message);
             }
         } catch (error) {
-            console.error("Error updating experience:", error)
+            console.error("Error updating experience:", error);
         }
-    }
+    };
+    
 
     const handleDeleteExperiences = async (experienceId) => {
         try {
@@ -235,8 +243,6 @@ const ExperiencesPage = ({ profileData, fetchProfileData }) => {
                                     />
                                 </div>
                             </div>
-
-
                             <div className="flex items-center">
                                 <input
                                     type="checkbox"
@@ -254,6 +260,16 @@ const ExperiencesPage = ({ profileData, fetchProfileData }) => {
                                 <label htmlFor="isCurrent" className="ml-2 block text-sm text-gray-700">
                                     Current Position
                                 </label>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                <input
+                                    type="text"
+                                    name="description"
+                                    value={updatedExperience.description || ""}
+                                    onChange={handleChange}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-gray-500"
+                                />
                             </div>
                         </div>
                         <div className="mt-6 flex justify-end space-x-3">
