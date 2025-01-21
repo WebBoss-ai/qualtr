@@ -58,6 +58,7 @@ const ExperiencesPage = ({ profileData, fetchProfileData }) => {
             }
         } catch (error) {
             console.error("Error updating experience:", error);
+            setEditingExperience(null);  // Close the edit form
         }
     };
     
