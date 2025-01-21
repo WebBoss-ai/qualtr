@@ -8,7 +8,7 @@ import { PlusCircle, Edit2, Trash2, X } from 'lucide-react'
 const employmentTypes = ["Full-time", "Part-time", "Contract", "Internship", "Freelance"]
 const locationTypes = ["On-site", "Remote", "Hybrid"]
 
-const ExperiencesPage = ({ profileData, fetchProfileData }) => {
+const ExperiencesPage = ({ profileData, fetchProfile }) => {
     const [editingExperience, setEditingExperience] = useState(null)
     const [updatedExperience, setUpdatedExperience] = useState({})
 
@@ -51,10 +51,10 @@ const ExperiencesPage = ({ profileData, fetchProfileData }) => {
             });
     
             if (response.data.success) {
-                if (typeof fetchProfileData === "function") {
-                    fetchProfileData(); // Ensure this is callable
+                if (typeof fetchProfile === "function") {
+                    fetchProfile(); // Ensure this is callable
                 } else {
-                    console.error("fetchProfileData is not a function");
+                    console.error("fetchProfile is not a function");
                 }
                 setEditingExperience(null);
             } else {
@@ -72,7 +72,7 @@ const ExperiencesPage = ({ profileData, fetchProfileData }) => {
             const response = await axios.delete(`${MARKETER_API_END_POINT}/delete-experience/${experienceId}`)
 
             if (response.data.success) {
-                fetchProfileData()
+                fetchProfile()
             } else {
                 console.error("Error in deleting experience:", response.data.message)
             }
