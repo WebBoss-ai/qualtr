@@ -6,6 +6,7 @@ import ExperiencesPage from './ExperiencesPage'
 import EducationModal from './EducationModal'
 import EducationPage from './EducationPage'
 import ExperiencesModal from './ExperiencesModal'
+import UserProfilePosts from './post/UserProfilePosts'
 
 const EnhancedMarketerProfile = () => {
     const [profileData, setProfileData] = useState({
@@ -24,7 +25,7 @@ const EnhancedMarketerProfile = () => {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
     const [success, setSuccess] = useState(null)
-
+    const userId = null
     const [selectedExperiences, setSelectedExperiences] = useState(null);
     const [selectedEducation, setSelectedEducation] = useState(null);
 
@@ -45,10 +46,10 @@ const EnhancedMarketerProfile = () => {
         setSuccess(null)
 
         try {
-            if (!token) throw new Error('Token is not available. Please log in.')
-
             const decodedToken = JSON.parse(atob(token.split('.')[1]))
             const userId = decodedToken.userId
+            if (!token) throw new Error('Token is not available. Please log in.')
+
             if (!userId) throw new Error('User ID is not found in the token.')
 
             const res = await axios.get(`${MARKETER_API_END_POINT}/profile/${userId}`, {
@@ -290,22 +291,60 @@ const EnhancedMarketerProfile = () => {
                                 {loading ? 'Updating...' : 'Update Profile'}
                             </button>
                         </form>
+                        <UserProfilePosts id={userId} />
                     </div>
 
                     {/* Sidebar - 30% */}
                     <div className="lg:w-[30%]">
                         <ExperiencesPage profileData={profileData} setProfileData={setProfileData} fetchProfile={fetchProfile} />
+                        <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
+                            <button
+                                onClick={() => setModalOpen1(true)}
+                                style={{
+                                    borderTop: "0.5px solid #e6e6e6",
+                                    borderBottom: "0.5px solid #e6e6e6",
+                                    backgroundColor: "#fff",
+                                    padding: "8px 0",
+                                    marginBottom: "32px",
+                                    fontSize: "14px",
+                                    cursor: "pointer",
+                                    width: "100%",
+                                    textAlign: "center",
+                                    transition: "background-color 0.3s ease",
+                                }}
+                                onMouseEnter={(e) => (e.target.style.backgroundColor = "#f2f2f2")}
+                                onMouseLeave={(e) => (e.target.style.backgroundColor = "#fff")}
+                            >
+                                Add Experience
+                            </button>
+                        </div>
                         <EducationPage profileData={profileData} setProfileData={setProfileData} fetchProfile={fetchProfile} />
 
-                        <button onClick={() => setModalOpen1(true)}>Edit Experience</button>
                         <ExperiencesModal
                             isOpen={isModalOpen1}
                             onClose={() => setModalOpen1(false)}
                             initialExperiences={experiences}
                             experiences={selectedExperiences}
                         />
-
-                        <button onClick={() => setModalOpen2(true)}>Edit Education</button>
+                        <button
+                            onClick={() => setModalOpen2(true)}
+                            style={{
+                                borderTop: "0.5px solid #e6e6e6",
+                                borderBottom: "0.5px solid #e6e6e6",
+                                backgroundColor: "#fff",
+                                padding: "8px 0",
+                                marginBottom: "32px",
+                                fontSize: "14px",
+                                cursor: "pointer",
+                                width: "100%",
+                                textAlign: "center",
+                                transition: "background-color 0.3s ease",
+                            }}
+                            onMouseEnter={(e) => (e.target.style.backgroundColor = "#f2f2f2")}
+                            onMouseLeave={(e) => (e.target.style.backgroundColor = "#fff")}
+                        >
+                            Edit Education
+                        </button>
                         <EducationModal
                             isOpen={isModalOpen2}
                             onClose={() => setModalOpen2(false)}

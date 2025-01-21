@@ -63,7 +63,7 @@ const EducationPage = ({ profileData, fetchProfile }) => {
     }
 
     return (
-        <div className="bg-white border border-gray-200 border[1px] rounded-lg p-6">
+        <div className="bg-white border-t border-l border-r rounded-t-lg p-6">
             <div className="flex justify-between items-center mb-6">
                 <h3 className="text-xl font-semibold text-gray-800">Educations</h3>
                 <button className="flex items-center text-sm text-gray-600 hover:text-gray-800 transition-colors duration-200">

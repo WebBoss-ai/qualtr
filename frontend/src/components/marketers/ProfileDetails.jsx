@@ -18,7 +18,6 @@ const ProfileDetails = () => {
     const { id } = useParams()
     const [profile, setProfile] = useState(null)
     const [error, setError] = useState(null)
-    console.log('Debug: userId from useParams:', id);
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -34,7 +33,6 @@ const ProfileDetails = () => {
                     setError(response.data.message || 'Error fetching profile')
                 }
             } catch (error) {
-                console.error('Error fetching profile:', error)
                 setError('An error occurred while fetching the profile.')
             }
         }
