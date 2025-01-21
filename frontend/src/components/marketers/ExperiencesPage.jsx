@@ -206,7 +206,7 @@ const ExperiencesPage = ({ profileData, fetchProfileData }) => {
                                     <input
                                         type="month"
                                         name="startDate"
-                                        value={updatedExperience.startDate || ""} // Format: YYYY-MM
+                                        value={updatedExperience.startDate ? `${updatedExperience.startDate.year}-${updatedExperience.startDate.month}` : ""} // Format: YYYY-MM
                                         onChange={(e) => {
                                             const [year, month] = e.target.value.split("-");
                                             setUpdatedExperience((prev) => ({
@@ -222,7 +222,7 @@ const ExperiencesPage = ({ profileData, fetchProfileData }) => {
                                     <input
                                         type="month"
                                         name="endDate"
-                                        value={updatedExperience.endDate || ""} // Format: YYYY-MM
+                                        value={updatedExperience.endDate ? `${updatedExperience.endDate.year}-${updatedExperience.endDate.month}` : ""} // Format: YYYY-MM
                                         onChange={(e) => {
                                             const [year, month] = e.target.value.split("-");
                                             setUpdatedExperience((prev) => ({
