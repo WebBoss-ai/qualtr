@@ -43,24 +43,16 @@ const ExperiencesPage = ({ profileData, fetchProfileData }) => {
         }
     };
 
-
     const handleSaveEdit = async () => {
         try {
-            console.log("Attempting to update experience...");
-            console.log("Editing Experience ID:", editingExperience?._id);
-            console.log("Updated Experience Data:", updatedExperience);
-    
             const response = await axios.put(`${MARKETER_API_END_POINT}/edit-experience`, {
                 experienceId: editingExperience._id,
                 updatedExperience,
             });
     
-            console.log("Response from server:", response);
-    
             if (response.data.success) {
-                console.log("Experience updated successfully!");
-                fetchProfileData();
-                setEditingExperience(null);
+                fetchProfileData();  // Refresh profile data
+                setEditingExperience(null);  // Close the edit form
             } else {
                 console.error("Error in saving edit:", response.data.message);
             }
