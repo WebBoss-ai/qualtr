@@ -17,7 +17,6 @@ const ExperiencesPage = ({ profileData, fetchProfile }) => {
         setUpdatedExperience({ ...experience })
     }
     useEffect(() => {
-        console.log("Profile Data:", profileData);
         if (profileData?.experiences) {
             profileData.experiences.forEach((exp) =>
                 console.log("Experience Dates:", exp.startDate, exp.endDate)
@@ -32,7 +31,6 @@ const ExperiencesPage = ({ profileData, fetchProfile }) => {
     }
 
     const handleDateChange = (date, field) => {
-        console.log(date)
         if (date instanceof Date && !isNaN(date)) {
             setUpdatedExperience((prev) => ({
                 ...prev,

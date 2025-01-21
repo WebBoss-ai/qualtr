@@ -37,44 +37,43 @@ const EnhancedMarketerProfile = () => {
     const token = localStorage.getItem('token')
 
     useEffect(() => {
-        const fetchProfile = async () => {
-            setLoading(true)
-            setError(null)
-            setSuccess(null)
-
-            try {
-                if (!token) throw new Error('Token is not available. Please log in.')
-
-                const decodedToken = JSON.parse(atob(token.split('.')[1]))
-                const userId = decodedToken.userId
-                if (!userId) throw new Error('User ID is not found in the token.')
-
-                const res = await axios.get(`${MARKETER_API_END_POINT}/profile/${userId}`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                })
-
-                setProfileData(res.data.profile || {
-                    fullname: '',
-                    phoneNumber: '',
-                    email: '',
-                    agencyName: '',
-                    bio: '',
-                    skills: '',
-                    location: '',
-                    profilePhoto: '',
-                    experiences: [],
-                    education: []
-                })
-                setSuccess('Profile loaded successfully.')
-            } catch (error) {
-                setError(error.response?.data?.message || error.message || 'Failed to load profile data.')
-            } finally {
-                setLoading(false)
-            }
-        }
-
         fetchProfile()
     }, [token])
+    const fetchProfile = async () => {
+        setLoading(true)
+        setError(null)
+        setSuccess(null)
+
+        try {
+            if (!token) throw new Error('Token is not available. Please log in.')
+
+            const decodedToken = JSON.parse(atob(token.split('.')[1]))
+            const userId = decodedToken.userId
+            if (!userId) throw new Error('User ID is not found in the token.')
+
+            const res = await axios.get(`${MARKETER_API_END_POINT}/profile/${userId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+
+            setProfileData(res.data.profile || {
+                fullname: '',
+                phoneNumber: '',
+                email: '',
+                agencyName: '',
+                bio: '',
+                skills: '',
+                location: '',
+                profilePhoto: '',
+                experiences: [],
+                education: []
+            })
+            setSuccess('Profile loaded successfully.')
+        } catch (error) {
+            setError(error.response?.data?.message || error.message || 'Failed to load profile data.')
+        } finally {
+            setLoading(false)
+        }
+    }
 
     const handleChange = (e) => {
         const { name, value } = e.target
