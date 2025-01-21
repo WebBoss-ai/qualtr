@@ -207,12 +207,13 @@ const ExperiencesPage = ({ profileData, fetchProfileData }) => {
                                         type="month"
                                         name="startDate"
                                         value={updatedExperience.startDate || ""} // Format: YYYY-MM
-                                        onChange={(e) =>
+                                        onChange={(e) => {
+                                            const [year, month] = e.target.value.split("-");
                                             setUpdatedExperience((prev) => ({
                                                 ...prev,
-                                                startDate: e.target.value, // e.g., "2025-01"
-                                            }))
-                                        }
+                                                startDate: { year, month }, // Store as an object with year and month
+                                            }));
+                                        }}
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-gray-500"
                                     />
                                 </div>
@@ -222,17 +223,19 @@ const ExperiencesPage = ({ profileData, fetchProfileData }) => {
                                         type="month"
                                         name="endDate"
                                         value={updatedExperience.endDate || ""} // Format: YYYY-MM
-                                        onChange={(e) =>
+                                        onChange={(e) => {
+                                            const [year, month] = e.target.value.split("-");
                                             setUpdatedExperience((prev) => ({
                                                 ...prev,
-                                                endDate: e.target.value, // e.g., "2025-01"
-                                            }))
-                                        }
+                                                endDate: { year, month }, // Store as an object with year and month
+                                            }));
+                                        }}
                                         disabled={updatedExperience.isCurrent} // Disable if 'isCurrent' is checked
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-gray-500"
                                     />
                                 </div>
                             </div>
+
 
                             <div className="flex items-center">
                                 <input
