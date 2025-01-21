@@ -507,3 +507,222 @@ const MarketerUpdateProfile = () => {
 };
 
 export default MarketerUpdateProfile;
+
+import React, { useState } from "react";
+import axios from "axios";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { MARKETER_API_END_POINT } from "@/utils/constant";
+
+const employmentTypes = ["Full-time", "Part-time", "Contract", "Internship", "Freelance"];
+const locationTypes = ["On-site", "Remote", "Hybrid"];
+
+const ExperiencesPage = ({ profileData, fetchProfileData }) => {
+    const [editingExperience, setEditingExperience] = useState(null);
+    const [updatedExperience, setUpdatedExperience] = useState({});
+
+    const handleEditExperiences = (experience) => {
+        setEditingExperience(experience);
+        setUpdatedExperience({
+            ...experience,
+            startDate: experience.startDate
+                ? new Date(experience.startDate.year, experience.startDate.month - 1)
+                : null,
+            endDate: experience.endDate
+                ? new Date(experience.endDate.year, experience.endDate.month - 1)
+                : null,
+        });
+    };
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setUpdatedExperience((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleDateChange = (name, date) => {
+        setUpdatedExperience((prev) => ({
+            ...prev,
+            [name]: date,
+        }));
+    };
+
+    const handleSaveEdit = async () => {
+        const formatToDateObject = (date) => ({
+            month: (date.getMonth() + 1).toString().padStart(2, "0"),
+            year: date.getFullYear().toString(),
+        });
+
+        const updatedData = {
+            ...updatedExperience,
+            startDate: updatedExperience.startDate
+                ? formatToDateObject(updatedExperience.startDate)
+                : null,
+            endDate: updatedExperience.endDate
+                ? formatToDateObject(updatedExperience.endDate)
+                : null,
+        };
+
+        try {
+            const response = await axios.put(`${MARKETER_API_END_POINT}/edit-experience`, {
+                experienceId: editingExperience._id,
+                updatedExperience: updatedData,
+            });
+
+            if (response.data.success) {
+                fetchProfileData(); // Fetch updated profile data
+                setEditingExperience(null);
+            } else {
+                console.error("Error in saving edit:", response.data.message);
+            }
+        } catch (error) {
+            console.error("Error updating experience:", error);
+        }
+    };
+
+    const handleDeleteExperiences = async (experienceId) => {
+        try {
+            const response = await axios.delete(`${MARKETER_API_END_POINT}/delete-experience/${experienceId}`);
+
+            if (response.data.success) {
+                fetchProfileData(); // Refresh the data
+            } else {
+                console.error("Error in deleting experience:", response.data.message);
+            }
+        } catch (error) {
+            console.error("Error deleting experience:", error);
+        }
+    };
+
+    if (!profileData || !profileData.experiences) {
+        return <p>Loading...</p>; // Show a loading state if profileData is not available
+    }
+
+    return (
+        <div>
+            <h3>Experiences</h3>
+            {profileData.experiences.length > 0 ? (
+                <ul>
+                    {profileData.experiences.map((exp, index) => (
+                        <li key={index}>
+                            <p>
+                                <strong>Title:</strong> {exp.title}
+                            </p>
+                            <p>
+                                <strong>Company:</strong> {exp.company}
+                            </p>
+                            <p>
+                                <strong>Employment Type:</strong> {exp.employmentType}
+                            </p>
+                            <p>
+                                <strong>Location:</strong> {exp.location} ({exp.locationType})
+                            </p>
+                            <p>
+                                <strong>Duration:</strong>{" "}
+                                {exp.startDate
+                                    ? `${exp.startDate.month}/${exp.startDate.year}`
+                                    : "N/A"}{" "}
+                                -{" "}
+                                {exp.isCurrent
+                                    ? "Present"
+                                    : exp.endDate
+                                        ? `${exp.endDate.month}/${exp.endDate.year}`
+                                        : "N/A"}
+                            </p>
+                            {exp.description && <p><strong>Description:</strong> {exp.description}</p>}
+                            <button onClick={() => handleEditExperiences(exp)}>Edit</button>
+                            <button onClick={() => handleDeleteExperiences(exp._id)}>Delete</button>
+                        </li>
+                    ))}
+                </ul>
+            ) : (
+                <p>No experiences listed.</p>
+            )}
+
+            {editingExperience && (
+                <div className="modal">
+                    <div className="modal-content">
+                        <h4>Edit Experience</h4>
+                        <label>Title</label>
+                        <input
+                            type="text"
+                            name="title"
+                            value={updatedExperience.title || ""}
+                            onChange={handleChange}
+                        />
+                        <label>Company</label>
+                        <input
+                            type="text"
+                            name="company"
+                            value={updatedExperience.company || ""}
+                            onChange={handleChange}
+                        />
+                        <label>Employment Type</label>
+                        <select
+                            name="employmentType"
+                            value={updatedExperience.employmentType || ""}
+                            onChange={handleChange}
+                        >
+                            <option value="" disabled>Select an option</option>
+                            {employmentTypes.map((type, index) => (
+                                <option key={index} value={type}>
+                                    {type}
+                                </option>
+                            ))}
+                        </select>
+                        <label>Location</label>
+                        <input
+                            type="text"
+                            name="location"
+                            value={updatedExperience.location || ""}
+                            onChange={handleChange}
+                        />
+                        <label>Location Type</label>
+                        <select
+                            name="locationType"
+                            value={updatedExperience.locationType || ""}
+                            onChange={handleChange}
+                        >
+                            <option value="" disabled>Select an option</option>
+                            {locationTypes.map((type, index) => (
+                                <option key={index} value={type}>
+                                    {type}
+                                </option>
+                            ))}
+                        </select>
+                        <label>Start Date</label>
+                        <DatePicker
+                            selected={updatedExperience.startDate}
+                            onChange={(date) => handleDateChange("startDate", date)}
+                            dateFormat="yyyy-MM"
+                            showMonthYearPicker
+                        />
+                        <label>End Date</label>
+                        <DatePicker
+                            selected={updatedExperience.endDate}
+                            onChange={(date) => handleDateChange("endDate", date)}
+                            dateFormat="yyyy-MM"
+                            showMonthYearPicker
+                            disabled={updatedExperience.isCurrent}
+                        />
+                        <label>Is Current</label>
+                        <input
+                            type="checkbox"
+                            name="isCurrent"
+                            checked={updatedExperience.isCurrent || false}
+                            onChange={(e) =>
+                                setUpdatedExperience((prev) => ({
+                                    ...prev,
+                                    isCurrent: e.target.checked,
+                                }))
+                            }
+                        />
+                        <button onClick={handleSaveEdit}>Save</button>
+                        <button onClick={() => setEditingExperience(null)}>Cancel</button>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default ExperiencesPage;

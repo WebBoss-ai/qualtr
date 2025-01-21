@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import axios from "axios"
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
@@ -16,6 +16,15 @@ const ExperiencesPage = ({ profileData, fetchProfileData }) => {
         setEditingExperience(experience)
         setUpdatedExperience({ ...experience })
     }
+    useEffect(() => {
+        console.log("Profile Data:", profileData);
+        if (profileData?.experiences) {
+            profileData.experiences.forEach((exp) =>
+                console.log("Experience Dates:", exp.startDate, exp.endDate)
+            );
+        }
+    }, [profileData]);
+
 
     const handleChange = (e) => {
         const { name, value } = e.target
@@ -23,11 +32,17 @@ const ExperiencesPage = ({ profileData, fetchProfileData }) => {
     }
 
     const handleDateChange = (date, field) => {
-        setUpdatedExperience((prev) => ({
-            ...prev,
-            [field]: date,
-        }))
-    }
+        console.log(date)
+        if (date instanceof Date && !isNaN(date)) {
+            setUpdatedExperience((prev) => ({
+                ...prev,
+                [field]: date,
+            }));
+        } else {
+            console.error(`Invalid date value for ${field}:`, date);
+        }
+    };
+
 
     const handleSaveEdit = async () => {
         try {
@@ -94,11 +109,14 @@ const ExperiencesPage = ({ profileData, fetchProfileData }) => {
                             </div>
                             <p className="text-xs text-gray-500 mb-1">{exp.employmentType} • {exp.locationType}</p>
                             <p className="text-xs text-gray-500 mb-2">
-                                {exp.startDate ? `${new Date(exp.startDate).toLocaleString('default', { month: 'long', year: 'numeric' })}` : "N/A"} -{" "}
+                                {exp.startDate
+                                    ? `${new Date(exp.startDate.year, exp.startDate.month - 1).toLocaleString('en-US', { month: 'long' })} ${exp.startDate.year}`
+                                    : "N/A"}{" "}
+                                -{" "}
                                 {exp.isCurrent
                                     ? "Present"
                                     : exp.endDate
-                                        ? `${new Date(exp.endDate).toLocaleString('default', { month: 'long', year: 'numeric' })}`
+                                        ? `${new Date(exp.endDate.year, exp.endDate.month - 1).toLocaleString('en-US', { month: 'long' })} ${exp.endDate.year}`
                                         : "N/A"}
                             </p>
 
@@ -185,26 +203,37 @@ const ExperiencesPage = ({ profileData, fetchProfileData }) => {
                             <div className="flex space-x-4">
                                 <div className="flex-1">
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
-                                    <DatePicker
-                                        selected={new Date(updatedExperience.startDate || Date.now())}
-                                        onChange={(date) => handleDateChange(date, "startDate")}
-                                        dateFormat="MM/yyyy"
-                                        showMonthYearPicker
+                                    <input
+                                        type="month"
+                                        name="startDate"
+                                        value={updatedExperience.startDate || ""} // Format: YYYY-MM
+                                        onChange={(e) =>
+                                            setUpdatedExperience((prev) => ({
+                                                ...prev,
+                                                startDate: e.target.value, // e.g., "2025-01"
+                                            }))
+                                        }
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-gray-500"
                                     />
                                 </div>
                                 <div className="flex-1">
                                     <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
-                                    <DatePicker
-                                        selected={new Date(updatedExperience.endDate || Date.now())}
-                                        onChange={(date) => handleDateChange(date, "endDate")}
-                                        dateFormat="MM/yyyy"
-                                        showMonthYearPicker
-                                        disabled={updatedExperience.isCurrent}
+                                    <input
+                                        type="month"
+                                        name="endDate"
+                                        value={updatedExperience.endDate || ""} // Format: YYYY-MM
+                                        onChange={(e) =>
+                                            setUpdatedExperience((prev) => ({
+                                                ...prev,
+                                                endDate: e.target.value, // e.g., "2025-01"
+                                            }))
+                                        }
+                                        disabled={updatedExperience.isCurrent} // Disable if 'isCurrent' is checked
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-gray-500"
                                     />
                                 </div>
                             </div>
+
                             <div className="flex items-center">
                                 <input
                                     type="checkbox"
