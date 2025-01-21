@@ -51,16 +51,20 @@ const ExperiencesPage = ({ profileData, fetchProfileData }) => {
             });
     
             if (response.data.success) {
-                fetchProfileData();  // Refresh profile data
-                setEditingExperience(null);  // Close the edit form
+                if (typeof fetchProfileData === "function") {
+                    fetchProfileData(); // Ensure this is callable
+                } else {
+                    console.error("fetchProfileData is not a function");
+                }
+                setEditingExperience(null);
             } else {
                 console.error("Error in saving edit:", response.data.message);
             }
         } catch (error) {
             console.error("Error updating experience:", error);
-            setEditingExperience(null);  // Close the edit form
+            setEditingExperience(null);
         }
-    };
+    };    
     
 
     const handleDeleteExperiences = async (experienceId) => {
