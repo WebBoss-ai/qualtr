@@ -62,18 +62,19 @@ const PostPage = () => {
         }
     };
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const checkLoginStatus = async () => {
+    const checkLoginStatus = async (setIsLoggedIn, setShowModal, setLoading) => {
         try {
-          const response = await axios.get(`${MARKETER_API_END_POINT}/auth/status`, { withCredentials: true });
-          setIsLoggedIn(response.data.loggedIn);
+            const response = await axios.get(`${MARKETER_API_END_POINT}/auth/status`, { withCredentials: true });
+            setIsLoggedIn(response.data.loggedIn);
+            if (!response.data.loggedIn) {
+                setShowModal(true); // Show modal if user is not logged in
+            }
         } catch (error) {
-          console.error("Error checking login status:", error);
+            console.error("Error checking login status:", error);
         } finally {
-          setLoading(false);
+            setLoading(false);
         }
-      };
-    checkLoginStatus();
-    
+    };
 
     const PostTimestamp = ({ createdAt }) => {
         const formattedTime = formatDistanceToNow(new Date(createdAt), { addSuffix: true });
@@ -182,20 +183,10 @@ const PostPage = () => {
         )
     }
     const toggleLike = async (postId) => {
-        const checkLoginStatus = async () => {
-            try {
-              const response = await axios.get(`${MARKETER_API_END_POINT}/auth/status`, { withCredentials: true });
-              setIsLoggedIn(response.data.loggedIn);
-              if (!response.data.loggedIn) {
-                setShowModal(true); // Show modal if user is not logged in
-              }
-            } catch (error) {
-              console.error("Error checking login status:", error);
-            } finally {
-              setLoading(false);
-            }
-          };
-        checkLoginStatus();
+        if (!isLoggedIn) {
+            setShowModal(true); // Show modal if user is not logged in
+            return;
+        }
         try {
             const response = await axios.post(`${MARKETER_API_END_POINT}/posts/${postId}/like`);
             setPosts((prevPosts) =>
@@ -218,7 +209,7 @@ const PostPage = () => {
             console.error('Error config:', error.config);
         }
     };
-const categories = [
+    const categories = [
         { name: 'Latest Posts', icon: Clock, href: '/posts' },
         { name: 'Trending on Qualtr', icon: TrendingUp, href: '/trending' },
         { name: 'Startup Essentials', icon: Briefcase, href: '/posts/startup-essentials' },

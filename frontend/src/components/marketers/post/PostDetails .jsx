@@ -204,8 +204,9 @@ const PostDetails = () => {
     }, [id])
 
     const toggleLike = async () => {
-        if (!userId) {
-            return setShowModal(true); // Show login modal if user is not logged in
+       if (!isLoggedIn) {
+            setShowModal(true); // Show modal if user is not logged in
+            return;
         }
 
         try {
