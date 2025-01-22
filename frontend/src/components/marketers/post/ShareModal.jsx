@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { QRCodeCanvas } from 'qrcode.react';
 import { Linkedin, Facebook, Twitter, Copy, Instagram, Send, X, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -42,13 +41,8 @@ const ShareModal = ({ isOpen, onClose, sharingLink }) => {
             className="bg-white rounded-2xl p-8 w-full max-w-md shadow-xl"
           >
             <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">Share this Post</h2>
-            <div className="mb-6 flex justify-center">
-              <div className="p-4 bg-gray-100 rounded-lg">
-                <QRCodeCanvas value={sharingLink} size={180} />
-              </div>
-            </div>
             <p className="text-gray-600 text-sm mb-6 text-center">
-              Share this link with your network or scan the QR code to view the post.
+              Share this link with your network to view the post.
             </p>
             <div className="grid grid-cols-2 gap-4 mb-6">
               <ShareButton icon={Linkedin} label="LinkedIn" href={`https://www.linkedin.com/shareArticle?mini=true&url=${sharingLink}`} />

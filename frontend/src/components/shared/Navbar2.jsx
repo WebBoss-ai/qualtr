@@ -165,15 +165,6 @@ const Navbar2 = () => {
                         </Link>
                     </li>
                     <li>
-                        <Link
-                            to="/founder-profile/update"
-                            className="flex flex-col items-center text-gray-700 hover:text-black-600"
-                        >
-                            <Home size={24} />
-                            <span className="text-sm">Dashboard</span>
-                        </Link>
-                    </li>
-                    <li>
                         {isLoggedIn ? (
                             <button
                                 onClick={handleLogout}

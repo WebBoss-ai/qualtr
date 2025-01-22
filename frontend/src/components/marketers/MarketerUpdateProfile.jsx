@@ -37,7 +37,6 @@ const EnhancedMarketerProfile = () => {
     const education = []; // Fetch or pass initial experiences
 
     const token = localStorage.getItem('token')
-
     const decodedToken = JSON.parse(atob(token.split('.')[1]))
     const id = decodedToken.userId
 
@@ -79,7 +78,6 @@ const EnhancedMarketerProfile = () => {
             setLoading(false)
         }
     }
-
     const handleChange = (e) => {
         const { name, value } = e.target
         setProfileData(prevData => ({ ...prevData, [name]: value }))
