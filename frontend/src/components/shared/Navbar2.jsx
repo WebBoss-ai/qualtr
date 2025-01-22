@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { MARKETER_API_END_POINT } from '@/utils/constant';
-import { Home, FileText, Users, Menu, LogOut, LogIn, UserPlus } from 'lucide-react'; // Icons from lucide-react
+import { Home, FileText, Users, Menu, LogOut, LogIn } from 'lucide-react'; // Icons from lucide-react
 
 const Navbar2 = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -91,7 +91,6 @@ const Navbar2 = () => {
                             </>
                         )}
                     </ul>
-
                     <button
                         className="md:hidden text-gray-700 hover:text-black-600"
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -164,6 +163,17 @@ const Navbar2 = () => {
                             <span className="text-sm">Founders</span>
                         </Link>
                     </li>
+                    {isLoggedIn && (
+                        <li>
+                            <Link
+                                to="/founder-profile/update"
+                                className="flex flex-col items-center text-gray-700 hover:text-black-600"
+                            >
+                                <Home size={24} />
+                                <span className="text-sm">Dashboard</span>
+                            </Link>
+                        </li>
+                    )}
                     <li>
                         {isLoggedIn ? (
                             <button
@@ -174,7 +184,10 @@ const Navbar2 = () => {
                                 <span className="text-sm">Logout</span>
                             </button>
                         ) : (
-                            <Link to="/founder/login" className="flex flex-col items-center text-gray-700 hover:text-black-600">
+                            <Link
+                                to="/founder/login"
+                                className="flex flex-col items-center text-gray-700 hover:text-black-600"
+                            >
                                 <LogIn size={24} />
                                 <span className="text-sm">Login</span>
                             </Link>
