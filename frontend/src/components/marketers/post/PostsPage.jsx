@@ -40,7 +40,7 @@ const PostPage = () => {
     const [showPostSuccessModal, setShowPostSuccessModal] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
-
+    const [loading, setLoading] = useState(true);
     const handleVote = async (postId, option) => {
         if (!userId) return setShowModal(true);
         try {
