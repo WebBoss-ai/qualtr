@@ -63,7 +63,7 @@ const RandomSuggestedProfiles = () => {
                         <div key={profile.id} className="p-4 hover:bg-gray-50 transition duration-150 ease-in-out">
                             <div className="flex items-center space-x-4">
                                 {/* Profile picture wrapped in <a> tag */}
-                                <a href={`https://qualtr.com/marketer-profile/${profile.id}`} className="flex-shrink-0">
+                                <a href={`https://qualtr.com/founder-profile/${profile.id}`} className="flex-shrink-0">
                                     <img
                                         src={profile.profilePhoto || '/default-profile.jpg'}
                                         alt={profile.fullname}
@@ -74,7 +74,7 @@ const RandomSuggestedProfiles = () => {
                                 <div className="flex-1 min-w-0">
                                     {/* Fullname wrapped in <a> tag with hover underline effect */}
                                     <a
-                                        href={`https://qualtr.com/marketer-profile/${profile.id}`}
+                                        href={`https://qualtr.com/founder-profile/${profile.id}`}
                                         className="text-sm font-medium text-gray-900 truncate hover:underline"
                                     >
                                         {profile.fullname}

@@ -61,6 +61,19 @@ const PostPage = () => {
             alert('Failed to submit your vote. Please try again later.');
         }
     };
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const checkLoginStatus = async () => {
+        try {
+          const response = await axios.get(`${MARKETER_API_END_POINT}/auth/status`, { withCredentials: true });
+          setIsLoggedIn(response.data.loggedIn);
+        } catch (error) {
+          console.error("Error checking login status:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+    checkLoginStatus();
+    
 
     const PostTimestamp = ({ createdAt }) => {
         const formattedTime = formatDistanceToNow(new Date(createdAt), { addSuffix: true });
@@ -169,9 +182,20 @@ const PostPage = () => {
         )
     }
     const toggleLike = async (postId) => {
-        if (!userId) {
-            return setShowModal(true); // Show login modal if user is not logged in
-        }
+        const checkLoginStatus = async () => {
+            try {
+              const response = await axios.get(`${MARKETER_API_END_POINT}/auth/status`, { withCredentials: true });
+              setIsLoggedIn(response.data.loggedIn);
+              if (!response.data.loggedIn) {
+                setShowModal(true); // Show modal if user is not logged in
+              }
+            } catch (error) {
+              console.error("Error checking login status:", error);
+            } finally {
+              setLoading(false);
+            }
+          };
+        checkLoginStatus();
         try {
             const response = await axios.post(`${MARKETER_API_END_POINT}/posts/${postId}/like`);
             setPosts((prevPosts) =>

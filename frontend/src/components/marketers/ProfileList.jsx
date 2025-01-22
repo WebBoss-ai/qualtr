@@ -191,7 +191,7 @@ const ProfileList = () => {
       setIsModalOpen(true)
       return
     }
-    navigate(`/marketer-profile/${id}`)
+    navigate(`/founder-profile/${id}`)
   }
 
   return (

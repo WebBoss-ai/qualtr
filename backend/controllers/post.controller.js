@@ -491,7 +491,7 @@ export const getTrendingPosts = async (req, res) => {
         return {
           ...post,
           timeAgo, // Adding formatted time
-          profileLink: `/marketer-profile/${post.author._id}`, // Link to author's profile
+          profileLink: `/founder-profile/${post.author._id}`, // Link to author's profile
         };
       })
     );

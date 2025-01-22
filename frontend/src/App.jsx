@@ -284,7 +284,7 @@ const appRouter = createBrowserRouter([
     element:<AdminDashboard /> 
   },
   {
-    path:"/admin/marketer-profiles/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NmY4NTU2MzU4ZTZmMmI3YTVjOTM0ZGYiLCJpYXQiOjE3MzAxMTMzNzYsImV4cCI6MTczMjcwNTM3Nn0.n4DUTrEBP_InFG8UlQNuWLsl4xhlIopufmi0o5J5ZLQ",
+    path:"/admin/founder-profiles/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NmY4NTU2MzU4ZTZmMmI3YTVjOTM0ZGYiLCJpYXQiOjE3MzAxMTMzNzYsImV4cCI6MTczMjcwNTM3Nn0.n4DUTrEBP_InFG8UlQNuWLsl4xhlIopufmi0o5J5ZLQ",
     element:<AdminProfiles /> 
   },
   {
