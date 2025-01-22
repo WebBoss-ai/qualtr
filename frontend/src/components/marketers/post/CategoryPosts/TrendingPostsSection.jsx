@@ -5,7 +5,7 @@ import RandomSuggestedProfiles from '../../RandomSuggestedProfiles';
 import { ThumbsUp, MessageCircle, Share2, Send, Calendar, MapPin, Briefcase, X, BarChart2, FileText, TrendingUpIcon as Trending, Palette, Smile, PenTool, Megaphone, ChevronRight } from 'lucide-react'
 import { TrendingUp, Scale, DollarSign, Image, Users, Wrench, Lightbulb, Clock, Upload } from 'lucide-react';
 import moment from 'moment';
-import Footer from '@/components/shared/Footer';
+import Footer2 from '@/components/shared/Footer2';
 import Navbar from '@/components/shared/Navbar';
 import { formatDistanceToNow } from 'date-fns';
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -193,8 +193,9 @@ const TrendingPostsSection = () => {
             console.error('Error config:', error.config);
         }
     };
-    const categories = [
-        { name: 'Trending', icon: TrendingUp, href: '/trending' },
+const categories = [
+        { name: 'Latest Posts', icon: Clock, href: '/posts' },
+        { name: 'Trending on Qualtr', icon: TrendingUp, href: '/trending' },
         { name: 'Startup Essentials', icon: Briefcase, href: '/posts/startup-essentials' },
         { name: 'Marketing & Branding', icon: Megaphone, href: '/posts/marketing-branding' },
         { name: 'Legal & Compliance', icon: Scale, href: '/posts/legal-compliance' },
@@ -1308,7 +1309,7 @@ const TrendingPostsSection = () => {
                 </div>
             )}
 
-            <Footer />
+            <Footer2 />
         </div >
     );
 };

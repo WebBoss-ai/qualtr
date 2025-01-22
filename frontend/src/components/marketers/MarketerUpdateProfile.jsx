@@ -7,6 +7,8 @@ import EducationModal from './EducationModal'
 import EducationPage from './EducationPage'
 import ExperiencesModal from './ExperiencesModal'
 import UserProfilePosts from './post/UserProfilePosts'
+import Footer2 from '../shared/Footer2'
+import Navbar2 from '../shared/Navbar2'
 
 const EnhancedMarketerProfile = () => {
     const [profileData, setProfileData] = useState({
@@ -25,7 +27,6 @@ const EnhancedMarketerProfile = () => {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
     const [success, setSuccess] = useState(null)
-    const userId = null
     const [selectedExperiences, setSelectedExperiences] = useState(null);
     const [selectedEducation, setSelectedEducation] = useState(null);
 
@@ -36,6 +37,9 @@ const EnhancedMarketerProfile = () => {
     const education = []; // Fetch or pass initial experiences
 
     const token = localStorage.getItem('token')
+
+    const decodedToken = JSON.parse(atob(token.split('.')[1]))
+    const id = decodedToken.userId
 
     useEffect(() => {
         fetchProfile()
@@ -166,140 +170,170 @@ const EnhancedMarketerProfile = () => {
     }
 
     return (
-        <div className="bg-gray-50 min-h-screen py-8">
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h1 className="text-2xl font-semibold text-gray-900 mb-6">Update Profile</h1>
+        <div>
+            <Navbar2 />
+            <div className="bg-gray-50 min-h-screen py-8">
+                <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <h1 className="text-2xl font-semibold text-gray-900 mb-6">Update Profile</h1>
 
-                {loading && <p className="text-gray-600">Loading...</p>}
-                {error && <p className="text-red-600">{error}</p>}
-                {success && <p className="text-green-600">{success}</p>}
+                    {loading && <p className="text-gray-600">Loading...</p>}
+                    {error && <p className="text-red-600">{error}</p>}
+                    {success && <p className="text-green-600">{success}</p>}
 
-                <div className="flex flex-col lg:flex-row gap-8">
-                    {/* Main content - 70% */}
-                    <div className="lg:w-[70%]">
-                        <form onSubmit={handleSubmit} className="bg-white border border-gray-200 border[1px] rounded-lg p-6">
-                            <div className="mb-6 flex items-center justify-center">
-                                <div className="relative">
-                                    <img
-                                        src={profileData.profilePhoto instanceof File ? URL.createObjectURL(profileData.profilePhoto) : profileData.profilePhoto || '/placeholder.svg'}
-                                        alt="Profile"
-                                        className="w-32 h-32 rounded-full object-cover"
-                                    />
-                                    <label htmlFor="profilePhoto" className="absolute bottom-0 right-0 bg-white rounded-full p-2 border border-gray-200 border[1px] cursor-pointer">
-                                        <Camera className="w-5 h-5 text-gray-600" />
-                                        <input
-                                            type="file"
-                                            id="profilePhoto"
-                                            name="profilePhoto"
-                                            onChange={handleFileChange}
-                                            className="hidden"
-                                            accept="image/*"
+                    <div className="flex flex-col lg:flex-row gap-8">
+                        {/* Main content - 70% */}
+                        <div className="lg:w-[70%]">
+                            <form onSubmit={handleSubmit} className="bg-white border border-gray-200 border[1px] rounded-lg p-6">
+                                <div className="mb-6 flex items-center justify-center">
+                                    <div className="relative">
+                                        <img
+                                            src={profileData.profilePhoto instanceof File ? URL.createObjectURL(profileData.profilePhoto) : profileData.profilePhoto || '/placeholder.svg'}
+                                            alt="Profile"
+                                            className="w-32 h-32 rounded-full object-cover"
                                         />
-                                    </label>
+                                        <label htmlFor="profilePhoto" className="absolute bottom-0 right-0 bg-white rounded-full p-2 border border-gray-200 border[1px] cursor-pointer">
+                                            <Camera className="w-5 h-5 text-gray-600" />
+                                            <input
+                                                type="file"
+                                                id="profilePhoto"
+                                                name="profilePhoto"
+                                                onChange={handleFileChange}
+                                                className="hidden"
+                                                accept="image/*"
+                                            />
+                                        </label>
+                                    </div>
                                 </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label htmlFor="fullname" className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                                        <input
+                                            type="text"
+                                            id="fullname"
+                                            name="fullname"
+                                            value={profileData.fullname}
+                                            onChange={handleChange}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
+                                            required
+                                        />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="agencyName" className="block text-sm font-medium text-gray-700 mb-1">Headline</label>
+                                        <input
+                                            type="text"
+                                            id="agencyName"
+                                            name="agencyName"
+                                            value={profileData.agencyName}
+                                            onChange={handleChange}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
+                                            required
+                                        />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                                        <input
+                                            type="tel"
+                                            id="phoneNumber"
+                                            name="phoneNumber"
+                                            value={profileData.phoneNumber}
+                                            onChange={handleChange}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
+                                            required
+                                        />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                        <input
+                                            type="email"
+                                            id="email"
+                                            name="email"
+                                            value={profileData.email}
+                                            onChange={handleChange}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="md:col-span-2">
+                                        <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
+                                        <textarea
+                                            id="bio"
+                                            name="bio"
+                                            value={profileData.bio}
+                                            onChange={handleChange}
+                                            rows={4}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="skills" className="block text-sm font-medium text-gray-700 mb-1">Skills (comma separated)</label>
+                                        <input
+                                            type="text"
+                                            id="skills"
+                                            name="skills"
+                                            value={profileData.skills}
+                                            onChange={handleChange}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                                        <input
+                                            type="text"
+                                            id="location"
+                                            name="location"
+                                            value={profileData.location}
+                                            onChange={handleChange}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
+                                        />
+                                    </div>
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="mt-6 w-full bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors duration-300"
+                                >
+                                    {loading ? 'Updating...' : 'Update Profile'}
+                                </button>
+                            </form>
+                            <UserProfilePosts id={id} />
+                        </div>
+
+                        {/* Sidebar - 30% */}
+                        <div className="lg:w-[30%]">
+                            <ExperiencesPage profileData={profileData} setProfileData={setProfileData} fetchProfile={fetchProfile} />
+                            <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
+                                <button
+                                    onClick={() => setModalOpen1(true)}
+                                    style={{
+                                        borderTop: "0.5px solid #e6e6e6",
+                                        borderBottom: "0.5px solid #e6e6e6",
+                                        backgroundColor: "#fff",
+                                        padding: "8px 0",
+                                        marginBottom: "32px",
+                                        fontSize: "14px",
+                                        cursor: "pointer",
+                                        width: "100%",
+                                        textAlign: "center",
+                                        transition: "background-color 0.3s ease",
+                                    }}
+                                    onMouseEnter={(e) => (e.target.style.backgroundColor = "#f2f2f2")}
+                                    onMouseLeave={(e) => (e.target.style.backgroundColor = "#fff")}
+                                >
+                                    Add Experience
+                                </button>
                             </div>
+                            <EducationPage profileData={profileData} setProfileData={setProfileData} fetchProfile={fetchProfile} />
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label htmlFor="fullname" className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                                    <input
-                                        type="text"
-                                        id="fullname"
-                                        name="fullname"
-                                        value={profileData.fullname}
-                                        onChange={handleChange}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
-                                        required
-                                    />
-                                </div>
-                                <div>
-                                    <label htmlFor="agencyName" className="block text-sm font-medium text-gray-700 mb-1">Headline</label>
-                                    <input
-                                        type="text"
-                                        id="agencyName"
-                                        name="agencyName"
-                                        value={profileData.agencyName}
-                                        onChange={handleChange}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
-                                        required
-                                    />
-                                </div>
-                                <div>
-                                    <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-                                    <input
-                                        type="tel"
-                                        id="phoneNumber"
-                                        name="phoneNumber"
-                                        value={profileData.phoneNumber}
-                                        onChange={handleChange}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
-                                        required
-                                    />
-                                </div>
-                                <div>
-                                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                                    <input
-                                        type="email"
-                                        id="email"
-                                        name="email"
-                                        value={profileData.email}
-                                        onChange={handleChange}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
-                                        required
-                                    />
-                                </div>
-                                <div className="md:col-span-2">
-                                    <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
-                                    <textarea
-                                        id="bio"
-                                        name="bio"
-                                        value={profileData.bio}
-                                        onChange={handleChange}
-                                        rows={4}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
-                                    />
-                                </div>
-                                <div>
-                                    <label htmlFor="skills" className="block text-sm font-medium text-gray-700 mb-1">Skills (comma separated)</label>
-                                    <input
-                                        type="text"
-                                        id="skills"
-                                        name="skills"
-                                        value={profileData.skills}
-                                        onChange={handleChange}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
-                                    />
-                                </div>
-                                <div>
-                                    <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-1">Location</label>
-                                    <input
-                                        type="text"
-                                        id="location"
-                                        name="location"
-                                        value={profileData.location}
-                                        onChange={handleChange}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
-                                    />
-                                </div>
-                            </div>
-
+                            <ExperiencesModal
+                                isOpen={isModalOpen1}
+                                onClose={() => setModalOpen1(false)}
+                                initialExperiences={experiences}
+                                experiences={selectedExperiences}
+                            />
                             <button
-                                type="submit"
-                                disabled={loading}
-                                className="mt-6 w-full bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors duration-300"
-                            >
-                                {loading ? 'Updating...' : 'Update Profile'}
-                            </button>
-                        </form>
-                        <UserProfilePosts id={userId} />
-                    </div>
-
-                    {/* Sidebar - 30% */}
-                    <div className="lg:w-[30%]">
-                        <ExperiencesPage profileData={profileData} setProfileData={setProfileData} fetchProfile={fetchProfile} />
-                        <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
-                            <button
-                                onClick={() => setModalOpen1(true)}
+                                onClick={() => setModalOpen2(true)}
                                 style={{
                                     borderTop: "0.5px solid #e6e6e6",
                                     borderBottom: "0.5px solid #e6e6e6",
@@ -315,45 +349,19 @@ const EnhancedMarketerProfile = () => {
                                 onMouseEnter={(e) => (e.target.style.backgroundColor = "#f2f2f2")}
                                 onMouseLeave={(e) => (e.target.style.backgroundColor = "#fff")}
                             >
-                                Add Experience
+                                Edit Education
                             </button>
+                            <EducationModal
+                                isOpen={isModalOpen2}
+                                onClose={() => setModalOpen2(false)}
+                                initialEducation={education}
+                                education={selectedEducation}
+                            />
                         </div>
-                        <EducationPage profileData={profileData} setProfileData={setProfileData} fetchProfile={fetchProfile} />
-
-                        <ExperiencesModal
-                            isOpen={isModalOpen1}
-                            onClose={() => setModalOpen1(false)}
-                            initialExperiences={experiences}
-                            experiences={selectedExperiences}
-                        />
-                        <button
-                            onClick={() => setModalOpen2(true)}
-                            style={{
-                                borderTop: "0.5px solid #e6e6e6",
-                                borderBottom: "0.5px solid #e6e6e6",
-                                backgroundColor: "#fff",
-                                padding: "8px 0",
-                                marginBottom: "32px",
-                                fontSize: "14px",
-                                cursor: "pointer",
-                                width: "100%",
-                                textAlign: "center",
-                                transition: "background-color 0.3s ease",
-                            }}
-                            onMouseEnter={(e) => (e.target.style.backgroundColor = "#f2f2f2")}
-                            onMouseLeave={(e) => (e.target.style.backgroundColor = "#fff")}
-                        >
-                            Edit Education
-                        </button>
-                        <EducationModal
-                            isOpen={isModalOpen2}
-                            onClose={() => setModalOpen2(false)}
-                            initialEducation={education}
-                            education={selectedEducation}
-                        />
                     </div>
                 </div>
             </div>
+            <Footer2 />
         </div>
     )
 }

@@ -121,6 +121,48 @@ export const login = async (req, res) => {
     }
 };
 
+export const logout = async (req, res) => {
+    try {
+        // Clear the token cookie
+        res.clearCookie("token", { httpOnly: true, sameSite: 'strict' });
+
+        return res.status(200).json({
+            message: 'Logout successful.',
+            success: true,
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: 'Internal server error.',
+            success: false,
+        });
+    }
+};
+
+export const checkAuthStatus = (req, res) => {
+    try {
+        // Check if the token exists in cookies
+        const token = req.cookies.token;
+
+        if (!token) {
+            return res.status(200).json({ loggedIn: false, message: "Not authenticated." });
+        }
+
+        // Verify the JWT token
+        jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+            if (err) {
+                return res.status(200).json({ loggedIn: false, message: "Invalid token." });
+            }
+
+            // If token is valid, return success response
+            return res.status(200).json({ loggedIn: true, userId: decoded.userId });
+        });
+    } catch (error) {
+        console.error("Error checking authentication status:", error);
+        return res.status(500).json({ message: "Internal server error." });
+    }
+};
+
 // Update user profile
 export const updateProfile = async (req, res) => {
     try {

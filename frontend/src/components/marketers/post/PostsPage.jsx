@@ -5,8 +5,6 @@ import RandomSuggestedProfiles from '../RandomSuggestedProfiles';
 import { ThumbsUp, MessageCircle, Share2, Send, Calendar, MapPin, Briefcase, X, BarChart2, FileText, TrendingUpIcon as Trending, Palette, Smile, PenTool, Megaphone, ChevronRight } from 'lucide-react'
 import { TrendingUp, Scale, DollarSign, Image, Users, Wrench, Lightbulb, Clock, Upload } from 'lucide-react';
 import moment from 'moment';
-import Footer from '@/components/shared/Footer';
-import Navbar from '@/components/shared/Navbar';
 import { formatDistanceToNow } from 'date-fns';
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
@@ -18,6 +16,8 @@ import RichTextEditor from '@/components/RichTextEditor';
 import parse from 'html-react-parser'; // Import html-react-parser
 import DOMPurify from 'dompurify';
 import ShareModal from './ShareModal';
+import Footer2 from '@/components/shared/Footer2';
+import Navbar2 from '@/components/shared/Navbar2';
 
 const PostPage = () => {
     const [posts, setPosts] = useState([]);
@@ -194,8 +194,9 @@ const PostPage = () => {
             console.error('Error config:', error.config);
         }
     };
-    const categories = [
-        { name: 'Trending', icon: TrendingUp, href: '/trending' },
+const categories = [
+        { name: 'Latest Posts', icon: Clock, href: '/posts' },
+        { name: 'Trending on Qualtr', icon: TrendingUp, href: '/trending' },
         { name: 'Startup Essentials', icon: Briefcase, href: '/posts/startup-essentials' },
         { name: 'Marketing & Branding', icon: Megaphone, href: '/posts/marketing-branding' },
         { name: 'Legal & Compliance', icon: Scale, href: '/posts/legal-compliance' },
@@ -694,7 +695,7 @@ const PostPage = () => {
 
     return (
         <div>
-            <Navbar />
+            <Navbar2 />
             <div>
                 <div className="bg-gray-100 min-h-screen">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -1119,15 +1120,15 @@ const PostPage = () => {
                                                     {/* Like Button */}
                                                     <button
                                                         onClick={() => toggleLike(post._id)} // Pass post._id to toggleLike
-                                                        className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs transition-colors ${post.likes.isLiked ? 'bg-pink-100 text-pink-600' : 'hover:bg-gray-100 text-gray-700'
+                                                        className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs transition-colors ${post.likes?.isLiked ? 'bg-pink-100 text-pink-600' : 'hover:bg-gray-100 text-gray-700'
                                                             }`}
                                                     >
                                                         <ThumbsUp
                                                             size={14}
-                                                            className={`transition-colors ${post.likes.isLiked ? 'text-pink-500 fill-current' : 'text-gray-500'
+                                                            className={`transition-colors ${post.likes?.isLiked ? 'text-pink-500 fill-current' : 'text-gray-500'
                                                                 }`}
                                                         />
-                                                        <span>{post.likes.isLiked ? 'Liked' : 'Like'}</span>
+                                                        <span>{post.likes?.isLiked ? 'Liked' : 'Like'}</span>
                                                         <span className="text-gray-500">({post.likes.length})</span>
                                                     </button>
 
@@ -1320,7 +1321,7 @@ const PostPage = () => {
                 </div>
             )}
 
-            <Footer />
+            <Footer2 />
         </div >
     );
 };

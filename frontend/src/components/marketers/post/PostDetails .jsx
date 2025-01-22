@@ -6,7 +6,7 @@ import RandomSuggestedProfiles from '../RandomSuggestedProfiles'
 import { ThumbsUp, MessageCircle, Share2, Send, Calendar, MapPin, Briefcase, BarChart2, FileText, X, ChevronRight, ChevronLeft } from 'lucide-react'
 import moment from 'moment';
 import Navbar from '@/components/shared/Navbar'
-import Footer from '@/components/shared/Footer'
+import Footer2 from '@/components/shared/Footer2'
 import parse from 'html-react-parser'; // Import html-react-parser
 import DOMPurify from 'dompurify';
 
@@ -532,7 +532,7 @@ const PostDetails = () => {
                 </div>
                 <LoginModal isOpen={showModal} onClose={() => setShowModal(false)} />
             </div>
-            <Footer />
+            <Footer2 />
         </div>
 
     )

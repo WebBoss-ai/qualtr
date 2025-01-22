@@ -82,7 +82,7 @@ const UserProfilePosts = ({ id }) => {
                         {displayedPosts.map((post) => (
                             <div
                                 key={post._id}
-                                className="flex-none w-80 border border-gray-200 rounded-lg p-6 shadow-sm"
+                                className="flex-none w-80 border border-gray-200 bg-white rounded-lg p-6 shadow-sm"
                             >
                                 <div className="flex justify-between items-start mb-4">
                                     <div>

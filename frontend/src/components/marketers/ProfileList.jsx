@@ -5,7 +5,7 @@ import { MARKETER_API_END_POINT } from '@/utils/constant'
 import { Search, MapPin, Building2, Users, X, ChevronDown, Filter, Globe } from 'lucide-react'
 import debounce from 'lodash.debounce'
 import TrendingPosts from './post/TrendingPosts'
-import Footer from '../shared/Footer'
+import Footer2 from '../shared/Footer2'
 import Navbar from '../shared/Navbar'
 
 const LoginModal = ({ isOpen, onClose }) => {
@@ -263,7 +263,7 @@ const ProfileList = () => {
         </div>
       </div>
       <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-      <Footer />
+      <Footer2 />
     </div>
   )
 }

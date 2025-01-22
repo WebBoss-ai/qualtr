@@ -4,7 +4,7 @@ import axios from 'axios'
 import { MARKETER_API_END_POINT } from '@/utils/constant'
 import { Briefcase, GraduationCap, MapPin, Mail, Phone, Globe, Linkedin, Edit, Calendar, CheckCircle } from 'lucide-react'
 import Navbar from '../shared/Navbar'
-import Footer from '../shared/Footer'
+import Footer2 from '../shared/Footer2'
 import UserPosts from './post/UserPosts'
 import UserProfilePosts from './post/UserProfilePosts'
 
@@ -222,7 +222,7 @@ const ProfileDetails = () => {
                     </div>
                 </div>
             </div>
-            <Footer />
+            <Footer2 />
         </div>
     )
 }
