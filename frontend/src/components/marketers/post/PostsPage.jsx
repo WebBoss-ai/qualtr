@@ -62,13 +62,10 @@ const PostPage = () => {
         }
     };
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const checkLoginStatus = async (setIsLoggedIn, setShowModal, setLoading) => {
+    const checkLoginStatus = async (setIsLoggedIn, setLoading) => {
         try {
             const response = await axios.get(`${MARKETER_API_END_POINT}/auth/status`, { withCredentials: true });
             setIsLoggedIn(response.data.loggedIn);
-            if (!response.data.loggedIn) {
-                setShowModal(true); // Show modal if user is not logged in
-            }
         } catch (error) {
             console.error("Error checking login status:", error);
         } finally {
@@ -184,7 +181,7 @@ const PostPage = () => {
     }
     const toggleLike = async (postId) => {
         if (!isLoggedIn) {
-            setShowModal(true); // Show modal if user is not logged in
+            // Don't open the modal here; rely on the initial login check
             return;
         }
         try {
@@ -249,6 +246,7 @@ const PostPage = () => {
 
     useEffect(() => {
         fetchPosts();
+        checkLoginStatus(setIsLoggedIn, setLoading);
     }, []);
 
     const fetchPosts = async () => {
