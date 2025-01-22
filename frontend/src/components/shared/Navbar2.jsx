@@ -11,22 +11,12 @@ const Navbar2 = () => {
   // Check user login status on mount
   useEffect(() => {
     const checkLoginStatus = async () => {
-      console.log("Checking login status..."); // Debug: Start of login status check
       try {
         const response = await axios.get(`${MARKETER_API_END_POINT}/auth/status`, { withCredentials: true });
-        console.log("Login status response:", response.data); // Debug: Log API response
-
-        if (response.data.loggedIn) {
-          console.log("User is logged in."); // Debug: User is authenticated
-          setIsLoggedIn(true);
-        } else {
-          console.log("User is not logged in."); // Debug: User is not authenticated
-          setIsLoggedIn(false);
-        }
+        setIsLoggedIn(response.data.loggedIn);
       } catch (error) {
-        console.error("Error checking login status:", error); // Debug: Log errors
+        console.error("Error checking login status:", error);
       } finally {
-        console.log("Finished checking login status."); // Debug: End of login status check
         setLoading(false);
       }
     };
@@ -35,61 +25,42 @@ const Navbar2 = () => {
   }, []);
 
   const handleLogout = async () => {
-    console.log("Logging out..."); // Debug: Start of logout
     try {
-      const response = await axios.post(`${MARKETER_API_END_POINT}/auth/logout`, {}, { withCredentials: true });
-      console.log("Logout response:", response.data); // Debug: Log logout API response
-
+      await axios.post(`${MARKETER_API_END_POINT}/auth/logout`, {}, { withCredentials: true });
       setIsLoggedIn(false);
-      console.log("User logged out successfully."); // Debug: Logout successful
       navigate('/'); // Redirect to home page
     } catch (error) {
-      console.error("Error logging out:", error); // Debug: Log logout errors
+      console.error("Error logging out:", error);
     }
   };
 
   if (loading) {
-    console.log("Navbar is loading..."); // Debug: Loading state
     return <div>Loading...</div>;
   }
 
-  console.log("Navbar rendered. User logged in:", isLoggedIn); // Debug: Log render and login status
-
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light">
-      <div className="container">
-        <Link className="navbar-brand" to="/">MyApp</Link>
+    <nav>
+      <div>
+        <Link to="/">MyApp</Link>
 
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
-
-        <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav ms-auto">
+        <div>
+          <ul>
             {isLoggedIn ? (
               <>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/dashboard">Dashboard</Link>
+                <li>
+                  <Link to="/dashboard">Dashboard</Link>
                 </li>
-                <li className="nav-item">
-                  <button className="btn btn-outline-danger" onClick={handleLogout}>Logout</button>
+                <li>
+                  <button onClick={handleLogout}>Logout</button>
                 </li>
               </>
             ) : (
               <>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/login">Login</Link>
+                <li>
+                  <Link to="/marketer/login">Login</Link>
                 </li>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/signup">Signup</Link>
+                <li>
+                  <Link to="/marketer/signup">Signup</Link>
                 </li>
               </>
             )}
