@@ -181,7 +181,7 @@ const PostPage = () => {
     }
     const toggleLike = async (postId) => {
         if (!isLoggedIn) {
-            // Don't open the modal here; rely on the initial login check
+            setShowModal(true); // Show the login modal if the user is not logged in
             return;
         }
         try {
