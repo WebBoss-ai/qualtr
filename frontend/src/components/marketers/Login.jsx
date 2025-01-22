@@ -31,7 +31,7 @@ const MarketerLogin = () => {
       alert('Login successful');
       
       // Redirect to the profile update page
-      navigate('/founder-profile/update');
+      navigate('/posts');
     } catch (error) {
       alert('Login failed. Please try again.');
     } finally {
@@ -56,7 +56,7 @@ const MarketerLogin = () => {
                 type="email"
                 autoComplete="email"
                 required
-                className="appearance-none rounded-t-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-[#17B169] focus:border-[#17B169] sm:text-sm pl-10"
+                className="appearance-none rounded-t-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-gray-600 focus:border-gray-600 sm:text-sm pl-10"
                 placeholder="Email address"
                 value={formData.email}
                 onChange={handleChange}
@@ -72,7 +72,7 @@ const MarketerLogin = () => {
                 type={showPassword ? 'text' : 'password'}
                 autoComplete="current-password"
                 required
-                className="appearance-none rounded-b-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-[#17B169] focus:border-[#17B169] sm:text-sm pl-10"
+                className="appearance-none rounded-b-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-gray-600 focus:border-gray-600 sm:text-sm pl-10"
                 placeholder="Password"
                 value={formData.password}
                 onChange={handleChange}
@@ -91,13 +91,13 @@ const MarketerLogin = () => {
           <div>
             <button
               type="submit"
-              className={`group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#17B169] hover:bg-[#149655] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#17B169] transition-all duration-300 ease-in-out ${
+              className={`group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gray-600 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-600 transition-all duration-300 ease-in-out ${
                 isLoading ? 'opacity-75 cursor-not-allowed' : ''
               }`}
               disabled={isLoading}
             >
               <span className="absolute left-0 inset-y-0 flex items-center pl-3">
-                <Lock className="h-5 w-5 text-[#149655] group-hover:text-[#17B169]" aria-hidden="true" />
+                <Lock className="h-5 w-5 text-gray-800 group-hover:text-gray-600" aria-hidden="true" />
               </span>
               {isLoading ? 'Signing in...' : 'Sign In'}
             </button>
@@ -107,7 +107,7 @@ const MarketerLogin = () => {
         <div className="text-center mt-4">
           <a
             href="/forgot-password"
-            className="text-sm text-[#17B169] hover:text-[#149655] transition-all duration-300"
+            className="text-sm text-gray-600 hover:text-gray-800 transition-all duration-300"
           >
             Forgot your password?
           </a>
@@ -115,7 +115,7 @@ const MarketerLogin = () => {
             Don't have an account?{' '}
             <a
               href="/founder/register"
-              className="text-[#17B169] hover:text-[#149655] transition-all duration-300"
+              className="text-gray-600 hover:text-gray-800 transition-all duration-300"
             >
               Register here
             </a>

@@ -19,7 +19,7 @@ import JobSeekerProfile from './components/JobSeekerProfile';
 import UpdateProfilePage from './components/UpdateProfilePage';
 import AddPortfolio from './components/AddPortfolio'
 import BrandDashboard from './components/dashboard/BrandDashboard'
-import Home2 from './components/Home2'
+import Home3 from './components/Home3'
 import './styles.css';
 import SavedJobs from './components/SavedJobs'
 import HowToHire from './components/ExtraPages/HowToHire'
@@ -65,11 +65,11 @@ import TrendingPostsSection from './components/marketers/post/CategoryPosts/Tren
 const appRouter = createBrowserRouter([
   {
     path: '/',
-    element: <Home2 />
+    element: <Home3 />
   },
   {
     path: '/home',
-    element: <Home2 />
+    element: <Home3 />
   },
   {
     path: '/login',

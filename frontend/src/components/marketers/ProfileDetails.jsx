@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import axios from 'axios'
 import { MARKETER_API_END_POINT } from '@/utils/constant'
 import { Briefcase, GraduationCap, MapPin, Mail, Phone, Globe, Linkedin, Edit, Calendar, CheckCircle } from 'lucide-react'
-import Navbar from '../shared/Navbar'
+import Navbar2 from '../shared/Navbar2'
 import Footer2 from '../shared/Footer2'
 import UserPosts from './post/UserPosts'
 import UserProfilePosts from './post/UserProfilePosts'
@@ -54,7 +54,7 @@ const ProfileDetails = () => {
 
     return (
         <div className="bg-white min-h-screen">
-            <Navbar />
+            <Navbar2 />
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Banner and Profile Section */}
                 <div className="relative">

@@ -6,7 +6,7 @@ import { ThumbsUp, MessageCircle, Share2, Send, Calendar, MapPin, Briefcase, X, 
 import { TrendingUp, Scale, DollarSign, Image, Users, Wrench, Lightbulb, Clock, Upload } from 'lucide-react';
 import moment from 'moment';
 import Footer2 from '@/components/shared/Footer2';
-import Navbar from '@/components/shared/Navbar';
+import Navbar2 from '@/components/shared/Navbar2';
 import { formatDistanceToNow } from 'date-fns';
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
@@ -709,7 +709,7 @@ const categories = [
 
     return (
         <div>
-            <Navbar />
+            <Navbar2 />
             <div>
                 <div className="bg-gray-100 min-h-screen">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

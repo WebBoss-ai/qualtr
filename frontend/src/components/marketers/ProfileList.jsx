@@ -6,7 +6,7 @@ import { Search, MapPin, Building2, Users, X, ChevronDown, Filter, Globe } from 
 import debounce from 'lodash.debounce'
 import TrendingPosts from './post/TrendingPosts'
 import Footer2 from '../shared/Footer2'
-import Navbar from '../shared/Navbar'
+import Navbar2 from '../shared/Navbar2'
 
 const LoginModal = ({ isOpen, onClose }) => {
   if (!isOpen) return null
@@ -210,7 +210,7 @@ const ProfileList = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar />
+      <Navbar2 />
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="lg:flex lg:gap-8">
           {/* Main content - 70% */}
