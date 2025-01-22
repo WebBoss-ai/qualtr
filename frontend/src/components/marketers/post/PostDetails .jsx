@@ -524,7 +524,7 @@ const PostDetails = () => {
                         </div>
 
                         {/* Suggested Profiles - 30% */}
-                        <div className="hidden lg:block lg:w-72">
+                        <div className="lg:block lg:w-72">
                             <div className="sticky top-20">
                                 <RandomSuggestedProfiles />
                             </div>

@@ -118,6 +118,20 @@ const ProfileList = () => {
   const [isFiltersExpanded, setIsFiltersExpanded] = useState(false)
   const [user, setUser] = useState(null)
   const navigate = useNavigate()
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const checkLoginStatus = async (setIsLoggedIn, setIsModalOpen, setLoading) => {
+        try {
+            const response = await axios.get(`${MARKETER_API_END_POINT}/auth/status`, { withCredentials: true });
+            setIsLoggedIn(response.data.loggedIn);
+            if (!response.data.loggedIn) {
+                setIsModalOpen(true); // Show modal if user is not logged in
+            }
+        } catch (error) {
+            console.error("Error checking login status:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
   const fetchProfiles = async (filters = {}) => {
     try {
@@ -187,10 +201,10 @@ const ProfileList = () => {
   }
 
   const handleProfileClick = (id) => {
-    if (!user) {
-      setIsModalOpen(true)
-      return
-    }
+    if (!isLoggedIn) {
+      setIsModalOpen(true); // Show modal if user is not logged in
+      return;
+  }
     navigate(`/founder-profile/${id}`)
   }
 
@@ -255,7 +269,7 @@ const ProfileList = () => {
           </div>
 
           {/* Trending section - 30% */}
-          <div className="hidden lg:block lg:w-80">
+          <div className="lg:block lg:w-80">
             <div className="sticky top-24">
               <TrendingPosts />
             </div>

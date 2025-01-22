@@ -1300,7 +1300,7 @@ const categories = [
                             </div>
 
                             {/* Right Sidebar */}
-                            <div className="hidden lg:block lg:col-span-3">
+                            <div className="lg:block lg:col-span-3">
                                 <div className="sticky top-10">
                                     <RandomSuggestedProfiles />
                                 </div>
