@@ -19,7 +19,7 @@ const ExperiencesPage = ({ profileData, fetchProfile }) => {
     useEffect(() => {
         if (profileData?.experiences) {
             profileData.experiences.forEach((exp) =>
-                console.log("Experience Dates:", exp.startDate, exp.endDate)
+                console.log("")
             );
         }
     }, [profileData]);

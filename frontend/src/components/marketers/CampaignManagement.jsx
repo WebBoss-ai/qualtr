@@ -222,7 +222,6 @@ const CampaignManagement = () => {
                         <div className="mt-4">
                             {campaign.images.length > 0 ? (
                                 campaign.images.map((image, index) => {
-                                    console.log('Rendering image:', image); // Debugging: Log image URL
                                     return (
                                         <img
                                             key={index}

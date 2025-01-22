@@ -119,19 +119,17 @@ const ProfileList = () => {
   const [user, setUser] = useState(null)
   const navigate = useNavigate()
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const checkLoginStatus = async (setIsLoggedIn, setIsModalOpen, setLoading) => {
-        try {
-            const response = await axios.get(`${MARKETER_API_END_POINT}/auth/status`, { withCredentials: true });
-            setIsLoggedIn(response.data.loggedIn);
-            if (!response.data.loggedIn) {
-                setIsModalOpen(true); // Show modal if user is not logged in
-            }
-        } catch (error) {
-            console.error("Error checking login status:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
+  const [loading, setLoading] = useState(true);
+  const checkLoginStatus = async (setIsLoggedIn, setLoading) => {
+      try {
+          const response = await axios.get(`${MARKETER_API_END_POINT}/auth/status`, { withCredentials: true });
+          setIsLoggedIn(response.data.loggedIn);
+      } catch (error) {
+          console.error("Error checking login status:", error);
+      } finally {
+          setLoading(false);
+      }
+  };
 
   const fetchProfiles = async (filters = {}) => {
     try {
@@ -159,7 +157,7 @@ const ProfileList = () => {
     if (token && userId) {
       setUser({ id: userId, token })
     }
-
+    checkLoginStatus(setIsLoggedIn, setLoading);
     fetchProfiles()
   }, [])
 

@@ -443,7 +443,6 @@ const PostDetails = () => {
                                             <div className="flex items-center gap-3 text-xs text-gray-500 mt-1">
                                                 <button
                                                     onClick={() => {
-                                                        console.log("Setting reply state for comment ID:", comment._id); // Debugging reply state setting
                                                         setReply({ commentId: comment._id, text: '' });
                                                     }}
                                                     className="hover:text-gray-700"
@@ -486,7 +485,6 @@ const PostDetails = () => {
                                                     <input
                                                         value={reply.text}
                                                         onChange={(e) => {
-                                                            console.log("Updating reply text for comment ID:", comment._id, "New text:", e.target.value); // Debugging input change
                                                             setReply({ ...reply, text: e.target.value });
                                                         }}
                                                         className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
@@ -494,7 +492,6 @@ const PostDetails = () => {
                                                     />
                                                     <button
                                                         onClick={() => {
-                                                            console.log("Submitting reply for comment ID:", comment._id, "Reply text:", reply.text); // Debugging reply submission
                                                             replyToComment(comment._id);
                                                         }}
                                                         className="px-2 py-1 text-xs bg-gray-800 text-white rounded-md hover:bg-gray-700 transition-colors"
