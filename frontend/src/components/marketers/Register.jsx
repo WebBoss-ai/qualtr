@@ -133,7 +133,7 @@ export default function Register() {
           <p className="mt-2 text-sm text-gray-600">
             Already registered?{' '}
             <a
-              href="/marketer/login"
+              href="/founder/login"
               className="text-[#17B169] hover:text-[#149655] transition-all duration-300"
             >
               Sign in

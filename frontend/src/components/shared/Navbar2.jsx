@@ -48,7 +48,10 @@ const Navbar2 = () => {
             {isLoggedIn ? (
               <>
                 <li>
-                  <Link to="/dashboard">Dashboard</Link>
+                  <Link to="/posts">Posts</Link>
+                </li>
+                <li>
+                  <Link to="/founder-profile/update">Dashboard</Link>
                 </li>
                 <li>
                   <button onClick={handleLogout}>Logout</button>
@@ -57,10 +60,10 @@ const Navbar2 = () => {
             ) : (
               <>
                 <li>
-                  <Link to="/marketer/login">Login</Link>
+                  <Link to="/founder/login">Login</Link>
                 </li>
                 <li>
-                  <Link to="/marketer/signup">Signup</Link>
+                  <Link to="/founder/register">Signup</Link>
                 </li>
               </>
             )}

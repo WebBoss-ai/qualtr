@@ -31,7 +31,7 @@ const MarketerLogin = () => {
       alert('Login successful');
       
       // Redirect to the profile update page
-      navigate('/marketer-profile/update');
+      navigate('/founder-profile/update');
     } catch (error) {
       alert('Login failed. Please try again.');
     } finally {
@@ -114,7 +114,7 @@ const MarketerLogin = () => {
           <p className="mt-2 text-sm text-gray-600">
             Don't have an account?{' '}
             <a
-              href="/marketer/register"
+              href="/founder/register"
               className="text-[#17B169] hover:text-[#149655] transition-all duration-300"
             >
               Register here

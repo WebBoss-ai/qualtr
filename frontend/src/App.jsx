@@ -204,31 +204,31 @@ const appRouter = createBrowserRouter([
     element:<PrivacyPolicy /> 
   },
   {
-    path:"/marketer/register",
+    path:"/founder/register",
     element:<Register /> 
   },
   {
-    path:"/marketer/login",
+    path:"/founder/login",
     element:<MarketerLogin /> 
   },
   {
-    path:"/marketer-profile/update",
+    path:"/founder-profile/update",
     element:<MarketerUpdateProfile /> 
   },
   {
-    path:"/marketer/profiles",
+    path:"/founder/profiles",
     element:<ProfileList /> 
   },
   {
-    path:"/marketer/experience",
+    path:"/founder/experience",
     element:<ExperiencesPage /> 
   },
   {
-    path:"/marketer/campaigns",
+    path:"/founder/campaigns",
     element:<CampaignManagement /> 
   },
   {
-    path:"/marketer-profile/:id",
+    path:"/founder-profile/:id",
     element:<ProfileDetails /> 
   },
   {

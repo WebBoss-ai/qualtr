@@ -21,10 +21,10 @@ const LoginModal = ({ isOpen, onClose }) => {
             <X size={20} className="text-gray-500" />
           </button>
         </div>
-        <p className="text-gray-600">Please sign in to view profiles and connect with other marketers.</p>
+        <p className="text-gray-600">Please sign in to view profiles and connect with other founders.</p>
         <div className="flex gap-3">
           <button
-            onClick={() => (window.location.href = '/marketer/login')}
+            onClick={() => (window.location.href = '/founder/login')}
             className="flex-1 bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors"
           >
             Sign in

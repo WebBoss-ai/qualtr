@@ -148,10 +148,10 @@ const TrendingPostsSection = () => {
                             <X size={18} className="text-gray-500" />
                         </button>
                     </div>
-                    <p className="text-sm text-gray-600">Please sign in to interact with posts and connect with other marketers.</p>
+                    <p className="text-sm text-gray-600">Please sign in to interact with posts and connect with other founders.</p>
                     <div className="flex gap-3">
                         <a
-                            href="/marketer/login"
+                            href="/founder/login"
                             className="flex-1 bg-gray-900 text-white px-4 py-2 rounded-md text-sm hover:bg-gray-800 transition-colors text-center"
                         >
                             Sign in

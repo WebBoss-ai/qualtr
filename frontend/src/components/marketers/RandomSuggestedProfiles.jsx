@@ -96,7 +96,7 @@ const RandomSuggestedProfiles = () => {
             {profiles.length > 0 && (
                 <div className="px-4 py-3 bg-gray-50 text-center">
                     <a
-                        href="/marketer/profiles"  // Use href for simple redirection
+                        href="/founder/profiles"  // Use href for simple redirection
                         className="text-sm font-medium text-gray-700 hover:text-gray-900 transition duration-150 ease-in-out"
                     >
                         View more
