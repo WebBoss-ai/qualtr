@@ -40,6 +40,7 @@ const SalesCustomerAcquisitionPosts = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
 
+    const [loading, setLoading] = useState(true);
     const handleVote = async (postId, option) => {
         if (!userId) return setShowModal(true);
         try {
@@ -61,13 +62,10 @@ const SalesCustomerAcquisitionPosts = () => {
         }
     };
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const checkLoginStatus = async (setIsLoggedIn, setShowModal, setLoading) => {
+    const checkLoginStatus = async (setIsLoggedIn, setLoading) => {
         try {
             const response = await axios.get(`${MARKETER_API_END_POINT}/auth/status`, { withCredentials: true });
             setIsLoggedIn(response.data.loggedIn);
-            if (!response.data.loggedIn) {
-                setShowModal(true); // Show modal if user is not logged in
-            }
         } catch (error) {
             console.error("Error checking login status:", error);
         } finally {
@@ -246,8 +244,9 @@ const categories = [
         { value: "document", label: "Document", icon: FileText },
     ]
 
-    useEffect(() => {
+        useEffect(() => {
         fetchPosts();
+        checkLoginStatus(setIsLoggedIn, setLoading);
     }, []);
 
     const fetchPosts = async () => {
