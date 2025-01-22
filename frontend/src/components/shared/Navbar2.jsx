@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { MARKETER_API_END_POINT } from '@/utils/constant'
+import { MARKETER_API_END_POINT } from '@/utils/constant';
 
 const Navbar2 = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -11,16 +11,22 @@ const Navbar2 = () => {
   // Check user login status on mount
   useEffect(() => {
     const checkLoginStatus = async () => {
+      console.log("Checking login status..."); // Debug: Start of login status check
       try {
-        const response = await axios.get(`${MARKETER_API_END_POINT}/auth/status`, { withCredentials: true }); // Example endpoint
+        const response = await axios.get(`${MARKETER_API_END_POINT}/auth/status`, { withCredentials: true });
+        console.log("Login status response:", response.data); // Debug: Log API response
+
         if (response.data.loggedIn) {
+          console.log("User is logged in."); // Debug: User is authenticated
           setIsLoggedIn(true);
         } else {
+          console.log("User is not logged in."); // Debug: User is not authenticated
           setIsLoggedIn(false);
         }
       } catch (error) {
-        console.error('Error checking login status:', error);
+        console.error("Error checking login status:", error); // Debug: Log errors
       } finally {
+        console.log("Finished checking login status."); // Debug: End of login status check
         setLoading(false);
       }
     };
@@ -29,16 +35,25 @@ const Navbar2 = () => {
   }, []);
 
   const handleLogout = async () => {
+    console.log("Logging out..."); // Debug: Start of logout
     try {
-      await axios.post(`${MARKETER_API_END_POINT}/auth/logout`, {}, { withCredentials: true });
+      const response = await axios.post(`${MARKETER_API_END_POINT}/auth/logout`, {}, { withCredentials: true });
+      console.log("Logout response:", response.data); // Debug: Log logout API response
+
       setIsLoggedIn(false);
-      navigate('/'); // Redirect to home page after logout
+      console.log("User logged out successfully."); // Debug: Logout successful
+      navigate('/'); // Redirect to home page
     } catch (error) {
-      console.error('Error logging out:', error);
+      console.error("Error logging out:", error); // Debug: Log logout errors
     }
   };
 
-  if (loading) return <div>Loading...</div>; // Show a loading state while checking login status
+  if (loading) {
+    console.log("Navbar is loading..."); // Debug: Loading state
+    return <div>Loading...</div>;
+  }
+
+  console.log("Navbar rendered. User logged in:", isLoggedIn); // Debug: Log render and login status
 
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
