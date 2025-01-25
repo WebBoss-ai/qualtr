@@ -103,6 +103,9 @@ export const login = async (req, res) => {
         // Generate JWT token
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '30d' });
 
+        // Determine redirection path based on profile completion
+        const redirectPath = user.isProfileComplete ? '/posts' : '/founder-profile/update';
+
         return res.status(200)
             .cookie("token", token, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, sameSite: 'strict' })
             .json({
@@ -110,6 +113,7 @@ export const login = async (req, res) => {
                 success: true,
                 token,
                 _id: user._id,
+                redirectPath, // Send the redirection path
             });
 
     } catch (error) {
@@ -167,7 +171,7 @@ export const checkAuthStatus = (req, res) => {
 export const updateProfile = async (req, res) => {
     try {
         const userId = req.id; // Assuming user ID is provided via authentication middleware
-        const { fullname, phoneNumber, agencyName, bio, skills, location } = req.body;
+        const { fullname, phoneNumber, agencyName, bio, skills, location, website } = req.body;
         const profilePhoto = req.file; // Multer will handle the file upload
 
         // Find user by ID
@@ -194,6 +198,7 @@ export const updateProfile = async (req, res) => {
         user.profile.skills = skills || user.profile.skills;
         user.profile.location = location || user.profile.location;
         user.profile.profilePhoto = uploadedProfilePhotoKey;
+        user.profile.website = website || user.profile.website;
 
         user.isProfileComplete = true;
         await user.save();

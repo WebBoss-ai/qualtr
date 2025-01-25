@@ -14,11 +14,11 @@ const EnhancedMarketerProfile = () => {
     const [profileData, setProfileData] = useState({
         fullname: '',
         phoneNumber: '',
-        email: '',
         agencyName: '',
         bio: '',
         skills: '',
         location: '',
+        website:'',
         profilePhoto: '',
         experiences: [],
         education: []
@@ -62,11 +62,11 @@ const EnhancedMarketerProfile = () => {
             setProfileData(res.data.profile || {
                 fullname: '',
                 phoneNumber: '',
-                email: '',
                 agencyName: '',
                 bio: '',
                 skills: '',
                 location: '',
+                website: '',
                 profilePhoto: '',
                 experiences: [],
                 education: []
@@ -241,12 +241,12 @@ const EnhancedMarketerProfile = () => {
                                         />
                                     </div>
                                     <div>
-                                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                        <label htmlFor="website" className="block text-sm font-medium text-gray-700 mb-1">Website</label>
                                         <input
-                                            type="email"
-                                            id="email"
-                                            name="email"
-                                            value={profileData.email}
+                                            type="text"
+                                            id="website"
+                                            name="website"
+                                            value={profileData.website}
                                             onChange={handleChange}
                                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
                                             required
@@ -259,6 +259,7 @@ const EnhancedMarketerProfile = () => {
                                             name="bio"
                                             value={profileData.bio}
                                             onChange={handleChange}
+                                            required
                                             rows={4}
                                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
                                         />
@@ -271,6 +272,7 @@ const EnhancedMarketerProfile = () => {
                                             name="skills"
                                             value={profileData.skills}
                                             onChange={handleChange}
+                                            required
                                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
                                         />
                                     </div>
@@ -282,6 +284,7 @@ const EnhancedMarketerProfile = () => {
                                             name="location"
                                             value={profileData.location}
                                             onChange={handleChange}
+                                            required
                                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
                                         />
                                     </div>

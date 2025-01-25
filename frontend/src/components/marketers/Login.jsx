@@ -22,22 +22,22 @@ const MarketerLogin = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const res = await axios.post(`${MARKETER_API_END_POINT}/login`, formData);
-      
-      // Store token and user ID in localStorage
-      localStorage.setItem('token', res.data.token);
-      localStorage.setItem('userId', res.data._id);
+        const res = await axios.post(`${MARKETER_API_END_POINT}/login`, formData);
 
-      alert('Login successful');
-      
-      // Redirect to the profile update page
-      navigate('/posts');
+        // Store token and user ID in localStorage
+        localStorage.setItem('token', res.data.token);
+        localStorage.setItem('userId', res.data._id);
+
+        alert('Login successful');
+
+        // Redirect to the appropriate page based on the redirectPath from the backend
+        navigate(res.data.redirectPath);
     } catch (error) {
-      alert('Login failed. Please try again.');
+        alert('Login failed. Please try again.');
     } finally {
-      setIsLoading(false);
+        setIsLoading(false);
     }
-  };
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
