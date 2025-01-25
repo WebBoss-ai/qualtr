@@ -7,7 +7,7 @@ import debounce from 'lodash.debounce'
 import TrendingPosts from './post/TrendingPosts'
 import Footer2 from '../shared/Footer2'
 import Navbar2 from '../shared/Navbar2'
-
+import profilePic from '../../images/user_qualtr.png'
 const LoginModal = ({ isOpen, onClose }) => {
   if (!isOpen) return null
 
@@ -121,34 +121,34 @@ const ProfileList = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
   const checkLoginStatus = async (setIsLoggedIn, setLoading) => {
-      try {
-          const response = await axios.get(`${MARKETER_API_END_POINT}/auth/status`, { withCredentials: true });
-          setIsLoggedIn(response.data.loggedIn);
-      } catch (error) {
-          console.error("Error checking login status:", error);
-      } finally {
-          setLoading(false);
-      }
+    try {
+      const response = await axios.get(`${MARKETER_API_END_POINT}/auth/status`, { withCredentials: true });
+      setIsLoggedIn(response.data.loggedIn);
+    } catch (error) {
+      console.error("Error checking login status:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const fetchProfiles = async (filters = {}) => {
     try {
-        const token = localStorage.getItem('token'); // Retrieve token from local storage
+      const token = localStorage.getItem('token'); // Retrieve token from local storage
 
-        const headers = token
-            ? { Authorization: `Bearer ${token}` }
-            : {}; // Use empty headers for unauthenticated users
+      const headers = token
+        ? { Authorization: `Bearer ${token}` }
+        : {}; // Use empty headers for unauthenticated users
 
-        const response = await axios.get(`${MARKETER_API_END_POINT}/profiles`, {
-            headers,
-            params: filters,
-        });
+      const response = await axios.get(`${MARKETER_API_END_POINT}/profiles`, {
+        headers,
+        params: filters,
+      });
 
-        setProfiles(response.data.profiles);
+      setProfiles(response.data.profiles);
     } catch (error) {
-        console.error('Error fetching profiles:', error.message);
+      console.error('Error fetching profiles:', error.message);
     }
-};
+  };
 
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -186,10 +186,10 @@ const ProfileList = () => {
         prevProfiles.map((profile) =>
           profile.id === id
             ? {
-                ...profile,
-                isFollowing: true,
-                followers: profile.followers + 1,
-              }
+              ...profile,
+              isFollowing: true,
+              followers: profile.followers + 1,
+            }
             : profile
         )
       )
@@ -202,7 +202,7 @@ const ProfileList = () => {
     if (!isLoggedIn) {
       setIsModalOpen(true); // Show modal if user is not logged in
       return;
-  }
+    }
     navigate(`/founder-profile/${id}`)
   }
 
@@ -227,18 +227,24 @@ const ProfileList = () => {
                 >
                   <div className="flex items-center gap-6">
                     <img
-                      src={profile.profilePhoto || '/placeholder.svg'}
-                      alt={profile.fullname}
-                      className="w-20 h-20 rounded-full object-cover border-2 border-gray-100"
+                      src={profile.profilePhoto ? profile.profilePhoto : profilePic}
+                      alt={profile.fullname || "User Profile"}
+                      className={`w-20 h-20 rounded-full border-2 border-gray-100 object-cover ${profile.profilePhoto ? "" : "overflow-hidden"
+                        }`}
+                      style={{
+                        objectPosition: "center",
+                      }}
                     />
+
+
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-lg font-semibold text-gray-900 truncate">{profile.fullname}</h3>
-                      <p className="text-sm text-gray-600 truncate mt-1">{profile.agencyName}</p>
+                      <h3 className="text-lg font-semibold text-gray-900 truncate">{profile.fullname || 'Qualtr Member'}</h3>
+                      <p className="text-sm text-gray-600 truncate mt-1">{profile.agencyName || 'Focused on creating impact'}</p>
                       <div className="flex flex-wrap items-center gap-4 mt-2 text-sm text-gray-500">
                         <div className="flex items-center gap-1">
                           <MapPin size={14} />
-                          <span>{profile.location}</span>
-                        </div>
+                          <span>{profile.location || 'A galaxy far, far away...'}</span>
+                          </div>
                         <div className="flex items-center gap-1">
                           <Users size={14} />
                           <span>{profile.followers} followers</span>
@@ -251,11 +257,10 @@ const ProfileList = () => {
                     </div>
                     <button
                       onClick={(e) => handleFollow(profile.id, e)}
-                      className={`px-6 py-2 rounded-full text-sm font-medium transition-colors ${
-                        profile.isFollowing
-                          ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                          : 'bg-gray-900 text-white hover:bg-gray-800'
-                      }`}
+                      className={`px-6 py-2 rounded-full text-sm font-medium transition-colors ${profile.isFollowing
+                        ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        : 'bg-gray-900 text-white hover:bg-gray-800'
+                        }`}
                       disabled={profile.isFollowing}
                     >
                       {profile.isFollowing ? 'Following' : 'Follow'}

@@ -7,12 +7,13 @@ import Navbar2 from '../shared/Navbar2'
 import Footer2 from '../shared/Footer2'
 import UserPosts from './post/UserPosts'
 import UserProfilePosts from './post/UserProfilePosts'
+import profilePic from '../../images/user_qualtr.png'
 
 const formatDate = (month, year) => {
     const date = new Date(`${month} 1, ${year}`);
     return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 };
-  
+
 
 const ProfileDetails = () => {
     const { id } = useParams()
@@ -62,10 +63,15 @@ const ProfileDetails = () => {
                     <div className="absolute top-28 left-4 sm:left-8">
                         {profile.profilePhoto && (
                             <img
-                                src={profile.profilePhoto}
-                                alt={`${profile.fullname}'s Profile`}
-                                className="w-40 h-40 rounded-full border-4 border-white object-cover"
+                                src={profile.profilePhoto ? profile.profilePhoto : profilePic}
+                                alt={`${profile.fullname || "User"}'s Profile`}
+                                className={`w-40 h-40 rounded-full border-4 border-white object-cover ${profile.profilePhoto ? "" : "overflow-hidden scale-125"
+                                    }`}
+                                style={{
+                                    objectPosition: profile.profilePhoto ? "center" : "top", // Adjust positioning for default pic
+                                }}
                             />
+
                         )}
                     </div>
                     <div className="absolute top-4 right-4">
@@ -80,15 +86,15 @@ const ProfileDetails = () => {
                     <div className="lg:w-2/3">
                         <div className="mb-6">
                             <h1 className="text-2xl font-semibold mt-12 text-gray-900 flex items-center">
-                                {profile.fullname}
+                                {profile.fullname || 'Qualtr Member'}
                                 {profile.isVerified && (
                                     <CheckCircle size={20} className="text-blue-500 ml-2" />
                                 )}
                             </h1>
-                            <h2 className="text-lg font-light text-gray-600 mt-1">{profile.agencyName}</h2>
+                            <h2 className="text-lg font-light text-gray-600 mt-1">{profile.agencyName || 'Focused on creating impact'}</h2>
                             <div className="flex items-center mt-2 text-sm text-gray-500">
                                 <MapPin size={16} className="mr-1" />
-                                <span>{profile.location}</span>
+                                <span>{profile.location || 'A galaxy far, far away...'}</span>
                             </div>
                         </div>
 

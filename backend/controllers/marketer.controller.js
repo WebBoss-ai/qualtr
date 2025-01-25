@@ -710,11 +710,12 @@ export const viewProfile = async (req, res) => {
 // Get all profiles
 export const getAllProfiles = async (req, res) => {
     try {
-        const { fullname, location, agencyName } = req.query;
+        const { fullname, location,website, agencyName } = req.query;
         const filters = {};
 
         if (fullname) filters['profile.fullname'] = { $regex: fullname, $options: 'i' };
         if (location) filters['profile.location'] = { $regex: location, $options: 'i' };
+        if (website) filters['profile.website'] = { $regex: website, $options: 'i' };
         if (agencyName) filters['profile.agencyName'] = { $regex: agencyName, $options: 'i' };
 
         const loggedInUserId = req.id;
@@ -730,6 +731,7 @@ export const getAllProfiles = async (req, res) => {
                 fullname: user.profile.fullname,
                 agencyName: user.profile.agencyName,
                 location: user.profile.location,
+                website: user.profile.website,
                 followers: user.followers.length,
                 following: user.following.length,
                 isFollowing: loggedInUserId ? user.followers.includes(loggedInUserId) : false,
