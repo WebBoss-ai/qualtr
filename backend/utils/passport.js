@@ -9,7 +9,7 @@ passport.use(
     {
         clientID: process.env.GOOGLE_CLIENT_ID || "default-client-id",
         clientSecret: process.env.GOOGLE_CLIENT_SECRET || "default-client-secret",
-        callbackURL: process.env.GOOGLE_CALLBACK_URL || "http://localhost:3000/auth/google/callback",
+        callbackURL: process.env.GOOGLE_CALLBACK_URL || "http://localhost:8000/auth/google/callback",
       },
     async (accessToken, refreshToken, profile, done) => {
       console.log("Google Strategy Callback Triggered.");

@@ -100,7 +100,7 @@ app.use("/api/v1/portfolio", portfolioRoute);
 app.use("/api/v1/message", messageRoute);
 
 // Google Authentication routes
-app.use("/api/v1/auth", authRoute);
+app.use("/auth", authRoute);
 
 // Serve React frontend for other routes
 app.get("*", (req, res) => {
