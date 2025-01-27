@@ -10,6 +10,7 @@ import session from "express-session";
 import passport from "passport";
 import connectDB from "./utils/db.js";
 import "./utils/passport.js"; // Import Passport configuration
+dotenv.config();
 
 // Import routes
 import userRoute from "./routes/user.route.js";
@@ -24,8 +25,6 @@ import portfolioRoute from "./routes/portfolio.route.js";
 import messageRoute from "./routes/message.route.js";
 import marketerRoute from "./routes/marketer.route.js";
 import authRoute from "./routes/authRoutes.js"; // Google Auth route
-
-dotenv.config();
 
 const app = express();
 const server = createServer(app);
