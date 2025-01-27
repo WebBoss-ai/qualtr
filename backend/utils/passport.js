@@ -4,10 +4,14 @@ import DigitalMarketer from "../models/DigitalMarketer.js";
 
 console.log("Initializing Passport...");
 
+console.log("GOOGLE_CLIENT_ID:", process.env.GOOGLE_CLIENT_ID || "Default Client ID");
+console.log("GOOGLE_CLIENT_SECRET:", process.env.GOOGLE_CLIENT_SECRET || "Default Client Secret");
+console.log("GOOGLE_CALLBACK_URL:", process.env.GOOGLE_CALLBACK_URL || "Default Callback URL");
+
 passport.use(
   new GoogleStrategy(
     {
-        clientID: process.env.GOOGLE_CLIENT_ID,
+        clientID: process.env.GOOGLE_CLIENT_ID || "default-client-id",
         clientSecret: process.env.GOOGLE_CLIENT_SECRET || "default-client-secret",
         callbackURL: process.env.GOOGLE_CALLBACK_URL || "http://localhost:8000/auth/google/callback",
       },
