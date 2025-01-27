@@ -38,6 +38,9 @@ const MarketerLogin = () => {
         setIsLoading(false);
     }
 };
+const handleGoogleLogin = () => {
+  window.location.href = 'https://qualtr.com/api/v1/auth/google';
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -103,6 +106,16 @@ const MarketerLogin = () => {
             </button>
           </div>
         </form>
+
+        <div className="mt-6">
+          <button
+            onClick={handleGoogleLogin}
+            className="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gray-500 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-all duration-300 ease-in-out"
+          >
+            Sign in with Google
+          </button>
+        </div>
+
         {/* Additional Links */}
         <div className="text-center mt-4">
           <a
