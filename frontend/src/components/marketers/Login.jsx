@@ -107,14 +107,14 @@ const handleGoogleLogin = () => {
           </div>
         </form>
 
-        <div className="mt-6">
+        {/* <div className="mt-6">
           <button
             onClick={handleGoogleLogin}
             className="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gray-500 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-all duration-300 ease-in-out"
           >
             Sign in with Google
           </button>
-        </div>
+        </div> */}
 
         {/* Additional Links */}
         <div className="text-center mt-4">
