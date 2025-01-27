@@ -39,7 +39,7 @@ const MarketerLogin = () => {
     }
 };
 const handleGoogleLogin = () => {
-  window.location.href = 'https://qualtr.com/api/v1/auth/google';
+  window.location.href = 'https://qualtr.com/auth/google';
 };
 
   return (
