@@ -114,6 +114,7 @@ const AdvancedSearch = ({ onSearch, isExpanded, onToggle }) => {
 
 const ProfileList = () => {
   const [profiles, setProfiles] = useState([])
+  const [visibleProfiles, setVisibleProfiles] = useState(15);
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isFiltersExpanded, setIsFiltersExpanded] = useState(false)
   const [user, setUser] = useState(null)
@@ -160,6 +161,14 @@ const ProfileList = () => {
     checkLoginStatus(setIsLoggedIn, setLoading);
     fetchProfiles()
   }, [])
+
+  const handleLoadMore = () => {
+    if (!isLoggedIn) {
+      setIsModalOpen(true); // Open login modal if user is not logged in
+      return;
+    }
+    setVisibleProfiles((prev) => prev + 15); // Load next 15 profiles
+  };
 
   const handleSearch = useCallback(
     debounce((filters) => {
@@ -219,7 +228,7 @@ const ProfileList = () => {
               onToggle={() => setIsFiltersExpanded(!isFiltersExpanded)}
             />
             <div className="mt-6 space-y-6">
-              {profiles.map((profile) => (
+            {profiles.slice(0, visibleProfiles).map((profile) => (
                 <div
                   key={profile.id}
                   onClick={() => handleProfileClick(profile.id)}
@@ -268,6 +277,14 @@ const ProfileList = () => {
                   </div>
                 </div>
               ))}
+            {visibleProfiles < profiles.length && (
+                <button
+                  onClick={handleLoadMore}
+                  className="mt-6 w-full bg-gray-800 text-white py-3 rounded-lg text-center font-semibold hover:bg-gray-900 transition-colors"
+                >
+                  Load More
+                </button>
+              )}
             </div>
           </div>
 
