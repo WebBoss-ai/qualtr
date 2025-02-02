@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 const VCProfileSchema = new mongoose.Schema({
     fundName: { type: String, required: true },
+    logo: { type: String, default: '' },
     fundType: { type: String, required: true },
     fundWebsite: { type: String, required: true },
     minChequeSize: { type: Number, required: true },

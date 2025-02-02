@@ -30,6 +30,28 @@ export async function uploadFileToS3(file) {
   }
 }
 
+export async function uploadVCLogoToS3(file) {
+  const uploadParams = {
+    Bucket: "qualtr", // Replace with your actual bucket name
+    Key: `vc_logo/${file.originalname}`, // Store inside the vc_logo folder
+    Body: file.buffer, // File buffer from Multer
+    ContentType: file.mimetype || "application/octet-stream",
+    ACL: "public-read", // Make the file publicly accessible (optional)
+  };
+
+  try {
+    const command = new PutObjectCommand(uploadParams);
+    const response = await s3Client.send(command);
+    return {
+      Location: `https://${uploadParams.Bucket}.s3.${s3Client.config.region}.amazonaws.com/${uploadParams.Key}`,
+      ...response,
+    };
+  } catch (error) {
+    console.error("Error uploading VC logo:", error);
+    throw error;
+  }
+}
+
 export async function uploadFileToCompaniesDoc(file) {
   const uploadParams = {
     Bucket: "qualtr", // Replace with your actual bucket name

@@ -6,6 +6,7 @@ import { VC_API_END_POINT } from "@/utils/constant";
 const VCForm = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    
     const [formData, setFormData] = useState({
         fundName: '',
         fundType: '',
@@ -16,8 +17,11 @@ const VCForm = () => {
         categoriesOfInterest: '',
         typeOfFinancing: '',
         linkedInPage: '',
-        thesis: ''
+        thesis: '',
+        logo: ''  // Store existing logo URL
     });
+    
+    const [selectedFile, setSelectedFile] = useState(null); // Store new logo file
 
     useEffect(() => {
         if (id) {
@@ -31,16 +35,38 @@ const VCForm = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const url = id ? `${VC_API_END_POINT}/${id}` : VC_API_END_POINT;
-        const method = id ? axios.put : axios.post;
-    
-        method(url, formData)
-            .then(() => navigate('/vcs'))
-            .catch(err => console.error(err));
+    const handleFileChange = (e) => {
+        setSelectedFile(e.target.files[0]);
     };
-    
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        
+        const formDataToSend = new FormData();
+        
+        // Append form fields
+        Object.keys(formData).forEach(key => {
+            formDataToSend.append(key, formData[key]);
+        });
+
+        // Append file if selected
+        if (selectedFile) {
+            formDataToSend.append("logo", selectedFile);
+        }
+
+        try {
+            const url = id ? `${VC_API_END_POINT}/${id}` : VC_API_END_POINT;
+            const method = id ? axios.put : axios.post;
+
+            await method(url, formDataToSend, {
+                headers: { "Content-Type": "multipart/form-data" }
+            });
+
+            navigate('/vcs');
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
     return (
         <div>
@@ -56,6 +82,19 @@ const VCForm = () => {
                 <input type="text" name="typeOfFinancing" placeholder="Type of Financing (comma-separated)" value={formData.typeOfFinancing} onChange={handleChange} required />
                 <input type="url" name="linkedInPage" placeholder="LinkedIn Page" value={formData.linkedInPage} onChange={handleChange} required />
                 <textarea name="thesis" placeholder="Thesis" value={formData.thesis} onChange={handleChange} required />
+
+                {/* Logo Upload */}
+                <label>Upload Logo:</label>
+                <input type="file" accept="image/*" onChange={handleFileChange} />
+
+                {/* Display Existing Logo */}
+                {formData.logo && (
+                    <div>
+                        <p>Current Logo:</p>
+                        <img src={formData.logo} alt="VC Logo" width="100" height="100" />
+                    </div>
+                )}
+
                 <button type="submit">{id ? 'Update' : 'Create'}</button>
             </form>
         </div>

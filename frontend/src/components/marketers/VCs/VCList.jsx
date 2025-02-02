@@ -33,8 +33,9 @@ const VCList = () => {
                 <ul>
                     {vcs.map(vc => (
                         <li key={vc._id}>
-                            <Link to={`/ vc / ${ vc._id }`}>{vc.fundName}</Link> - 
-                            <Link to={`/ vc / edit / ${ vc._id }`} style={{ marginLeft: '10px' }}>Edit</Link>
+                            <img src={vc.logo} alt={vc.fundName} width="50" height="50" onError={(e) => e.target.src = '/default-logo.png'} />
+                            <Link to={`/vc/${ vc._id }`}>{vc.fundName}</Link> - 
+                            <Link to={`/vc/edit/${ vc._id }`} style={{ marginLeft: '10px' }}>Edit</Link>
                         </li>
                     ))}
                 </ul>

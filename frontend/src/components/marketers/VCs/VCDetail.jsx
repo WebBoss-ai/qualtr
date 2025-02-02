@@ -18,6 +18,7 @@ const VCDetail = () => {
     return (
         <div>
             <h2>{vc.fundName}</h2>
+            <img src={vc.logo} alt={vc.fundName} width="50" height="50" onError={(e) => e.target.src = '/default-logo.png'} />
             <p>Type: {vc.fundType}</p>
             <p>Website: <a href={vc.fundWebsite} target="_blank" rel="noopener noreferrer">{vc.fundWebsite}</a></p>
             <p>Minimum Cheque: ${vc.minChequeSize}</p>
@@ -26,7 +27,7 @@ const VCDetail = () => {
             <p>Categories: {vc.categoriesOfInterest.join(', ')}</p>
             <p>Financing Types: {vc.typeOfFinancing.join(', ')}</p>
             <p>Thesis: {vc.thesis}</p>
-            <Link to={`/edit-vc/${id}`}>Edit</Link>
+            <Link to={`/vc/edit/${id}`}>Edit</Link>
         </div>
     );
 };
