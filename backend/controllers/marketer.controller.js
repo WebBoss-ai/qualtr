@@ -710,7 +710,7 @@ export const viewProfile = async (req, res) => {
 // Get all profiles
 export const getAllProfiles = async (req, res) => {
     try {
-        const { fullname, location,website, agencyName } = req.query;
+        const { fullname, location, website, agencyName } = req.query;
         const filters = {};
 
         if (fullname) filters['profile.fullname'] = { $regex: fullname, $options: 'i' };
@@ -721,7 +721,8 @@ export const getAllProfiles = async (req, res) => {
         const loggedInUserId = req.id;
         const users = await DigitalMarketer.find(filters).select('-password');
 
-        const profiles = await Promise.all(users.map(async (user) => {
+        // Fetch profile photos in parallel to reduce waiting time
+        const profilePromises = users.map(async (user) => {
             const profilePhotoURL = user.profile.profilePhoto
                 ? await getObjectURL(user.profile.profilePhoto)
                 : null;
@@ -737,9 +738,27 @@ export const getAllProfiles = async (req, res) => {
                 isFollowing: loggedInUserId ? user.followers.includes(loggedInUserId) : false,
                 profilePhoto: profilePhotoURL,
             };
-        }));
+        });
 
-        res.status(200).json({ success: true, message: 'Profiles retrieved successfully.', profiles });
+        const profiles = await Promise.all(profilePromises);
+
+        // Separate profiles with and without photos
+        let profilesWithPhoto = profiles.filter(p => p.profilePhoto);
+        let profilesWithoutPhoto = profiles.filter(p => !p.profilePhoto);
+
+        // Shuffle both arrays randomly
+        const shuffleArray = (arr) => arr.sort(() => Math.random() - 0.5);
+        profilesWithPhoto = shuffleArray(profilesWithPhoto);
+        profilesWithoutPhoto = shuffleArray(profilesWithoutPhoto);
+
+        // Merge lists: first profiles with photos, then without
+        const sortedProfiles = [...profilesWithPhoto, ...profilesWithoutPhoto];
+
+        res.status(200).json({
+            success: true,
+            message: 'Profiles retrieved successfully.',
+            profiles: sortedProfiles,
+        });
     } catch (error) {
         console.error('Error fetching profiles:', error.message);
         res.status(500).json({ success: false, message: 'Internal server error.' });
