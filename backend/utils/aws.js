@@ -36,7 +36,6 @@ export async function uploadVCLogoToS3(file) {
     Key: `vc_logo/${file.originalname}`, // Store inside the vc_logo folder
     Body: file.buffer, // File buffer from Multer
     ContentType: file.mimetype || "application/octet-stream",
-    ACL: "public-read", // Make the file publicly accessible (optional)
   };
 
   try {
