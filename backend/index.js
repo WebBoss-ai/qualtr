@@ -25,6 +25,7 @@ import portfolioRoute from "./routes/portfolio.route.js";
 import messageRoute from "./routes/message.route.js";
 import marketerRoute from "./routes/marketer.route.js";
 import authRoute from "./routes/authRoutes.js"; // Google Auth route
+import vcRoutes from "./routes/vcRoutes.js"; // Google Auth route
 
 const app = express();
 const server = createServer(app);
@@ -97,6 +98,7 @@ app.use("/api/v1/analytics", analyticsRoute);
 app.use("/api/v1/job-analytics", jobAnalyticsRoute);
 app.use("/api/v1/portfolio", portfolioRoute);
 app.use("/api/v1/message", messageRoute);
+app.use("/api/v1/vcs", vcRoutes);
 
 // Google Authentication routes
 app.use("/auth", authRoute);

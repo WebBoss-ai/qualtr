@@ -62,6 +62,9 @@ import TechnologyToolsPosts from './components/marketers/post/CategoryPosts/Tech
 import StartupEssentialsPosts from './components/marketers/post/CategoryPosts/StartupEssentialsPosts'
 import MarketingBrandingPosts from './components/marketers/post/CategoryPosts/MarketingBrandingPosts'
 import TrendingPostsSection from './components/marketers/post/CategoryPosts/TrendingPostsSection'
+import VCList from './components/marketers/VCs/VCList'
+import VCDetail from './components/marketers/VCs/VCDetail'
+import VCForm from './components/marketers/VCs/VCForm'
 const appRouter = createBrowserRouter([
   {
     path: '/',
@@ -97,199 +100,215 @@ const appRouter = createBrowserRouter([
   },
   // admin ke liye yha se start hoga
   {
-    path:"/admin/companies",
-    element: <Layout><ProtectedRoute><Companies/></ProtectedRoute></Layout>
+    path: "/admin/companies",
+    element: <Layout><ProtectedRoute><Companies /></ProtectedRoute></Layout>
   },
   {
-    path:"/admin/companies/create",
-    element: <ProtectedRoute><CompanyCreate/></ProtectedRoute> 
+    path: "/admin/companies/create",
+    element: <ProtectedRoute><CompanyCreate /></ProtectedRoute>
   },
   {
-    path:"/admin/companies/:id",
-    element:<ProtectedRoute><CompanySetup/></ProtectedRoute> 
+    path: "/admin/companies/:id",
+    element: <ProtectedRoute><CompanySetup /></ProtectedRoute>
   },
   {
-    path:"/admin/projects",
-    element:<Layout><ProtectedRoute><AdminJobs/></ProtectedRoute></Layout>
+    path: "/admin/projects",
+    element: <Layout><ProtectedRoute><AdminJobs /></ProtectedRoute></Layout>
   },
   {
-    path:"/admin/projects/create",
-    element:<ProtectedRoute><PostJob/></ProtectedRoute> 
+    path: "/admin/projects/create",
+    element: <ProtectedRoute><PostJob /></ProtectedRoute>
   },
   {
-    path:"/admin/projects/:id/applicants",
-    element:<ProtectedRoute><Applicants/></ProtectedRoute> 
+    path: "/admin/projects/:id/applicants",
+    element: <ProtectedRoute><Applicants /></ProtectedRoute>
   },
   {
-    path:"/agencies",
-    element:<Layout><JobSeekersList /></Layout>
-  },{
-    path:"/agency/:id",
-    element:<JobSeekerProfile /> 
+    path: "/agencies",
+    element: <Layout><JobSeekersList /></Layout>
+  }, {
+    path: "/agency/:id",
+    element: <JobSeekerProfile />
   },
   {
-    path:"/profile/update",
-    element:<UpdateProfilePage /> 
+    path: "/profile/update",
+    element: <UpdateProfilePage />
   },
   {
-    path:"/dashboard/brand",
-    element:<BrandDashboard /> 
+    path: "/dashboard/brand",
+    element: <BrandDashboard />
   },
   {
-    path:"/projects/saved",
-    element:<SavedJobs /> 
+    path: "/projects/saved",
+    element: <SavedJobs />
   },
   {
-    path:"/portfolio",
-    element:<AddPortfolio /> 
+    path: "/portfolio",
+    element: <AddPortfolio />
   },
   {
-    path:"/email-sent",
-    element:<EmailSent /> 
+    path: "/email-sent",
+    element: <EmailSent />
   },
   {
-    path:"/verify-email",
-    element:<VerifyEmail /> 
+    path: "/verify-email",
+    element: <VerifyEmail />
   },
   {
-    path:"/how-to-hire",
-    element:<HowToHire /> 
+    path: "/how-to-hire",
+    element: <HowToHire />
   },
   {
-    path:"/my-meetings",
-    element: <Layout><MyMessages /></Layout>  
+    path: "/my-meetings",
+    element: <Layout><MyMessages /></Layout>
   },
   {
-    path:"/admin/PEbYAjJgctVkocEdaCWF9LCJs731rtQ5lV4VynE4VIQX4dApNioVoyrAjteflZdDv3hxcI9YGY9LLrR3mYq0uc7xN56FwNoZze0j",
-    element:<AdminMessages /> 
+    path: "/admin/PEbYAjJgctVkocEdaCWF9LCJs731rtQ5lV4VynE4VIQX4dApNioVoyrAjteflZdDv3hxcI9YGY9LLrR3mYq0uc7xN56FwNoZze0j",
+    element: <AdminMessages />
   },
   {
-    path:"/admin/users/PEbYAjJgctVkocEdaCWF9LCJs731rtQ5lV4VynE4VIQX4dApNioVoyrAjteflZdDv3hxcI9YGY9LLrR3mYq0uc7xN56FwNoZze0j",
-    element:<AdminUsers /> 
+    path: "/admin/users/PEbYAjJgctVkocEdaCWF9LCJs731rtQ5lV4VynE4VIQX4dApNioVoyrAjteflZdDv3hxcI9YGY9LLrR3mYq0uc7xN56FwNoZze0j",
+    element: <AdminUsers />
   },
   {
-    path:"/compare-list",
-    element:<CompareList /> 
+    path: "/compare-list",
+    element: <CompareList />
   },
   {
-    path:"/support",
-    element:<HelpAndSupport /> 
+    path: "/support",
+    element: <HelpAndSupport />
   },
   {
-    path:"/about",
-    element:<AboutUs /> 
+    path: "/about",
+    element: <AboutUs />
   },
   {
-    path:"/contact",
-    element:<ContactUs /> 
+    path: "/contact",
+    element: <ContactUs />
   },
   {
-    path:"/carrers",
-    element:<QualtrCareers /> 
+    path: "/carrers",
+    element: <QualtrCareers />
   },
   {
-    path:"/impact",
-    element:<OurImpact /> 
+    path: "/impact",
+    element: <OurImpact />
   },
   {
-    path:"/success-stories",
-    element:<QualtrSuccessStories /> 
+    path: "/success-stories",
+    element: <QualtrSuccessStories />
   },
   {
-    path:"/how-to-find-work",
-    element:<HowToFindWork /> 
+    path: "/how-to-find-work",
+    element: <HowToFindWork />
   },
   {
-    path:"/privacy-policy",
-    element:<PrivacyPolicy /> 
+    path: "/privacy-policy",
+    element: <PrivacyPolicy />
   },
   {
-    path:"/founder/register",
-    element:<Register /> 
+    path: "/founder/register",
+    element: <Register />
   },
   {
-    path:"/founder/login",
-    element:<MarketerLogin /> 
+    path: "/founder/login",
+    element: <MarketerLogin />
   },
   {
-    path:"/founder-profile/update",
-    element:<MarketerUpdateProfile /> 
+    path: "/founder-profile/update",
+    element: <MarketerUpdateProfile />
   },
   {
-    path:"/founder/profiles",
-    element:<ProfileList /> 
+    path: "/founder/profiles",
+    element: <ProfileList />
   },
   {
-    path:"/founder/experience",
-    element:<ExperiencesPage /> 
+    path: "/founder/experience",
+    element: <ExperiencesPage />
   },
   {
-    path:"/founder/campaigns",
-    element:<CampaignManagement /> 
+    path: "/founder/campaigns",
+    element: <CampaignManagement />
   },
   {
-    path:"/founder-profile/:id",
-    element:<ProfileDetails /> 
+    path: "/founder-profile/:id",
+    element: <ProfileDetails />
   },
   {
-    path:"/posts",
-    element:<PostsPage /> 
+    path: "/posts",
+    element: <PostsPage />
   },
   {
-    path:"/trending",
-    element:<TrendingPostsSection /> 
+    path: "/trending",
+    element: <TrendingPostsSection />
   },
   {
-    path:"/posts/inspirations",
-    element:<InspirationsPosts /> 
+    path: "/posts/inspirations",
+    element: <InspirationsPosts />
   },
   {
-    path:"/posts/finance-investment",
-    element:<FinanceInvestmentPosts /> 
+    path: "/posts/finance-investment",
+    element: <FinanceInvestmentPosts />
   },
   {
-    path:"/posts/legal-compliance",
-    element:<LegalCompliancePosts /> 
+    path: "/posts/legal-compliance",
+    element: <LegalCompliancePosts />
   },
   {
-    path:"/posts/sales-customer-acquisition",
-    element:<SalesCustomerAcquisitionPosts /> 
+    path: "/posts/sales-customer-acquisition",
+    element: <SalesCustomerAcquisitionPosts />
   },
   {
-    path:"/posts/technology-tools",
-    element:<TechnologyToolsPosts /> 
+    path: "/posts/technology-tools",
+    element: <TechnologyToolsPosts />
   },
   {
-    path:"/posts/startup-essentials",
-    element:<StartupEssentialsPosts /> 
+    path: "/posts/startup-essentials",
+    element: <StartupEssentialsPosts />
   },
   {
-    path:"/posts/marketing-branding",
-    element:<MarketingBrandingPosts /> 
+    path: "/posts/marketing-branding",
+    element: <MarketingBrandingPosts />
   },
   {
-    path:"/text-editor",
-    element:<RichTextEditor /> 
+    path: "/text-editor",
+    element: <RichTextEditor />
   },
   {
-    path:"/post/:id",
-    element:<PostDetails /> 
+    path: "/post/:id",
+    element: <PostDetails />
   },
   {
-    path:"/all-posts/:authorId",
-    element:<UserAllPosts /> 
+    path: "/vcs",
+    element: <VCList />
   },
   {
-    path:"/admin/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NmY4NTU2MzU4ZTZmMmI3YTVjOTM0ZGYiLCJpYXQiOjE3MzAxMTMzNzYsImV4cCI6MTczMjcwNTM3Nn0.n4DUTrEBP_InFG8UlQNuWLsl4xhlIopufmi0o5J5ZLQ",
-    element:<AdminDashboard /> 
+    path: "/vc/:id",
+    element: <VCDetail />
   },
   {
-    path:"/admin/founder-profiles/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NmY4NTU2MzU4ZTZmMmI3YTVjOTM0ZGYiLCJpYXQiOjE3MzAxMTMzNzYsImV4cCI6MTczMjcwNTM3Nn0.n4DUTrEBP_InFG8UlQNuWLsl4xhlIopufmi0o5J5ZLQ",
-    element:<AdminProfiles /> 
+    path: "/vc/add",
+    element: <VCForm />
   },
   {
-    path:"/admin/post-management/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NmY4NTU2MzU4ZTZmMmI3YTVjOTM0ZGYiLCJpYXQiOjE3MzAxMTMzNzYsImV4cCI6MTczMjcwNTM3Nn0.n4DUTrEBP_InFG8UlQNuWLsl4xhlIopufmi0o5J5ZLQ",
-    element:<AdminToggle /> 
+    path: "/vc/edit/:id",
+    element: <VCForm />
+  },
+  {
+    path: "/all-posts/:authorId",
+    element: <UserAllPosts />
+  },
+  {
+    path: "/admin/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NmY4NTU2MzU4ZTZmMmI3YTVjOTM0ZGYiLCJpYXQiOjE3MzAxMTMzNzYsImV4cCI6MTczMjcwNTM3Nn0.n4DUTrEBP_InFG8UlQNuWLsl4xhlIopufmi0o5J5ZLQ",
+    element: <AdminDashboard />
+  },
+  {
+    path: "/admin/founder-profiles/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NmY4NTU2MzU4ZTZmMmI3YTVjOTM0ZGYiLCJpYXQiOjE3MzAxMTMzNzYsImV4cCI6MTczMjcwNTM3Nn0.n4DUTrEBP_InFG8UlQNuWLsl4xhlIopufmi0o5J5ZLQ",
+    element: <AdminProfiles />
+  },
+  {
+    path: "/admin/post-management/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NmY4NTU2MzU4ZTZmMmI3YTVjOTM0ZGYiLCJpYXQiOjE3MzAxMTMzNzYsImV4cCI6MTczMjcwNTM3Nn0.n4DUTrEBP_InFG8UlQNuWLsl4xhlIopufmi0o5J5ZLQ",
+    element: <AdminToggle />
   },
 
 ])
