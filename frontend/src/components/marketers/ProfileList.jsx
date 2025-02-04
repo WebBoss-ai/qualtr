@@ -8,6 +8,7 @@ import TrendingPosts from './post/TrendingPosts'
 import Footer2 from '../shared/Footer2'
 import Navbar2 from '../shared/Navbar2'
 import profilePic from '../../images/user_qualtr.png'
+import RandomVCProfiles from './VCs/RandomVCProfiles'
 const LoginModal = ({ isOpen, onClose }) => {
   if (!isOpen) return null
 
@@ -295,8 +296,11 @@ const ProfileList = () => {
 
           {/* Trending section - 30% */}
           <div className="lg:block lg:w-80">
-            <div className="sticky top-24">
+            <div className="sticky top-24 mb-10">
               <TrendingPosts />
+            </div>
+            <div className="sticky top-24">
+              <RandomVCProfiles />
             </div>
           </div>
         </div>

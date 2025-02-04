@@ -54,7 +54,7 @@ const RandomVCProfiles = () => {
                         return (
                             <div key={vc._id} className="p-4 hover:bg-gray-50 transition duration-150 ease-in-out">
                                 <div className="flex items-center space-x-4">
-                                    <a href={vc.fundWebsite} className="flex-shrink-0">
+                                    <a href={`/vc/${vc._id}`} className="flex-shrink-0">
                                         <img
                                             src={vc.logo || '/default-vc-logo.jpg'}
                                             alt={vc.fundName}
@@ -62,7 +62,7 @@ const RandomVCProfiles = () => {
                                         />
                                     </a>
                                     <div className="flex-1 min-w-0">
-                                        <a href={vc.fundWebsite} className="text-sm font-medium text-gray-900 truncate hover:underline">
+                                        <a href={`/vc/${vc._id}`} className="text-sm font-medium text-gray-900 truncate hover:underline">
                                             {vc.fundName}
                                         </a>
                                         <p className="text-sm text-gray-600 truncate">{vc.fundType}</p>
@@ -72,6 +72,14 @@ const RandomVCProfiles = () => {
                             </div>
                         );
                     })}
+                    <div className="px-4 py-3 bg-gray-50 text-center">
+                        <a
+                            href="/vcs"  // Use href for simple redirection
+                            className="text-sm font-medium text-gray-700 hover:text-gray-900 transition duration-150 ease-in-out"
+                        >
+                            View more
+                        </a>
+                    </div>
                 </div>
             )}
         </div>
