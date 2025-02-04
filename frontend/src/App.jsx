@@ -292,6 +292,10 @@ const appRouter = createBrowserRouter([
     element: <VCForm />
   },
   {
+    path: "/vc/random",
+    element: <RandomVCProfiles />
+  },
+  {
     path: "/vc/edit/:id",
     element: <VCForm />
   },

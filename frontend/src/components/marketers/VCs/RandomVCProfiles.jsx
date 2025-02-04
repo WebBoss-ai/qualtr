@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { VC_API_END_POINT } from "@/utils/constant"
+import { VC_API_END_POINT } from "@/utils/constant";
 
 const VCProfileSkeleton = () => (
     <div className="animate-pulse flex space-x-4 p-4 border-b border-gray-200">
@@ -20,7 +20,7 @@ const RandomVCProfiles = () => {
     useEffect(() => {
         const fetchVCs = async () => {
             try {
-                const response = axios.get(`${VC_API_END_POINT}/random`);
+                const response = await axios.get(`${VC_API_END_POINT}/random`);
                 setVCs(response.data.vcs || []);
             } catch (err) {
                 setError('Failed to fetch VC profiles.');
@@ -50,26 +50,28 @@ const RandomVCProfiles = () => {
                 <p className="text-gray-700 text-center py-4">No VCs found.</p>
             ) : (
                 <div className="divide-y divide-gray-200">
-                    {vcs.map(vc => (
-                        <div key={vc._id} className="p-4 hover:bg-gray-50 transition duration-150 ease-in-out">
-                            <div className="flex items-center space-x-4">
-                                <a href={vc.fundWebsite} className="flex-shrink-0">
-                                    <img
-                                        src={vc.logo || '/default-vc-logo.jpg'}
-                                        alt={vc.fundName}
-                                        className="h-12 w-12 rounded-full object-cover border border-gray-300"
-                                    />
-                                </a>
-                                <div className="flex-1 min-w-0">
-                                    <a href={vc.fundWebsite} className="text-sm font-medium text-gray-900 truncate hover:underline">
-                                        {vc.fundName}
+                    {vcs.map(vc => {
+                        return (
+                            <div key={vc._id} className="p-4 hover:bg-gray-50 transition duration-150 ease-in-out">
+                                <div className="flex items-center space-x-4">
+                                    <a href={vc.fundWebsite} className="flex-shrink-0">
+                                        <img
+                                            src={vc.logo || '/default-vc-logo.jpg'}
+                                            alt={vc.fundName}
+                                            className="h-12 w-12 rounded-full object-cover border border-gray-300"
+                                        />
                                     </a>
-                                    <p className="text-sm text-gray-600 truncate">{vc.fundType}</p>
-                                    <p className="text-xs text-gray-500 truncate">{vc.stageOfInvestment.join(', ')}</p>
+                                    <div className="flex-1 min-w-0">
+                                        <a href={vc.fundWebsite} className="text-sm font-medium text-gray-900 truncate hover:underline">
+                                            {vc.fundName}
+                                        </a>
+                                        <p className="text-sm text-gray-600 truncate">{vc.fundType}</p>
+                                        <p className="text-xs text-gray-500 truncate">{vc.stageOfInvestment.join(', ')}</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             )}
         </div>
