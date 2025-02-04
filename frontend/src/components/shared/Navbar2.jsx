@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { MARKETER_API_END_POINT } from '@/utils/constant';
-import { Home, FileText, Users,Banknote, Menu, LogOut, LogIn } from 'lucide-react'; // Icons from lucide-react
+import { Home, FileText, Users, Banknote, Menu, LogOut, LogIn } from 'lucide-react'; // Icons from lucide-react
 
 const Navbar2 = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -200,16 +200,9 @@ const Navbar2 = () => {
                                 <LogIn size={20} />
                                 <span className="text-sm font-medium">Login</span>
                             </Link>
-                        ) : (
-                            <button
-                                onClick={handleLogout}
-                                className="flex flex-col items-center text-red-500 hover:text-red-600 transition-transform active:scale-90"
-                            >
-                                <LogOut size={20} />
-                                <span className="text-sm font-medium">Logout</span>
-                            </button>
-                        )}
+                        ) : null}
                     </li>
+
                 </ul>
             </nav>
         </>
