@@ -37,10 +37,11 @@ const VCList = () => {
     ]
 
     const types = [
-        'VC',
+        'Venture Capital',
         'Angel Network',
         'Corporate VC',
-        'Micro VC'
+        'PE Fund',
+        'Accelerator'
     ]
 
     useEffect(() => {
@@ -83,9 +84,9 @@ const VCList = () => {
         if (selectedStages.length > 0) {
             filtered = filtered.filter(vc =>
                 selectedStages.some(stage =>
-                    vc.stageOfInvestment.includes(stage)
+                    new RegExp(`^${stage}\\b`, "i").test(vc.stageOfInvestment)
                 )
-            )
+            );
         }
 
         // Category filter
@@ -188,6 +189,30 @@ const VCList = () => {
                                     </div>
                                 </div>
 
+                                {/* Fund Type */}
+                                <div className="mb-6">
+                                    <label className="block text-xs font-medium text-gray-700 mb-2">Fund Type</label>
+                                    <div className="space-y-2">
+                                        {types.map(type => (
+                                            <label key={type} className="flex items-center">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selectedTypes.includes(type)}
+                                                    onChange={() => {
+                                                        setSelectedTypes(prev =>
+                                                            prev.includes(type)
+                                                                ? prev.filter(t => t !== type)
+                                                                : [...prev, type]
+                                                        )
+                                                    }}
+                                                    className="w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-gray-900"
+                                                />
+                                                <span className="ml-2 text-sm text-gray-600">{type}</span>
+                                            </label>
+                                        ))}
+                                    </div>
+                                </div>
+
                                 {/* Investment Stage */}
                                 <div className="mb-6">
                                     <label className="block text-xs font-medium text-gray-700 mb-2">Investment Stage</label>
@@ -217,18 +242,12 @@ const VCList = () => {
                                     <label className="block text-xs font-medium text-gray-700 mb-2">Categories</label>
                                     <div className="space-y-2">
                                         {categories.map(category => (
-                                            <label key={category} className="flex items-center">
+                                            <label key={category} className="flex items-center opacity-50 cursor-not-allowed">
                                                 <input
                                                     type="checkbox"
                                                     checked={selectedCategories.includes(category)}
-                                                    onChange={() => {
-                                                        setSelectedCategories(prev =>
-                                                            prev.includes(category)
-                                                                ? prev.filter(c => c !== category)
-                                                                : [...prev, category]
-                                                        )
-                                                    }}
-                                                    className="w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-gray-900"
+                                                    disabled // Makes it inactive
+                                                    className="w-4 h-4 text-gray-900 border-gray-300 rounded"
                                                 />
                                                 <span className="ml-2 text-sm text-gray-600">{category}</span>
                                             </label>
@@ -236,29 +255,7 @@ const VCList = () => {
                                     </div>
                                 </div>
 
-                                {/* Fund Type */}
-                                <div>
-                                    <label className="block text-xs font-medium text-gray-700 mb-2">Fund Type</label>
-                                    <div className="space-y-2">
-                                        {types.map(type => (
-                                            <label key={type} className="flex items-center">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={selectedTypes.includes(type)}
-                                                    onChange={() => {
-                                                        setSelectedTypes(prev =>
-                                                            prev.includes(type)
-                                                                ? prev.filter(t => t !== type)
-                                                                : [...prev, type]
-                                                        )
-                                                    }}
-                                                    className="w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-gray-900"
-                                                />
-                                                <span className="ml-2 text-sm text-gray-600">{type}</span>
-                                            </label>
-                                        ))}
-                                    </div>
-                                </div>
+
                             </div>
                         </div>
 
