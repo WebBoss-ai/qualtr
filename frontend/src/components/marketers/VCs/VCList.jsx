@@ -11,7 +11,7 @@ const VCList = () => {
     const [filteredVcs, setFilteredVcs] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
-
+    const [isOpen, setIsOpen] = useState(false);
     // Filter states
     const [searchTerm, setSearchTerm] = useState('')
     const [chequeRange, setChequeRange] = useState({ min: 0, max: 100000000 })
@@ -133,10 +133,20 @@ const VCList = () => {
                     <div className="flex flex-col lg:flex-row gap-8">
                         {/* Filters - 30% */}
                         <div className="lg:w-[30%] space-y-6">
-                            <div className="bg-white rounded-lg shadow-sm p-6">
+                            {/* Toggle Button for Mobile */}
+                            <button
+                                className="md:hidden flex items-center justify-between w-full px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-md shadow-sm"
+                                onClick={() => setIsOpen(!isOpen)}
+                            >
+                                <span>Filters</span>
+                                <Filter className="w-4 h-4 text-gray-400" />
+                            </button>
+
+                            {/* Filter Section - Hidden on Mobile when collapsed */}
+                            <div className={`${isOpen ? "block" : "hidden"} md:block bg-white rounded-lg shadow-sm p-6`}>
                                 <div className="flex items-center justify-between mb-6">
                                     <h2 className="text-sm font-medium text-gray-900">Filters</h2>
-                                    <Filter className="w-4 h-4 text-gray-400" />
+                                    <Filter className="w-4 h-4 text-gray-400 md:hidden" onClick={() => setIsOpen(false)} />
                                 </div>
 
                                 {/* Search */}
@@ -246,7 +256,7 @@ const VCList = () => {
                                                 <input
                                                     type="checkbox"
                                                     checked={selectedCategories.includes(category)}
-                                                    disabled // Makes it inactive
+                                                    disabled
                                                     className="w-4 h-4 text-gray-900 border-gray-300 rounded"
                                                 />
                                                 <span className="ml-2 text-sm text-gray-600">{category}</span>
@@ -254,8 +264,6 @@ const VCList = () => {
                                         ))}
                                     </div>
                                 </div>
-
-
                             </div>
                         </div>
 

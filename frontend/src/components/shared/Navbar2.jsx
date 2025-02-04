@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { MARKETER_API_END_POINT } from '@/utils/constant';
-import { Home, FileText, Users, Menu, LogOut, LogIn } from 'lucide-react'; // Icons from lucide-react
+import { Home, FileText, Users,Banknote, Menu, LogOut, LogIn } from 'lucide-react'; // Icons from lucide-react
 
 const Navbar2 = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [mounted, setMounted] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const navigate = useNavigate();
 
@@ -23,7 +24,7 @@ const Navbar2 = () => {
                 setLoading(false);
             }
         };
-
+        setMounted(true);
         checkLoginStatus();
     }, []);
 
@@ -78,6 +79,16 @@ const Navbar2 = () => {
                             </>
                         ) : (
                             <>
+                                <li>
+                                    <Link to="/posts" className="text-gray-700 hover:text-black-600">
+                                        Posts
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link to="/founder/profiles" className="text-gray-700 hover:text-black-600">
+                                        Founders
+                                    </Link>
+                                </li>
                                 <li>
                                     <Link to="/founder/login" className="text-gray-700 hover:text-black-600">
                                         Login
@@ -149,48 +160,54 @@ const Navbar2 = () => {
             </nav>
 
             {/* Bottom Navbar */}
-            <nav className="fixed md:hidden bottom-0 left-0 right-0 bg-white shadow-t-md z-50">
+            <nav className={`fixed md:hidden bottom-0 left-0 right-0 bg-white shadow-t-md z-50 transition-opacity duration-300 ${mounted ? "opacity-100" : "opacity-0"}`}>
                 <ul className="flex justify-around items-center py-2">
                     <li>
-                        <Link to="/posts" className="flex flex-col items-center text-gray-700 hover:text-black-600">
-                            <FileText size={24} />
-                            <span className="text-sm">Posts</span>
+                        <Link to="/posts" className="flex flex-col items-center text-gray-700 hover:text-black transition-transform active:scale-90">
+                            <FileText size={20} />
+                            <span className="text-sm font-medium">Posts</span>
                         </Link>
                     </li>
                     <li>
-                        <Link to="/founder/profiles" className="flex flex-col items-center text-gray-700 hover:text-black-600">
-                            <Users size={24} />
-                            <span className="text-sm">Founders</span>
+                        <Link to="/founder/profiles" className="flex flex-col items-center text-gray-700 hover:text-black transition-transform active:scale-90">
+                            <Users size={20} />
+                            <span className="text-sm font-medium">Founders</span>
+                        </Link>
+                    </li>
+                    <li>
+                        <Link to="/vcs" className="flex flex-col items-center text-gray-700 hover:text-black transition-transform active:scale-90">
+                            <Banknote size={20} />
+                            <span className="text-sm font-medium">VCs</span>
                         </Link>
                     </li>
                     {isLoggedIn && (
                         <li>
                             <Link
                                 to="/founder-profile/update"
-                                className="flex flex-col items-center text-gray-700 hover:text-black-600"
+                                className="flex flex-col items-center text-gray-700 hover:text-black transition-transform active:scale-90"
                             >
-                                <Home size={24} />
-                                <span className="text-sm">Dashboard</span>
+                                <Home size={20} />
+                                <span className="text-sm font-medium">Dashboard</span>
                             </Link>
                         </li>
                     )}
                     <li>
-                        {isLoggedIn ? (
-                            <button
-                                onClick={handleLogout}
-                                className="flex flex-col items-center text-gray-700 hover:text-black-600"
-                            >
-                                <LogOut size={24} />
-                                <span className="text-sm">Logout</span>
-                            </button>
-                        ) : (
+                        {!isLoggedIn ? (
                             <Link
                                 to="/founder/login"
-                                className="flex flex-col items-center text-gray-700 hover:text-black-600"
+                                className="flex flex-col items-center text-white bg-black px-4 py-2 rounded-lg font-medium shadow-md hover:bg-gray-900 transition-transform active:scale-90"
                             >
-                                <LogIn size={24} />
-                                <span className="text-sm">Login</span>
+                                <LogIn size={20} />
+                                <span className="text-sm font-medium">Login</span>
                             </Link>
+                        ) : (
+                            <button
+                                onClick={handleLogout}
+                                className="flex flex-col items-center text-red-500 hover:text-red-600 transition-transform active:scale-90"
+                            >
+                                <LogOut size={20} />
+                                <span className="text-sm font-medium">Logout</span>
+                            </button>
                         )}
                     </li>
                 </ul>

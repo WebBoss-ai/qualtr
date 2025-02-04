@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { MARKETER_API_END_POINT } from "@/utils/constant";
 import RandomSuggestedProfiles from '../../RandomSuggestedProfiles';
-import { ThumbsUp, MessageCircle, Share2, Send, Calendar, MapPin, Briefcase, X, BarChart2, FileText, TrendingUpIcon as Trending, Palette, Smile, PenTool, Megaphone, ChevronRight } from 'lucide-react'
+import { ThumbsUp, MessageCircle,ChevronDown, Share2, Send, Calendar, MapPin, Briefcase, X, BarChart2, FileText, TrendingUpIcon as Trending, Palette, Smile, PenTool, Megaphone, ChevronRight } from 'lucide-react'
 import { TrendingUp, Scale, DollarSign, Image, Users, Wrench, Lightbulb, Clock, Upload } from 'lucide-react';
 import moment from 'moment';
 import Footer2 from '@/components/shared/Footer2';
@@ -23,6 +23,7 @@ const StartupEssentialsPosts = () => {
     const [visibleCommentPostId, setVisibleCommentPostId] = useState(null); // Track the post ID for the visible comments section
     const [isExpanded, setIsExpanded] = useState(false)
     const [postCategory, setPostCategory] = useState('');
+    const [isOpen, setIsOpen] = useState(false);
     const [userProfilePhoto, setUserProfilePhoto] = useState('');
     const [postType, setPostType] = useState('');
     const [postText, setPostText] = useState('');
@@ -716,8 +717,19 @@ const categories = [
                             {/* Left Sidebar */}
                             <div className="lg:col-span-3">
                                 <div className="bg-white border border-[1px] rounded-lg overflow-hidden sticky top-8">
-                                    <h2 className="text-lg font-semibold text-gray-900 p-4 border-b border-gray-200">Categories</h2>
-                                    <nav className="flex flex-col">
+                                    {/* Header with Toggle Button */}
+                                    <h2
+                                        className="text font-semibold text-gray-900 p-4 border-b border-gray-200 flex justify-between items-center lg:cursor-default cursor-pointer"
+                                        onClick={() => setIsOpen(prev => !prev)}
+                                    >
+                                        Categories
+                                        <span className="lg:hidden">
+                                            {isOpen ? <ChevronDown className="h-5 w-5 text-gray-500" /> : <ChevronRight className="h-5 w-5 text-gray-500" />}
+                                        </span>
+                                    </h2>
+
+                                    {/* Navigation: Show always on large screens, togglable on mobile */}
+                                    <nav className={`flex flex-col transition-all duration-300 ${isOpen ? "block" : "hidden"} lg:block`}>
                                         {categories.map((category, index) => (
                                             <a
                                                 key={index}
