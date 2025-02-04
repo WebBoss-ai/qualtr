@@ -20,7 +20,7 @@ export const getAllVCs = async (req, res) => {
 
 export const getRandomVCs = async (req, res) => {
     try {
-        const vcs = await VCProfile.aggregate([{ $sample: { size: 7 } }]);
+        const vcs = await VCProfile.aggregate([{ $sample: { size: 5 } }]);
         
         const vcsWithLogoURLs = await Promise.all(
             vcs.map(async (vc) => ({

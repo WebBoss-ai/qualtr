@@ -296,13 +296,14 @@ const ProfileList = () => {
 
           {/* Trending section - 30% */}
           <div className="lg:block lg:w-80">
-            <div className="sticky top-24 mb-10">
-              <TrendingPosts />
-            </div>
-            <div className="sticky top-24">
-              <RandomVCProfiles />
-            </div>
-          </div>
+    <div className="sticky top-24 mb-10 z-10">
+        <TrendingPosts />
+    </div>
+    <div className="sticky top-24 z-10">
+        <RandomVCProfiles />
+    </div>
+</div>
+
         </div>
       </div>
       <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
