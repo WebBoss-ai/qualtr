@@ -1,5 +1,5 @@
 import express from 'express';
-import { register, login, updateProfile,addCampaign,listAllCampaigns, followUser, editEducation,updateExperiences,deleteExperience,updateEducation,deleteEducation, viewProfile, getAllProfiles, editExperience, editCampaign, deleteCampaign, getRandomSuggestedProfiles, getAllProfilesAdmin, updateSuggestedStatus, logout, checkAuthStatus } from '../controllers/marketer.controller.js';
+import { register, login, updateProfile,addCampaign,listAllCampaigns, followUser, editEducation,updateExperiences,deleteExperience,updateEducation,deleteEducation, viewProfile, getAllProfiles, editExperience, editCampaign, deleteCampaign, getRandomSuggestedProfiles, getAllProfilesAdmin, updateSuggestedStatus, logout, checkAuthStatus, getAllEmailsAdmin } from '../controllers/marketer.controller.js';
 import isAuthenticated from '../middlewares/isAuthenticated.js';
 import upload from "../middlewares/multer.js";
 import { addComment, createPost, getAllPosts, getPostById, voteOnPoll, getUserProfilePosts, getTrendingPosts, replyToComment, toggleLike, toggleTrendingStatus, getUserPosts, getAllPostsByAuthor } from '../controllers/post.controller.js';
@@ -47,6 +47,7 @@ router.get('/posts/inspirations', getInspirationsPosts);
 router.get('/profile/:id', viewProfile);
 
 router.get('/admin/profiles', getAllProfilesAdmin);
+router.get('/admin/emails', getAllEmailsAdmin);
 router.put('/admin/profiles/:id/suggested', updateSuggestedStatus)
 router.post('/profiles/follow', isAuthenticated, followUser);
 

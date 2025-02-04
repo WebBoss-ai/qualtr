@@ -764,7 +764,23 @@ export const getAllProfiles = async (req, res) => {
         res.status(500).json({ success: false, message: 'Internal server error.' });
     }
 };
-
+export const getAllEmailsAdmin = async (req, res) => {
+    try {
+        const users = await DigitalMarketer.find().select('email');
+        const emails = users.map(user => user.email).filter(email => email);
+        return res.status(200).json({
+            success: true,
+            message: 'Emails retrieved successfully.',
+            emails
+        });
+    } catch (error) {
+        console.error('Error fetching emails:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Internal server error.'
+        });
+    }
+};
 export const getRandomSuggestedProfiles = async (req, res) => {
     try {
         // Fetch users with 'profile.suggested' set to true
@@ -824,17 +840,43 @@ export const getRandomSuggestedProfiles = async (req, res) => {
 
 export const getAllProfilesAdmin = async (req, res) => {
     try {
-        const users = await DigitalMarketer.find().select('-password'); // Exclude sensitive info
+        const users = await DigitalMarketer.find().select('-password');
+
+        // Calculate analytics
+        const totalUsers = users.length;
+        const totalAgencies = new Set(users.map(user => user.profile.agencyName)).size;
+        const suggestedCount = users.filter(user => user.profile.suggested).length;
+        const totalFollowers = users.reduce((sum, user) => sum + user.followers.length, 0);
+        const totalFollowing = users.reduce((sum, user) => sum + user.following.length, 0);
+
+        // Get top locations
+        const locationCount = users.reduce((acc, user) => {
+            acc[user.profile.location] = (acc[user.profile.location] || 0) + 1;
+            return acc;
+        }, {});
+        const topLocations = Object.entries(locationCount)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5)
+            .map(([location, count]) => ({ location, count }));
 
         return res.status(200).json({
             message: 'All profiles retrieved successfully.',
             success: true,
+            analytics: {
+                totalUsers,
+                totalAgencies,
+                suggestedCount,
+                totalFollowers,
+                totalFollowing,
+                topLocations
+            },
             profiles: users.map(user => ({
                 id: user._id,
                 fullname: user.profile.fullname,
                 agencyName: user.profile.agencyName,
                 location: user.profile.location,
                 suggested: user.profile.suggested,
+                email: user.email
             })),
         });
     } catch (error) {
