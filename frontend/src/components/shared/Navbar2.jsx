@@ -53,28 +53,28 @@ const Navbar2 = () => {
                     <ul className="hidden md:flex space-x-6 items-center">
                         {isLoggedIn ? (
                             <>
-                                <Link to="/vcs" className="font-semibold text-blue-700 hover:text-black-600">
+                                <Link to="/vcs" className="font-medium text-blue-700 hover:text-black-600">
                                     VCs
                                 </Link>
                                 <li>
-                                    <Link to="/posts" className="font-semibold text-gray-700 hover:text-black-600">
+                                    <Link to="/posts" className="font-medium text-gray-700 hover:text-black-600">
                                         Posts
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link to="/founder/profiles" className="font-semibold text-gray-700 hover:text-black-600">
+                                    <Link to="/founder/profiles" className="font-medium text-gray-700 hover:text-black-600">
                                         Founders
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link to="/founder-profile/update" className="font-semibold text-gray-700 hover:text-black-600">
+                                    <Link to="/founder-profile/update" className="font-medium text-gray-700 hover:text-black-600">
                                         Dashboard
                                     </Link>
                                 </li>
                                 <li>
                                     <button
                                         onClick={handleLogout}
-                                        className="font-semibold text-gray-700 hover:text-black-600 border border-gray-300 px-4 py-1 rounded"
+                                        className="font-medium text-gray-700 hover:text-black-600 border border-gray-300 px-4 py-1 rounded"
                                     >
                                         Logout
                                     </button>
@@ -83,27 +83,27 @@ const Navbar2 = () => {
                         ) : (
                             <>
                                 <li>
-                                    <Link to="/vcs" className=" font-semibold text-blue-700 hover:text-black-600">
+                                    <Link to="/vcs" className=" font-medium text-blue-700 hover:text-black-600">
                                         VCs
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link to="/posts" className="font-semibold text-gray-700 hover:text-black-600">
+                                    <Link to="/posts" className="font-medium text-gray-700 hover:text-black-600">
                                         Posts
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link to="/founder/profiles" className="font-semibold text-gray-700 hover:text-black-600">
+                                    <Link to="/founder/profiles" className="font-medium text-gray-700 hover:text-black-600">
                                         Founders
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link to="/founder/login" className="font-semibold text-gray-700 hover:text-black-600">
+                                    <Link to="/founder/login" className="font-medium text-gray-700 hover:text-black-600">
                                         Login
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link to="/founder/register" className="font-semibold text-gray-700 hover:text-black-600">
+                                    <Link to="/founder/register" className="font-medium text-gray-700 hover:text-black-600">
                                         Signup
                                     </Link>
                                 </li>
