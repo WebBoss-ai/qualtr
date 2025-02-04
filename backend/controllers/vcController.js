@@ -18,6 +18,23 @@ export const getAllVCs = async (req, res) => {
     }
 };
 
+export const getRandomVCs = async (req, res) => {
+    try {
+        const vcs = await VCProfile.aggregate([{ $sample: { size: 5 } }]);
+        
+        const vcsWithLogoURLs = await Promise.all(
+            vcs.map(async (vc) => ({
+                ...vc,
+                logo: vc.logo ? await getObjectURL(vc.logo) : null,
+            }))
+        );
+
+        res.status(200).json({ success: true, vcs: vcsWithLogoURLs });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Server Error' });
+    }
+};
+
 export const getVCById = async (req, res) => {
     try {
         const vc = await VCProfile.findById(req.params.id);

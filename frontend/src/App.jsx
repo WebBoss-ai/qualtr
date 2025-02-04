@@ -65,6 +65,7 @@ import TrendingPostsSection from './components/marketers/post/CategoryPosts/Tren
 import VCList from './components/marketers/VCs/VCList'
 import VCDetail from './components/marketers/VCs/VCDetail'
 import VCForm from './components/marketers/VCs/VCForm'
+import RandomVCProfiles from './components/marketers/VCs/RandomVCProfiles'
 const appRouter = createBrowserRouter([
   {
     path: '/',

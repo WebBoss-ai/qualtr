@@ -18,6 +18,7 @@ import DOMPurify from 'dompurify';
 import ShareModal from './ShareModal';
 import Footer2 from '@/components/shared/Footer2';
 import Navbar2 from '@/components/shared/Navbar2';
+import RandomVCProfiles from '../VCs/RandomVCProfiles';
 
 const PostPage = () => {
     const [posts, setPosts] = useState([]);
@@ -1322,10 +1323,14 @@ const PostPage = () => {
 
                             {/* Right Sidebar */}
                             <div className="lg:block lg:col-span-3">
-                                <div className="sticky top-10">
+                                <div className="sticky top-10 mb-10">
                                     <RandomSuggestedProfiles />
                                 </div>
+                                <div className="sticky top-10">
+                                    <RandomVCProfiles />
+                                </div>
                             </div>
+                            
                         </div>
                     </div>
                 </div>
