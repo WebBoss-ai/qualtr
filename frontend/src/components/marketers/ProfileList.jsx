@@ -296,13 +296,15 @@ const ProfileList = () => {
 
           {/* Trending section - 30% */}
           <div className="lg:block lg:w-80">
-    <div className="sticky top-24 mb-10 z-10">
-        <TrendingPosts />
+  <div className="sticky top-24 z-10">
+    <div className="mb-10">
+      <RandomVCProfiles />
     </div>
-    <div className="sticky top-24 z-10">
-        <RandomVCProfiles />
-    </div>
+    <TrendingPosts />
+  </div>
 </div>
+
+
 
         </div>
       </div>
