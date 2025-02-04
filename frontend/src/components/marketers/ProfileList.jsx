@@ -228,7 +228,7 @@ const ProfileList = () => {
               onToggle={() => setIsFiltersExpanded(!isFiltersExpanded)}
             />
             <div className="mt-6 space-y-6">
-            {profiles.slice(0, visibleProfiles).map((profile) => (
+              {profiles.slice(0, visibleProfiles).map((profile) => (
                 <div
                   key={profile.id}
                   onClick={() => handleProfileClick(profile.id)}
@@ -248,12 +248,17 @@ const ProfileList = () => {
 
                     <div className="flex-1 min-w-0">
                       <h3 className="text-lg font-semibold text-gray-900 truncate">{profile.fullname || 'Qualtr Member'}</h3>
-                      <p className="text-sm text-gray-600 truncate mt-1">{profile.agencyName || 'Focused on creating impact'}</p>
+                      <p className="text-sm text-gray-600 truncate mt-1">
+                        {profile.agencyName
+                          ? `${profile.agencyName.slice(0, 50)}${profile.agencyName.length > 50 ? '...' : ''}`
+                          : 'Focused on creating impact'.slice(0, 50) + ('Focused on creating impact'.length > 50 ? '...' : '')}
+                      </p>
+
                       <div className="flex flex-wrap items-center gap-4 mt-2 text-sm text-gray-500">
                         <div className="flex items-center gap-1">
                           <MapPin size={14} />
                           <span>{profile.location || 'A galaxy far, far away...'}</span>
-                          </div>
+                        </div>
                         <div className="flex items-center gap-1">
                           <Users size={14} />
                           <span>{profile.followers} followers</span>
@@ -277,7 +282,7 @@ const ProfileList = () => {
                   </div>
                 </div>
               ))}
-            {visibleProfiles < profiles.length && (
+              {visibleProfiles < profiles.length && (
                 <button
                   onClick={handleLoadMore}
                   className="mt-6 w-full bg-gray-800 text-white py-3 rounded-lg text-center font-semibold hover:bg-gray-900 transition-colors"
