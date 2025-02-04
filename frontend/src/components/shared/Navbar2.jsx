@@ -53,6 +53,9 @@ const Navbar2 = () => {
                     <ul className="hidden md:flex space-x-6 items-center">
                         {isLoggedIn ? (
                             <>
+                                <Link to="/vcs" className="text-blue-200 hover:text-black-600">
+                                    VCs
+                                </Link>
                                 <li>
                                     <Link to="/posts" className="text-gray-700 hover:text-black-600">
                                         Posts
@@ -79,6 +82,11 @@ const Navbar2 = () => {
                             </>
                         ) : (
                             <>
+                                <li>
+                                    <Link to="/vcs" className="text-blue-700 hover:text-black-600">
+                                        VCs
+                                    </Link>
+                                </li>
                                 <li>
                                     <Link to="/posts" className="text-gray-700 hover:text-black-600">
                                         Posts

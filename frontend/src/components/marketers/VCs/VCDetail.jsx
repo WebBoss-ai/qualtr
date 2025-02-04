@@ -113,18 +113,18 @@ const VCDetail = () => {
                                         href={vc.fundWebsite}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="flex items-center text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                                        className="flex items-center text-sm text-blue-600 hover:text-blue-900 transition-colors"
                                     >
-                                        <Globe className="w-4 h-4 mr-3 text-gray-400" />
+                                        <Globe className="w-4 h-4 mr-3 text-blue-400" />
                                         Visit Website
                                     </a>
                                     <a
                                         href={vc.linkedInPage}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="flex items-center text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                                        className="flex items-center text-sm text-blue-600 hover:text-blue-900 transition-colors"
                                     >
-                                        <LinkedinIcon className="w-4 h-4 mr-3 text-gray-400" />
+                                        <LinkedinIcon className="w-4 h-4 mr-3 text-blue-400" />
                                         LinkedIn Profile
                                     </a>
                                 </div>
