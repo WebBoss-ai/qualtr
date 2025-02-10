@@ -266,7 +266,13 @@ const ProfileList = () => {
                         </div>
                         <div className="flex items-center gap-1">
                           <Globe size={14} />
-                          <span>{profile.website || 'Website not available'}</span>
+                          <span>
+                            {profile.website
+                              ? profile.website.length > 20
+                                ? profile.website.slice(0, 17) + "..."  // Cut to 27 chars + "..."
+                                : profile.website
+                              : "Website not available"}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -296,13 +302,13 @@ const ProfileList = () => {
 
           {/* Trending section - 30% */}
           <div className="lg:block lg:w-80">
-  <div className="sticky top-24 z-10">
-    <div className="mb-10">
-      <RandomVCProfiles />
-    </div>
-    <TrendingPosts />
-  </div>
-</div>
+            <div className="sticky top-24 z-10">
+              <div className="mb-10">
+                <RandomVCProfiles />
+              </div>
+              <TrendingPosts />
+            </div>
+          </div>
 
 
 

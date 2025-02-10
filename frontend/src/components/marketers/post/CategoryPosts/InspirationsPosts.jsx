@@ -712,7 +712,7 @@ const InspirationsPosts = () => {
             <Navbar2 />
             <div>
                 <div className="bg-gray-100 min-h-screen">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                    <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 py-8">
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                             {/* Left Sidebar */}
                             <div className="lg:col-span-3">
@@ -863,27 +863,27 @@ const InspirationsPosts = () => {
                                 </div>
                                 {posts.length > 0 ? (
                                     posts.map((post) => (
-                                        <div key={post._id} className="bg-white border border-[1px] rounded-lg overflow-hidden mb-6">
+                                        <div key={post._id} className="bg-white border-b border-gray-300 overflow-hidden">
                                             <div className="p-4">
                                                 <div className="flex items-center justify-between mb-4">
                                                     {/* Author Profile */}
                                                     {post.author?.profile && (
                                                         <div className="flex items-center">
-                                                            {post.author.profile.profilePhoto && (
+                                                            {/* {post.author.profile.profilePhoto && (
                                                                 <img
                                                                     src={post.author.profile.profilePhoto || "/placeholder.svg"}
                                                                     alt={post.author.profile.fullname}
                                                                     className="w-10 h-10 rounded-full mr-3"
                                                                 />
-                                                            )}
+                                                            )} */}
                                                             <div>
                                                                 <p className="text-sm font-medium text-gray-900">
-                                                                    {post.author.profile.fullname}
+                                                                    Q
                                                                     {post.category && (
                                                                         <> | <span className="text-gray-700">{post.category}</span></>
                                                                     )}
                                                                 </p>
-                                                                <p className="text-xs text-gray-500">{post?.author?.profile?.agencyName}</p>
+                                                                {/* <p className="text-xs text-gray-500">{post?.author?.profile?.agencyName}</p> */}
                                                             </div>
 
                                                         </div>
@@ -1143,12 +1143,12 @@ const InspirationsPosts = () => {
                                                     {/* Like Button */}
                                                     <button
                                                         onClick={() => toggleLike(post._id)} // Pass post._id to toggleLike
-                                                        className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs transition-colors ${post.likes.isLiked ? 'bg-pink-100 text-pink-600' : 'hover:bg-gray-100 text-gray-700'
+                                                        className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs transition-colors ${post.likes.isLiked ? 'bg-gray-100 text-gray-600' : 'hover:bg-gray-100 text-gray-700'
                                                             }`}
                                                     >
                                                         <ThumbsUp
                                                             size={14}
-                                                            className={`transition-colors ${post.likes.isLiked ? 'text-pink-500 fill-current' : 'text-gray-500'
+                                                            className={`transition-colors ${post.likes.isLiked ? 'text-gray-500 fill-current' : 'text-gray-500'
                                                                 }`}
                                                         />
                                                         <span>{post.likes.isLiked ? 'Liked' : 'Like'}</span>
@@ -1181,11 +1181,6 @@ const InspirationsPosts = () => {
                                                         {post.comments.map((comment) => (
                                                             <div key={comment._id} className="border-b border-gray-100 pb-2">
                                                                 <div className="flex items-start gap-2">
-                                                                    <img
-                                                                        src={comment.profile.profilePhoto || '/default-avatar.png'}
-                                                                        alt={comment.profile.fullname || 'Anonymous User'}
-                                                                        className="w-8 h-8 rounded-full"
-                                                                    />
                                                                     <div>
                                                                         <p className="text-sm font-medium text-gray-800">
                                                                             {comment.profile?.fullname || 'Anonymous User'}

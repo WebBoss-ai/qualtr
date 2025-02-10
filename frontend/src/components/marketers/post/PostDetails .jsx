@@ -269,7 +269,7 @@ const PostDetails = () => {
                             <div className="bg-white rounded-lg border border-gray-200 p-4">
                                 {/* Author info */}
                                 <div className="flex items-center mb-3">
-                                    {post?.author?.profile?.profilePhoto ? (
+                                    {/* {post?.author?.profile?.profilePhoto ? (
                                         <img
                                             src={post.author.profile.profilePhoto}
                                             alt={post.author.profile.fullname || "User"}
@@ -281,11 +281,11 @@ const PostDetails = () => {
                                             alt="Default Profile"
                                             className="w-10 h-10 rounded-full object-cover mr-3"
                                         />
-                                    )}
+                                    )} */}
 
                                     <div>
-                                        <h2 className="text-base font-semibold text-gray-900">{post?.author?.profile?.fullname || 'Unknown Author'}</h2>
-                                        <p className="text-xs text-gray-500">{post?.author?.profile?.agencyName || 'Unknown Agency'}</p>
+                                        <h2 className="text-base font-semibold text-gray-900">Qualtr Member</h2>
+                                        <p className="text-xs text-gray-500">{post?.category || 'Unknown'}</p>
                                     </div>
                                 </div>
 
@@ -294,7 +294,7 @@ const PostDetails = () => {
                                     <ExpandableText
                                         className="text-gray-600 text-sm mb-4"
                                         text={post.text}
-                                        maxLength={200}
+                                        maxLength={2000}
                                     />
                                 )}
                                 {/* Media */}
@@ -385,12 +385,12 @@ const PostDetails = () => {
                                     {/* Like Button */}
                                     <button
                                         onClick={toggleLike}
-                                        className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs transition-colors ${likes.isLiked ? 'bg-pink-100 text-pink-600' : 'hover:bg-gray-100 text-gray-700'
+                                        className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs transition-colors ${likes.isLiked ? 'bg-gray-100 text-gray-600' : 'hover:bg-gray-100 text-gray-700'
                                             }`}
                                     >
                                         <ThumbsUp
                                             size={14}
-                                            className={`transition-colors ${likes.isLiked ? 'text-pink-500 fill-current' : 'text-gray-500'
+                                            className={`transition-colors ${likes.isLiked ? 'text-gray-500 fill-current' : 'text-gray-500'
                                                 }`}
                                         />
                                         <span>{likes.isLiked ? 'Liked' : 'Like'}</span>

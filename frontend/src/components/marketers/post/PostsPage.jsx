@@ -713,7 +713,7 @@ const PostPage = () => {
             <Navbar2 />
             <div>
                 <div className="bg-gray-100 min-h-screen">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                    <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 py-8">
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                             {/* Left Sidebar */}
                             <div className="lg:col-span-3">
@@ -866,27 +866,27 @@ const PostPage = () => {
                                 </div>
                                 {posts.length > 0 ? (
                                     posts.map((post) => (
-                                        <div key={post._id} className="bg-white border border-[1px] rounded-lg overflow-hidden mb-6">
-                                            <div className="p-4">
+                                        <a href={`/post/${post._id}`} key={post._id} className="block">
+                                            <div className="bg-white border-b border-gray-300 overflow-hidden cursor-pointer">                                            <div className="p-4">
                                                 <div className="flex items-center justify-between mb-4">
                                                     {/* Author Profile */}
                                                     {post.author?.profile && (
                                                         <div className="flex items-center">
-                                                            {post.author.profile.profilePhoto && (
+                                                            {/* {post.author.profile.profilePhoto && (
                                                                 <img
                                                                     src={post.author.profile.profilePhoto || "/placeholder.svg"}
                                                                     alt={post.author.profile.fullname}
                                                                     className="w-10 h-10 rounded-full mr-3"
                                                                 />
-                                                            )}
+                                                            )} */}
                                                             <div>
                                                                 <p className="text-sm font-medium text-gray-900">
-                                                                    {post.author.profile.fullname}
+                                                                    Q
                                                                     {post.category && (
                                                                         <> | <span className="text-gray-700">{post.category}</span></>
                                                                     )}
                                                                 </p>
-                                                                <p className="text-xs text-gray-500">{post?.author?.profile?.agencyName}</p>
+                                                                {/* <p className="text-xs text-gray-500">{post?.author?.profile?.agencyName}</p> */}
                                                             </div>
 
                                                         </div>
@@ -1146,12 +1146,12 @@ const PostPage = () => {
                                                     {/* Like Button */}
                                                     <button
                                                         onClick={() => toggleLike(post._id)} // Pass post._id to toggleLike
-                                                        className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs transition-colors ${post.likes?.isLiked ? 'bg-pink-100 text-pink-600' : 'hover:bg-gray-100 text-gray-700'
+                                                        className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs transition-colors ${post.likes?.isLiked ? 'bg-gray-100 text-gray-600' : 'hover:bg-gray-100 text-gray-700'
                                                             }`}
                                                     >
                                                         <ThumbsUp
                                                             size={14}
-                                                            className={`transition-colors ${post.likes?.isLiked ? 'text-pink-500 fill-current' : 'text-gray-500'
+                                                            className={`transition-colors ${post.likes?.isLiked ? 'text-gray-500 fill-current' : 'text-gray-500'
                                                                 }`}
                                                         />
                                                         <span>{post.likes?.isLiked ? 'Liked' : 'Like'}</span>
@@ -1184,145 +1184,141 @@ const PostPage = () => {
                                                     />
                                                 </div>
                                             </div>
-                                            {/* Comments Section */}
-                                            {visibleCommentPostId === post._id && (
-                                                <div className="mt-4 bg-white rounded-lg border border-gray-200 p-4">
-                                                    <h3 className="text-sm font-semibold text-gray-900 mb-3">Comments</h3>
-                                                    <div className="space-y-3 max-h-80 overflow-y-auto">
-                                                        {post.comments.map((comment) => (
-                                                            <div key={comment._id} className="border-b border-gray-100 pb-2">
-                                                                <div className="flex items-start gap-2">
-                                                                    <img
-                                                                        src={comment.profile.profilePhoto || '/default-avatar.png'}
-                                                                        alt={comment.profile.fullname || 'Anonymous User'}
-                                                                        className="w-8 h-8 rounded-full"
-                                                                    />
-                                                                    <div>
-                                                                        <p className="text-sm font-medium text-gray-800">
-                                                                            {comment.profile?.fullname || 'Anonymous User'}
-                                                                        </p>
-                                                                        <p className="text-xs text-gray-500">
-                                                                            {comment.profile?.agencyName || ''}
-                                                                        </p>
-                                                                    </div>
-                                                                </div>
-                                                                {comment.text && (
-                                                                    <ExpandableText
-                                                                        text={comment.text}
-                                                                        maxLength={100}
-                                                                        className="text-sm text-gray-600 mt-2"
-                                                                    />
-                                                                )}
-                                                                <div className="flex items-center gap-3 text-xs text-gray-500 mt-1">
-                                                                    <button
-                                                                        onClick={() =>
-                                                                            setReply({
-                                                                                commentId: comment._id,
-                                                                                text: '',
-                                                                                postId: post._id,
-                                                                            })
-                                                                        }
-                                                                        className="hover:text-gray-700"
-                                                                    >
-                                                                        Reply
-                                                                    </button>
-                                                                    <span>{moment(comment.createdAt).fromNow()}</span>
-                                                                </div>
-
-                                                                {/* Replies */}
-                                                                {comment.replies.map((reply) => (
-                                                                    <div key={reply._id} className="ml-4 mt-3 p-2 bg-gray-50 rounded-md">
-                                                                        <div className="flex items-start gap-2">
-                                                                            <img
-                                                                                src={reply.profile?.profilePhoto || '/default-avatar.png'}
-                                                                                alt={reply.profile?.fullname || 'Anonymous User'}
-                                                                                className="w-6 h-6 rounded-full"
-                                                                            />
-                                                                            <div>
-                                                                                <p className="text-xs font-medium text-gray-800">
-                                                                                    {reply.profile?.fullname || 'Anonymous User'}
-                                                                                </p>
-                                                                                <p className="text-xs text-gray-500">{reply.profile?.agencyName || ''}</p>
-                                                                            </div>
+                                                {/* Comments Section */}
+                                                {visibleCommentPostId === post._id && (
+                                                    <div className="mt-4 bg-white rounded-lg border border-gray-200 p-4">
+                                                        <h3 className="text-sm font-semibold text-gray-900 mb-3">Comments</h3>
+                                                        <div className="space-y-3 max-h-80 overflow-y-auto">
+                                                            {post.comments.map((comment) => (
+                                                                <div key={comment._id} className="border-b border-gray-100 pb-2">
+                                                                    <div className="flex items-start gap-2">
+                                                                        <div>
+                                                                            <p className="text-sm font-medium text-gray-800">
+                                                                                {comment.profile?.fullname || 'Anonymous User'}
+                                                                            </p>
+                                                                            <p className="text-xs text-gray-500">
+                                                                                {comment.profile?.agencyName || ''}
+                                                                            </p>
                                                                         </div>
-                                                                        {reply.text && (
-                                                                            <ExpandableText
-                                                                                text={reply.text}
-                                                                                maxLength={100}
-                                                                                className="text-sm text-gray-700 mt-1"
-                                                                            />
-                                                                        )}
-
-                                                                        {/* Media Section */}
-                                                                        <span className="text-xs text-gray-500">{moment(reply.createdAt).fromNow()}</span>
                                                                     </div>
-                                                                ))}
-
-                                                                {/* Reply Input */}
-                                                                {reply.commentId === comment._id && (
-                                                                    <div className="mt-2 flex gap-2">
-                                                                        <input
-                                                                            value={reply.text}
-                                                                            onChange={(e) =>
+                                                                    {comment.text && (
+                                                                        <ExpandableText
+                                                                            text={comment.text}
+                                                                            maxLength={100}
+                                                                            className="text-sm text-gray-600 mt-2"
+                                                                        />
+                                                                    )}
+                                                                    <div className="flex items-center gap-3 text-xs text-gray-500 mt-1">
+                                                                        <button
+                                                                            onClick={() =>
                                                                                 setReply({
-                                                                                    ...reply,
-                                                                                    text: e.target.value,
+                                                                                    commentId: comment._id,
+                                                                                    text: '',
                                                                                     postId: post._id,
                                                                                 })
                                                                             }
-                                                                            className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
-                                                                            placeholder="Write a reply..."
-                                                                        />
-                                                                        <button
-                                                                            onClick={() =>
-                                                                                replyToComment(reply.postId, reply.commentId, reply.text)
-                                                                            }
-                                                                            className="px-2 py-1 text-xs bg-gray-800 text-white rounded-md hover:bg-gray-700 transition-colors"
+                                                                            className="hover:text-gray-700"
                                                                         >
                                                                             Reply
                                                                         </button>
+                                                                        <span>{moment(comment.createdAt).fromNow()}</span>
                                                                     </div>
-                                                                )}
-                                                            </div>
-                                                        ))}
-                                                    </div>
 
-                                                    {/* Add Comment */}
-                                                    <div className="mt-3 flex gap-2">
-                                                        <input
-                                                            value={newComment}
-                                                            onChange={(e) => setNewComment(e.target.value)}
-                                                            className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
-                                                            placeholder="Add a comment..."
-                                                        />
-                                                        <button
-                                                            onClick={() => addComment(post._id, newComment)}
-                                                            className="px-3 py-2 bg-gray-800 text-white text-sm rounded-md hover:bg-gray-700 transition-colors"
-                                                        >
-                                                            <Send size={14} />
-                                                        </button>
+                                                                    {/* Replies */}
+                                                                    {comment.replies.map((reply) => (
+                                                                        <div key={reply._id} className="ml-4 mt-3 p-2 bg-gray-50 rounded-md">
+                                                                            <div className="flex items-start gap-2">
+                                                                                <img
+                                                                                    src={reply.profile?.profilePhoto || '/default-avatar.png'}
+                                                                                    alt={reply.profile?.fullname || 'Anonymous User'}
+                                                                                    className="w-6 h-6 rounded-full"
+                                                                                />
+                                                                                <div>
+                                                                                    <p className="text-xs font-medium text-gray-800">
+                                                                                        {reply.profile?.fullname || 'Anonymous User'}
+                                                                                    </p>
+                                                                                    <p className="text-xs text-gray-500">{reply.profile?.agencyName || ''}</p>
+                                                                                </div>
+                                                                            </div>
+                                                                            {reply.text && (
+                                                                                <ExpandableText
+                                                                                    text={reply.text}
+                                                                                    maxLength={100}
+                                                                                    className="text-sm text-gray-700 mt-1"
+                                                                                />
+                                                                            )}
+
+                                                                            {/* Media Section */}
+                                                                            <span className="text-xs text-gray-500">{moment(reply.createdAt).fromNow()}</span>
+                                                                        </div>
+                                                                    ))}
+
+                                                                    {/* Reply Input */}
+                                                                    {reply.commentId === comment._id && (
+                                                                        <div className="mt-2 flex gap-2">
+                                                                            <input
+                                                                                value={reply.text}
+                                                                                onChange={(e) =>
+                                                                                    setReply({
+                                                                                        ...reply,
+                                                                                        text: e.target.value,
+                                                                                        postId: post._id,
+                                                                                    })
+                                                                                }
+                                                                                className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
+                                                                                placeholder="Write a reply..."
+                                                                            />
+                                                                            <button
+                                                                                onClick={() =>
+                                                                                    replyToComment(reply.postId, reply.commentId, reply.text)
+                                                                                }
+                                                                                className="px-2 py-1 text-xs bg-gray-800 text-white rounded-md hover:bg-gray-700 transition-colors"
+                                                                            >
+                                                                                Reply
+                                                                            </button>
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            ))}
+                                                        </div>
+
+                                                        {/* Add Comment */}
+                                                        <div className="mt-3 flex gap-2">
+                                                            <input
+                                                                value={newComment}
+                                                                onChange={(e) => setNewComment(e.target.value)}
+                                                                className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
+                                                                placeholder="Add a comment..."
+                                                            />
+                                                            <button
+                                                                onClick={() => addComment(post._id, newComment)}
+                                                                className="px-3 py-2 bg-gray-800 text-white text-sm rounded-md hover:bg-gray-700 transition-colors"
+                                                            >
+                                                                <Send size={14} />
+                                                            </button>
+                                                        </div>
                                                     </div>
+                                                )}
+
+                                            </div>
+                                            </a>
+                                            ))
+                                            ) : (
+                                            <div className="text-center py-8">
+                                                <p className="text-gray-700 text-lg">Building your business vision... please wait</p>
+                                                <div className="flex justify-center items-center space-x-2 mt-4">
+                                                    <svg className="animate-spin h-12 w-12 text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50">
+                                                        <circle className="opacity-25" cx="25" cy="25" r="20" stroke="currentColor" strokeWidth="4"></circle>
+                                                        <path className="opacity-75" fill="currentColor" d="M25 5c-1.4 0-2.6 1-2.6 2.4 0 1.3 1.1 2.4 2.4 2.4s2.4-1.1 2.4-2.4C27.6 6.1 26.4 5 25 5zM25 15c-1.4 0-2.6 1-2.6 2.4 0 1.3 1.1 2.4 2.4 2.4s2.4-1.1 2.4-2.4c0-1.3-1.1-2.4-2.4-2.4zM25 25c-1.4 0-2.6 1-2.6 2.4 0 1.3 1.1 2.4 2.4 2.4s2.4-1.1 2.4-2.4c0-1.3-1.1-2.4-2.4-2.4zM25 35c-1.4 0-2.6 1-2.6 2.4 0 1.3 1.1 2.4 2.4 2.4s2.4-1.1 2.4-2.4c0-1.3-1.1-2.4-2.4-2.4zM25 45c-1.4 0-2.6 1-2.6 2.4 0 1.3 1.1 2.4 2.4 2.4s2.4-1.1 2.4-2.4c0-1.3-1.1-2.4-2.4-2.4z"></path>
+                                                    </svg>
                                                 </div>
-                                            )}
-
-                                        </div>
-                                    ))
-                                ) : (
-                                    <div className="text-center py-8">
-                                        <p className="text-gray-700 text-lg">Building your business vision... please wait</p>
-                                        <div className="flex justify-center items-center space-x-2 mt-4">
-                                            <svg className="animate-spin h-12 w-12 text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50">
-                                                <circle className="opacity-25" cx="25" cy="25" r="20" stroke="currentColor" strokeWidth="4"></circle>
-                                                <path className="opacity-75" fill="currentColor" d="M25 5c-1.4 0-2.6 1-2.6 2.4 0 1.3 1.1 2.4 2.4 2.4s2.4-1.1 2.4-2.4C27.6 6.1 26.4 5 25 5zM25 15c-1.4 0-2.6 1-2.6 2.4 0 1.3 1.1 2.4 2.4 2.4s2.4-1.1 2.4-2.4c0-1.3-1.1-2.4-2.4-2.4zM25 25c-1.4 0-2.6 1-2.6 2.4 0 1.3 1.1 2.4 2.4 2.4s2.4-1.1 2.4-2.4c0-1.3-1.1-2.4-2.4-2.4zM25 35c-1.4 0-2.6 1-2.6 2.4 0 1.3 1.1 2.4 2.4 2.4s2.4-1.1 2.4-2.4c0-1.3-1.1-2.4-2.4-2.4zM25 45c-1.4 0-2.6 1-2.6 2.4 0 1.3 1.1 2.4 2.4 2.4s2.4-1.1 2.4-2.4c0-1.3-1.1-2.4-2.4-2.4z"></path>
-                                            </svg>
-                                        </div>
-                                    </div>
+                                            </div>
 
                                 )}
-                            </div>
+                                        </div>
 
-                            {/* Right Sidebar */}
-                            <div className="lg:block lg:col-span-3">
+                            {/* Right Sidebar */ }
+                                        < div className = "lg:block lg:col-span-3" >
                                 <div className="sticky top-10 mb-10">
                                     <RandomSuggestedProfiles />
                                 </div>
@@ -1330,7 +1326,7 @@ const PostPage = () => {
                                     <RandomVCProfiles />
                                 </div>
                             </div>
-                            
+
                         </div>
                     </div>
                 </div>
