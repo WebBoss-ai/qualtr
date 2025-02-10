@@ -66,6 +66,7 @@ import VCList from './components/marketers/VCs/VCList'
 import VCDetail from './components/marketers/VCs/VCDetail'
 import VCForm from './components/marketers/VCs/VCForm'
 import RandomVCProfiles from './components/marketers/VCs/RandomVCProfiles'
+import PostLikesManager from './components/marketers/admin/PostLikesManager'
 const appRouter = createBrowserRouter([
   {
     path: '/',
@@ -310,6 +311,10 @@ const appRouter = createBrowserRouter([
   {
     path: "/admin/founder-profiles/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NmY4NTU2MzU4ZTZmMmI3YTVjOTM0ZGYiLCJpYXQiOjE3MzAxMTMzNzYsImV4cCI6MTczMjcwNTM3Nn0.n4DUTrEBP_InFG8UlQNuWLsl4xhlIopufmi0o5J5ZLQ",
     element: <AdminProfiles />
+  },
+  {
+    path: "/admin/fake-likes/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NmY4NTU2MzU4ZTZmMmI3YTVjOTM0ZGYiLCJpYXQiOjE3MzAxMTMzNzYsImV4cCI6MTczMjcwNTM3Nn0.n4DUTrEBP_InFG8UlQNuWLsl4xhlIopufmi0o5J5ZLQ",
+    element: <PostLikesManager />
   },
   {
     path: "/admin/post-management/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NmY4NTU2MzU4ZTZmMmI3YTVjOTM0ZGYiLCJpYXQiOjE3MzAxMTMzNzYsImV4cCI6MTczMjcwNTM3Nn0.n4DUTrEBP_InFG8UlQNuWLsl4xhlIopufmi0o5J5ZLQ",

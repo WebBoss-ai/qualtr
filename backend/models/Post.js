@@ -141,6 +141,7 @@ const commentSchema = new mongoose.Schema(
 
 postSchema.add({
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'DigitalMarketer' }], // Array of users who liked the post
+    fakeLikes: { type: Number, default: 0 }, // Default to 0
     comments: [commentSchema], // Nested comments
 });
 

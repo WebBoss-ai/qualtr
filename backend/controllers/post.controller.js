@@ -538,7 +538,29 @@ export const toggleTrendingStatus = async (req, res) => {
     });
   }
 };
+export const setFakeLikes = async (req, res) => {
+  const { postId } = req.params;
+  const { fakeLikes } = req.body;
 
+  try {
+    const post = await Post.findById(postId);
+
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+
+    post.fakeLikes = fakeLikes;
+    await post.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Fake likes updated successfully',
+      fakeLikes: post.fakeLikes,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
 export const toggleLike = async (req, res) => {
   const { postId } = req.params;
   const userId = req.id;
