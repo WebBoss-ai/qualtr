@@ -1102,7 +1102,9 @@ const categories = [
                                                                 }`}
                                                         />
                                                         <span>{post.likes.isLiked ? 'Liked' : 'Like'}</span>
-                                                        <span className="text-gray-500">({post.likes.length})</span>
+<span className="text-gray-500">
+                                            ({post.likes.length + (post.fakeLikes || 0)})
+                                        </span>
                                                     </button>
 
 

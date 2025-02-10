@@ -204,7 +204,7 @@ const PostDetails = () => {
     }, [id])
 
     const toggleLike = async () => {
-       if (!isLoggedIn) {
+        if (!isLoggedIn) {
             setShowModal(true); // Show modal if user is not logged in
             return;
         }
@@ -394,7 +394,9 @@ const PostDetails = () => {
                                                 }`}
                                         />
                                         <span>{likes.isLiked ? 'Liked' : 'Like'}</span>
-                                        <span className="text-gray-500">({likes.length})</span>
+                                        <span className="text-gray-500">
+                                            ({post.likes.length + (post.fakeLikes || 0)})
+                                        </span>
                                     </button>
 
                                     {/* Comment Button */}
