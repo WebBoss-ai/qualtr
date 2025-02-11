@@ -44,7 +44,7 @@ const PostPage = () => {
     const [modalMessage, setModalMessage] = useState('');
     const [loading, setLoading] = useState(true);
     const handleVote = async (postId, option) => {
-        if (!userId) return setShowModal(true);
+        if (!isLoggedIn) return setShowModal(true);
         try {
             const response = await axios.post(
                 `${MARKETER_API_END_POINT}/posts/${postId}/poll/vote`,
@@ -298,7 +298,7 @@ const PostPage = () => {
         }
     };
     const addComment = async (postId, commentText) => {
-        if (!userId) return setShowModal(true);
+        if (!isLoggedIn) return setShowModal(true);
 
         try {
             const response = await axios.post(`${MARKETER_API_END_POINT}/posts/${postId}/comment`, {
@@ -321,7 +321,7 @@ const PostPage = () => {
         }
     };
     const replyToComment = async (postId, commentId, replyText) => {
-        if (!userId) return setShowModal(true);
+        if (!isLoggedIn) return setShowModal(true);
         try {
             const response = await axios.post(
                 `${MARKETER_API_END_POINT}/posts/${postId}/comment/${commentId}/reply`,
@@ -346,7 +346,7 @@ const PostPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!userId) {
+        if (!isLoggedIn) {
             setShowModal(true);
             return;
         }
