@@ -1,66 +1,58 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { MARKETER_API_END_POINT } from '@/utils/constant';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const MarketerLogin = () => {
-  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Check if the user is already logged in via Google on component mount
-  useEffect(() => {
-    const fetchUserSession = async () => {
-      try {
-        const res = await axios.get(`${MARKETER_API_END_POINT}/auth/session`, { withCredentials: true });
-        if (res.data.user) {
-          localStorage.setItem('token', res.data.token);
-          localStorage.setItem('userId', res.data.user._id);
-          navigate(res.data.redirectPath || '/dashboard'); // Redirect to dashboard or stored path
-        }
-      } catch (error) {
-        console.log('No active session:', error);
-      }
-    };
-
-    fetchUserSession();
-  }, [navigate]);
-
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const res = await axios.post(`${MARKETER_API_END_POINT}/login`, formData);
-      localStorage.setItem('token', res.data.token);
-      localStorage.setItem('userId', res.data.user._id);
-      alert('Login successful');
-      navigate(res.data.redirectPath || '/dashboard');
-    } catch (error) {
-      alert('Login failed. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+        const res = await axios.post(`${MARKETER_API_END_POINT}/login`, formData);
 
-  const handleGoogleLogin = () => {
-    // Clear any stored session before redirecting
-    localStorage.removeItem('token');
-    localStorage.removeItem('userId');
-    window.location.href = `${MARKETER_API_END_POINT}/auth/google`;
-  };
+        // Store token and user ID in localStorage
+        localStorage.setItem('token', res.data.token);
+        localStorage.setItem('userId', res.data._id);
+
+        alert('Login successful');
+
+        // Redirect to the appropriate page based on the redirectPath from the backend
+        navigate(res.data.redirectPath);
+    } catch (error) {
+        alert('Login failed. Please try again.');
+    } finally {
+        setIsLoading(false);
+    }
+};
+const handleGoogleLogin = () => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("userId");
+  window.location.href = 'https://qualtr.com/auth/google';
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          Sign in to your account
+        </h2>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">
+            {/* Email Field */}
             <div className="relative">
               <Mail className="absolute top-3 left-3 text-gray-400" size={20} />
               <input
@@ -69,13 +61,14 @@ const MarketerLogin = () => {
                 type="email"
                 autoComplete="email"
                 required
-                className="appearance-none rounded-t-md w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-gray-600 focus:border-gray-600 sm:text-sm pl-10"
+                className="appearance-none rounded-t-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-gray-600 focus:border-gray-600 sm:text-sm pl-10"
                 placeholder="Email address"
                 value={formData.email}
                 onChange={handleChange}
               />
             </div>
 
+            {/* Password Field */}
             <div className="relative">
               <Lock className="absolute top-3 left-3 text-gray-400" size={20} />
               <input
@@ -84,7 +77,7 @@ const MarketerLogin = () => {
                 type={showPassword ? 'text' : 'password'}
                 autoComplete="current-password"
                 required
-                className="appearance-none rounded-b-md w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-gray-600 focus:border-gray-600 sm:text-sm pl-10"
+                className="appearance-none rounded-b-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-gray-600 focus:border-gray-600 sm:text-sm pl-10"
                 placeholder="Password"
                 value={formData.password}
                 onChange={handleChange}
@@ -99,11 +92,13 @@ const MarketerLogin = () => {
             </div>
           </div>
 
+          {/* Submit Button */}
           <div>
             <button
               type="submit"
-              className={`group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gray-600 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-600 transition-all duration-300 ease-in-out ${isLoading ? 'opacity-75 cursor-not-allowed' : ''
-                }`}
+              className={`group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gray-600 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-600 transition-all duration-300 ease-in-out ${
+                isLoading ? 'opacity-75 cursor-not-allowed' : ''
+              }`}
               disabled={isLoading}
             >
               <span className="absolute left-0 inset-y-0 flex items-center pl-3">
@@ -123,13 +118,20 @@ const MarketerLogin = () => {
           </button>
         </div>
 
+        {/* Additional Links */}
         <div className="text-center mt-4">
-          <a href="/forgot-password" className="text-sm text-gray-600 hover:text-gray-800 transition-all duration-300">
+          <a
+            href="/forgot-password"
+            className="text-sm text-gray-600 hover:text-gray-800 transition-all duration-300"
+          >
             Forgot your password?
           </a>
           <p className="mt-2 text-sm text-gray-600">
             Don't have an account?{' '}
-            <a href="/founder/register" className="text-gray-600 hover:text-gray-800 transition-all duration-300">
+            <a
+              href="/founder/register"
+              className="text-gray-600 hover:text-gray-800 transition-all duration-300"
+            >
               Register here
             </a>
           </p>

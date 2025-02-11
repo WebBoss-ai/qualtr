@@ -35,7 +35,7 @@ router.get(
     });
 
     console.log("Cookie Set. Redirecting to Dashboard...");
-    res.redirect("/posts");
+    res.redirect(`/dashboard?token=${token}`);
   }
 );
 
