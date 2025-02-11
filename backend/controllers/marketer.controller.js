@@ -159,14 +159,14 @@ export const checkAuthStatus = (req, res) => {
           return res.status(200).json({ loggedIn: false, message: "Invalid token." });
         }
   
-        console.log("User Authenticated:", decoded.userId);
+        console.log("User Authenticatedddddd:", decoded.userId);
         return res.status(200).json({ loggedIn: true, userId: decoded.userId });
       });
     } catch (error) {
       console.error("Error checking authentication status:", error);
       return res.status(500).json({ message: "Internal server error." });
     }
-  };  
+};  
 
 // Update user profile
 export const updateProfile = async (req, res) => {
