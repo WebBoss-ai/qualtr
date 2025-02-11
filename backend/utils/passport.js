@@ -33,10 +33,10 @@ passport.use(
           console.log("User not found. Creating new user...");
           user = await DigitalMarketer.create({
             email,
-            profile: {
-              fullname: profile.displayName,
-            },
-          });
+            profile: { fullname: profile.displayName },
+            googleId: profile.id, // Store the Google ID
+            password: "oauth-user", // Dummy password
+        });        
         } else {
           console.log("User found:", user);
         }
