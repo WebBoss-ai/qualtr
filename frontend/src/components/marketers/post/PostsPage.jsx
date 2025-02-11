@@ -866,7 +866,7 @@ const PostPage = () => {
                                 </div>
                                 {posts.length > 0 ? (
                                     posts.map((post) => (
-                                        <a href={`/post/${post._id}`} key={post._id} className="block">
+                                        <div key={post._id} className="block" onClick={(e) => e.stopPropagation()}>
                                             <div className="bg-white border-b border-gray-300 overflow-hidden cursor-pointer">                                            <div className="p-4">
                                                 <div className="flex items-center justify-between mb-4">
                                                     {/* Author Profile */}
@@ -1155,9 +1155,9 @@ const PostPage = () => {
                                                                 }`}
                                                         />
                                                         <span>{post.likes?.isLiked ? 'Liked' : 'Like'}</span>
-<span className="text-gray-500">
-                                            ({post.likes.length + (post.fakeLikes || 0)})
-                                        </span>
+                                                        <span className="text-gray-500">
+                                                            ({post.likes.length + (post.fakeLikes || 0)})
+                                                        </span>
                                                     </button>
 
 
@@ -1303,24 +1303,24 @@ const PostPage = () => {
                                                 )}
 
                                             </div>
-                                            </a>
-                                            ))
-                                            ) : (
-                                            <div className="text-center py-8">
-                                                <p className="text-gray-700 text-lg">Building your business vision... please wait</p>
-                                                <div className="flex justify-center items-center space-x-2 mt-4">
-                                                    <svg className="animate-spin h-12 w-12 text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50">
-                                                        <circle className="opacity-25" cx="25" cy="25" r="20" stroke="currentColor" strokeWidth="4"></circle>
-                                                        <path className="opacity-75" fill="currentColor" d="M25 5c-1.4 0-2.6 1-2.6 2.4 0 1.3 1.1 2.4 2.4 2.4s2.4-1.1 2.4-2.4C27.6 6.1 26.4 5 25 5zM25 15c-1.4 0-2.6 1-2.6 2.4 0 1.3 1.1 2.4 2.4 2.4s2.4-1.1 2.4-2.4c0-1.3-1.1-2.4-2.4-2.4zM25 25c-1.4 0-2.6 1-2.6 2.4 0 1.3 1.1 2.4 2.4 2.4s2.4-1.1 2.4-2.4c0-1.3-1.1-2.4-2.4-2.4zM25 35c-1.4 0-2.6 1-2.6 2.4 0 1.3 1.1 2.4 2.4 2.4s2.4-1.1 2.4-2.4c0-1.3-1.1-2.4-2.4-2.4zM25 45c-1.4 0-2.6 1-2.6 2.4 0 1.3 1.1 2.4 2.4 2.4s2.4-1.1 2.4-2.4c0-1.3-1.1-2.4-2.4-2.4z"></path>
-                                                    </svg>
-                                                </div>
-                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="text-center py-8">
+                                        <p className="text-gray-700 text-lg">Building your business vision... please wait</p>
+                                        <div className="flex justify-center items-center space-x-2 mt-4">
+                                            <svg className="animate-spin h-12 w-12 text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50">
+                                                <circle className="opacity-25" cx="25" cy="25" r="20" stroke="currentColor" strokeWidth="4"></circle>
+                                                <path className="opacity-75" fill="currentColor" d="M25 5c-1.4 0-2.6 1-2.6 2.4 0 1.3 1.1 2.4 2.4 2.4s2.4-1.1 2.4-2.4C27.6 6.1 26.4 5 25 5zM25 15c-1.4 0-2.6 1-2.6 2.4 0 1.3 1.1 2.4 2.4 2.4s2.4-1.1 2.4-2.4c0-1.3-1.1-2.4-2.4-2.4zM25 25c-1.4 0-2.6 1-2.6 2.4 0 1.3 1.1 2.4 2.4 2.4s2.4-1.1 2.4-2.4c0-1.3-1.1-2.4-2.4-2.4zM25 35c-1.4 0-2.6 1-2.6 2.4 0 1.3 1.1 2.4 2.4 2.4s2.4-1.1 2.4-2.4c0-1.3-1.1-2.4-2.4-2.4zM25 45c-1.4 0-2.6 1-2.6 2.4 0 1.3 1.1 2.4 2.4 2.4s2.4-1.1 2.4-2.4c0-1.3-1.1-2.4-2.4-2.4z"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
 
                                 )}
-                                        </div>
+                            </div>
 
-                            {/* Right Sidebar */ }
-                                        < div className = "lg:block lg:col-span-3" >
+                            {/* Right Sidebar */}
+                            < div className="lg:block lg:col-span-3" >
                                 <div className="sticky top-10 mb-10">
                                     <RandomSuggestedProfiles />
                                 </div>
