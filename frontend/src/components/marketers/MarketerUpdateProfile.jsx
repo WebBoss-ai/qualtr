@@ -36,48 +36,77 @@ const EnhancedMarketerProfile = () => {
     const [isModalOpen2, setModalOpen2] = useState(false);
     const education = []; // Fetch or pass initial experiences
 
-    const token = localStorage.getItem('token')
-    const decodedToken = JSON.parse(atob(token.split('.')[1]))
-    const id = decodedToken.userId
+    const token = localStorage.getItem('token');
 
-    useEffect(() => {
-        fetchProfile()
-    }, [token])
-    const fetchProfile = async () => {
-        setLoading(true)
-        setError(null)
-        setSuccess(null)
-
-        try {
-            const decodedToken = JSON.parse(atob(token.split('.')[1]))
-            const userId = decodedToken.userId
-            if (!token) throw new Error('Token is not available. Please log in.')
-
-            if (!userId) throw new Error('User ID is not found in the token.')
-
-            const res = await axios.get(`${MARKETER_API_END_POINT}/profile/${userId}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            })
-
-            setProfileData(res.data.profile || {
-                fullname: '',
-                phoneNumber: '',
-                agencyName: '',
-                bio: '',
-                skills: '',
-                location: '',
-                website: '',
-                profilePhoto: '',
-                experiences: [],
-                education: []
-            })
-            setSuccess('Profile loaded successfully.')
-        } catch (error) {
-            setError(error.response?.data?.message || error.message || 'Failed to load profile data.')
-        } finally {
-            setLoading(false)
-        }
+    let id = null;
+    if (token) {
+      try {
+        const decodedToken = JSON.parse(atob(token.split('.')[1]));
+        id = decodedToken.userId || null;
+      } catch (error) {
+        console.error("Invalid token:", error);
+      }
     }
+    
+    useEffect(() => {
+      if (token) {
+        fetchProfile();
+      }
+    }, [token]);
+    
+    const fetchProfile = async () => {
+      setLoading(true);
+      setError(null);
+      setSuccess(null);
+    
+      if (!token) {
+        setError("Token is missing. Please log in.");
+        setLoading(false);
+        return;
+      }
+    
+      let userId = null;
+      try {
+        const decodedToken = JSON.parse(atob(token.split('.')[1]));
+        userId = decodedToken.userId;
+      } catch (error) {
+        setError("Invalid token. Please log in again.");
+        setLoading(false);
+        return;
+      }
+    
+      if (!userId) {
+        setError("User ID not found in token.");
+        setLoading(false);
+        return;
+      }
+    
+      try {
+        const res = await axios.get(`${MARKETER_API_END_POINT}/profile/${userId}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+    
+        setProfileData(res.data.profile || {
+          fullname: '',
+          phoneNumber: '',
+          agencyName: '',
+          bio: '',
+          skills: '',
+          location: '',
+          website: '',
+          profilePhoto: '',
+          experiences: [],
+          education: []
+        });
+    
+        setSuccess("Profile loaded successfully.");
+      } catch (error) {
+        setError(error.response?.data?.message || error.message || "Failed to load profile data.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    
     const handleChange = (e) => {
         const { name, value } = e.target
         setProfileData(prevData => ({ ...prevData, [name]: value }))
