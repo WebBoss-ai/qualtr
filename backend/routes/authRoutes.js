@@ -15,26 +15,32 @@ router.get("/google", (req, res, next) => {
 // Handle Google Authentication callback
 router.get(
   "/google/callback",
-  (req, res, next) => {
-    console.log("Google Callback Hit.");
-    next();
-  },
   passport.authenticate("google", { failureRedirect: "/login" }),
   (req, res) => {
-    console.log("Authentication Successful. Generating JWT...");
-    const token = jwt.sign({ userId: req.user._id }, process.env.JWT_SECRET, { expiresIn: "30d" });
+    console.log("Google Authentication Successful. Generating JWT...");
 
-    console.log("Token Generated:", token);
+    // Check if user is available
+    if (!req.user) {
+      return res.status(401).json({ message: "Authentication failed" });
+    }
 
-    // Set token cookie and redirect
+    const token = jwt.sign(
+      { userId: req.user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "30d" }
+    );
+
+    console.log("Generated Token:", token);
+
+    // Set token in HttpOnly cookie
     res.cookie("token", token, {
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: "lax", // Ensure frontend can access it
     });
 
-    console.log("Cookie Set. Redirecting to Dashboard...");
+    console.log("Token set in cookie. Redirecting to profile...");
     res.redirect(`/founder-profile/update`);
   }
 );

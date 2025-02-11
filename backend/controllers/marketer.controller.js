@@ -145,27 +145,28 @@ export const logout = async (req, res) => {
 
 export const checkAuthStatus = (req, res) => {
     try {
-        // Check if the token exists in cookies
-        const token = req.cookies.token;
-
-        if (!token) {
-            return res.status(200).json({ loggedIn: false, message: "Not authenticated." });
+      // Check for token in cookies
+      const token = req.cookies?.token;
+      if (!token) {
+        console.log("No token found in cookies.");
+        return res.status(200).json({ loggedIn: false, message: "Not authenticated." });
+      }
+  
+      // Verify the token
+      jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+        if (err) {
+          console.log("Invalid token:", err.message);
+          return res.status(200).json({ loggedIn: false, message: "Invalid token." });
         }
-
-        // Verify the JWT token
-        jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-            if (err) {
-                return res.status(200).json({ loggedIn: false, message: "Invalid token." });
-            }
-
-            // If token is valid, return success response
-            return res.status(200).json({ loggedIn: true, userId: decoded.userId });
-        });
+  
+        console.log("User Authenticated:", decoded.userId);
+        return res.status(200).json({ loggedIn: true, userId: decoded.userId });
+      });
     } catch (error) {
-        console.error("Error checking authentication status:", error);
-        return res.status(500).json({ message: "Internal server error." });
+      console.error("Error checking authentication status:", error);
+      return res.status(500).json({ message: "Internal server error." });
     }
-};
+  };  
 
 // Update user profile
 export const updateProfile = async (req, res) => {
