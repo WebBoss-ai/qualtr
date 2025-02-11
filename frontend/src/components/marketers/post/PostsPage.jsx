@@ -65,15 +65,24 @@ const PostPage = () => {
     };
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const checkLoginStatus = async (setIsLoggedIn, setLoading) => {
+        console.log("Checking login status...");
+        setLoading(true); // Indicate loading state
+    
         try {
+            console.log("Sending request to:", `${MARKETER_API_END_POINT}/auth/status`);
+            
             const response = await axios.get(`${MARKETER_API_END_POINT}/auth/status`, { withCredentials: true });
+            
+            console.log("Response received:", response.data);
+            
             setIsLoggedIn(response.data.loggedIn);
         } catch (error) {
-            console.error("Error checking login status:", error);
+            console.error("Error checking login status:", error.response?.data || error.message);
         } finally {
             setLoading(false);
+            console.log("Login status check completed.");
         }
-    };
+    };    
 
     const PostTimestamp = ({ createdAt }) => {
         const formattedTime = formatDistanceToNow(new Date(createdAt), { addSuffix: true });
