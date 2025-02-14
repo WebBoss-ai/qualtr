@@ -42,7 +42,7 @@ const PostPage = () => {
     const [showPostSuccessModal, setShowPostSuccessModal] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
 
     const POSTS_PER_PAGE = 10; // Number of posts per request
     const [page, setPage] = useState(1);
@@ -259,76 +259,46 @@ const PostPage = () => {
         { value: "poll", label: "Poll", icon: BarChart2 },
         { value: "document", label: "Document", icon: FileText },
     ]
-
     useEffect(() => {
-        console.log("🔄 useEffect: Initial fetch triggered");
-        setLoading(false); // 🔧 Ensure loading starts as false
-        fetchPosts(1);
-        checkLoginStatus(setIsLoggedIn, setLoading);
+        if (!loading) {
+            fetchPosts(1);
+        }
     }, []);
-    
-    
-    
+
+    // Scroll listener to load more posts
     useEffect(() => {
         const handleScroll = () => {
-            console.log("🖱️ Scrolling detected: Checking if near bottom...");
+            if (loading || page >= totalPages) return;
+
             if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
-                console.log(`📩 Attempting to fetch page ${page + 1}, loading=${loading}, totalPages=${totalPages}`);
-                if (!loading) {
-                    fetchPosts(page + 1); // Load next page when near bottom
-                } else {
-                    console.log("🚫 Skipping fetch due to ongoing loading...");
-                }
+                fetchPosts(page + 1);
             }
         };
-    
-        window.addEventListener('scroll', handleScroll);
-        return () => {
-            console.log("📴 Removing scroll listener");
-            window.removeEventListener('scroll', handleScroll);
-        };
-    }, [page, loading]);
-    
+
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, [page, loading, totalPages]);
+
     const fetchPosts = async (pageNumber = 1) => {
-        console.log(`🚀 fetchPosts called with pageNumber=${pageNumber}, loading=${loading}, totalPages=${totalPages}`);
-    
-        if (loading || (pageNumber > 1 && pageNumber > totalPages)) {
-            console.log(`⚠️ Skipping fetch: loading=${loading}, pageNumber=${pageNumber}, totalPages=${totalPages}`);
-            return;
-        }
-    
-        console.log(`🔍 Fetching posts for page: ${pageNumber}`);
+        if (loading || pageNumber > totalPages) return;
+
         setLoading(true);
-    
+
         try {
             const storedUserId = localStorage.getItem('userId');
-            console.log(`🔑 Stored userId: ${storedUserId}`);
             setUserId(storedUserId);
-    
-            // **Fetch paginated posts**
-            console.log(`🌍 Sending request to: ${MARKETER_API_END_POINT}/posts?page=${pageNumber}&limit=${POSTS_PER_PAGE}`);
+
             const response = await axios.get(`${MARKETER_API_END_POINT}/posts?page=${pageNumber}&limit=${POSTS_PER_PAGE}`);
-    console.log(response)
-            console.log(`📥 Response received for page ${pageNumber}:`, response.data);
             const newPosts = response.data.posts || [];
-    
-            if (newPosts.length === 0) {
-                console.log("⛔ No more posts found, stopping further fetches.");
-                return; // Stop fetching if no posts are returned
-            }
-    
-            console.log(`📝 Processing ${newPosts.length} new posts...`);
-    
-            // Fetch likes and comments for each post
+
+            if (newPosts.length === 0) return;
+
             const updatedPosts = await Promise.all(
                 newPosts.map(async (post) => {
                     try {
-                        console.log(`📌 Fetching details for post ${post._id}`);
                         const postResponse = await axios.get(`${MARKETER_API_END_POINT}/post/${post._id}`);
                         const fetchedPost = postResponse.data.post;
-    
-                        console.log(`✅ Post ${post._id} details fetched successfully`);
-    
+
                         return {
                             ...post,
                             likes: {
@@ -338,36 +308,25 @@ const PostPage = () => {
                             comments: fetchedPost.comments || [],
                         };
                     } catch (error) {
-                        console.error(`❌ Failed to fetch details for post ${post._id}:`, error);
                         return post;
                     }
                 })
             );
-    
-            console.log(`📌 Appending ${updatedPosts.length} posts to state`);
-            setPosts((prevPosts) => {
-                console.log(`🛠️ Previous posts count: ${prevPosts.length}, New total: ${prevPosts.length + updatedPosts.length}`);
-                return [...prevPosts, ...updatedPosts];
-            });
-    
-            console.log(`🖼️ Updating user profile photo`);
+
+            setPosts((prevPosts) => (pageNumber === 1 ? updatedPosts : [...prevPosts, ...updatedPosts]));
             setUserProfilePhoto(response.data.userProfilePhoto);
-    
+
             if (pageNumber === 1) {
-                console.log(`🔢 Setting totalPages=${response.data.totalPages}`);
                 setTotalPages(response.data.totalPages);
             }
-    
-            console.log(`📍 Setting current page to ${pageNumber}`);
+
             setPage(pageNumber);
         } catch (error) {
-            console.error('❌ Failed to fetch posts:', error);
+            console.error('Failed to fetch posts:', error);
         } finally {
-            console.log(`✅ Fetch complete for page ${pageNumber}, setting loading=false`);
             setLoading(false);
         }
     };
-    
 
     const addComment = async (postId, commentText) => {
         if (!isLoggedIn) return setShowModal(true);
@@ -1398,10 +1357,15 @@ const PostPage = () => {
                                     </div>
 
                                 )}
+                                {loading && (
+                                    <p className="flex justify-center items-center mt-4 text-lg font-semibold text-gray-700">
+                                        Loading more posts...
+                                    </p>
+                                )}
                             </div>
 
                             {/* Right Sidebar */}
-                            < div className="lg:block lg:col-span-3" >
+                            <div className="hidden lg:block lg:col-span-3">
                                 <div className="sticky top-10 mb-10">
                                     <RandomSuggestedProfiles />
                                 </div>
@@ -1409,7 +1373,6 @@ const PostPage = () => {
                                     <RandomVCProfiles />
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
