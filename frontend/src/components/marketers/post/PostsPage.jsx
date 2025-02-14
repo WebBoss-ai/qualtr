@@ -70,22 +70,15 @@ const PostPage = () => {
     };
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const checkLoginStatus = async (setIsLoggedIn, setLoading) => {
-        console.log("Checking login status...");
         setLoading(true); // Indicate loading state
 
         try {
-            console.log("Sending request to:", `${MARKETER_API_END_POINT}/auth/status`);
-
             const response = await axios.get(`${MARKETER_API_END_POINT}/auth/status`, { withCredentials: true });
-
-            console.log("Response received:", response.data);
-
             setIsLoggedIn(response.data.loggedIn);
         } catch (error) {
             console.error("Error checking login status:", error.response?.data || error.message);
         } finally {
             setLoading(false);
-            console.log("Login status check completed.");
         }
     };
 
@@ -377,34 +370,25 @@ const PostPage = () => {
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        console.log("Form submission started.");
-    
+        e.preventDefault();    
         if (!isLoggedIn) {
-            console.log("User is not logged in. Showing login modal.");
             setShowModal(true);
             return;
         }
     
-        setIsSubmitting(true); // Disable button and show "Posting..."
-        console.log("Form submission in progress. Button disabled.");
-    
+        setIsSubmitting(true); // Disable button and show "Posting..."    
         const formData = new FormData();
         formData.append('category', postCategory);
         formData.append('text', postText);
-        console.log("Category and text added:", postCategory, postText);
     
         for (let file of media.images) {
-            console.log("Appending image:", file.name);
             formData.append('images', file);
         }
         for (let file of media.videos) {
-            console.log("Appending video:", file.name);
             formData.append('videos', file);
         }
     
         if (additionalData.event) {
-            console.log("Appending event data:", additionalData.event);
             formData.append('event[title]', additionalData.event.title || '');
             formData.append('event[description]', additionalData.event.description || '');
             formData.append('event[date]', additionalData.event.date || '');
@@ -412,14 +396,12 @@ const PostPage = () => {
         }
     
         if (additionalData.occasion) {
-            console.log("Appending occasion data:", additionalData.occasion);
             formData.append('occasion[title]', additionalData.occasion.title || '');
             formData.append('occasion[description]', additionalData.occasion.description || '');
             formData.append('occasion[date]', additionalData.occasion.date || '');
         }
     
         if (additionalData.jobOpening) {
-            console.log("Appending job opening data:", additionalData.jobOpening);
             formData.append('jobOpening[title]', additionalData.jobOpening.title || '');
             formData.append('jobOpening[description]', additionalData.jobOpening.description || '');
             formData.append('jobOpening[location]', additionalData.jobOpening.location || '');
@@ -427,49 +409,39 @@ const PostPage = () => {
         }
     
         if (additionalData.poll) {
-            console.log("Appending poll data:", additionalData.poll);
             formData.append('poll[question]', additionalData.poll.question || '');
             additionalData.poll.options.forEach((option, index) => {
-                console.log(`Appending poll option ${index + 1}:`, option);
                 formData.append(`poll[options][${index}]`, option);
             });
             formData.append('poll[endDate]', additionalData.poll.endDate || '');
         }
     
         if (additionalData.document) {
-            console.log("Appending document data:", additionalData.document);
             formData.append('document[name]', additionalData.document.name || '');
             formData.append('document[url]', additionalData.document.url || '');
         }
     
         try {
-            console.log("Sending form data to API...");
             const response = await axios.post(`${MARKETER_API_END_POINT}/posts`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
-    
-            console.log("Post created successfully:", response.data);
-    
+        
             // Reset the form fields
             setPostCategory('');
             setPostText('');
             setMedia({ images: [], videos: [] });
             setAdditionalData({});
-            console.log("Form fields reset.");
     
             // Show success modal
             setModalMessage('Thanks for posting on Qualtr!');
             setShowPostSuccessModal(true);
-            console.log("Success modal displayed.");
     
             // Refresh posts
-            console.log("Refreshing posts...");
             fetchPosts();
         } catch (error) {
             console.error('Failed to create post:', error);
         } finally {
             setIsSubmitting(false); // Enable button again
-            console.log("Form submission completed. Button enabled.");
         }
     };    
 
