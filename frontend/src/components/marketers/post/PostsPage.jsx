@@ -261,54 +261,73 @@ const PostPage = () => {
     ]
 
     useEffect(() => {
-        fetchPosts(1); // Load first page initially
+        console.log("🔄 useEffect: Initial fetch triggered");
+        setLoading(false); // 🔧 Ensure loading starts as false
+        fetchPosts(1);
         checkLoginStatus(setIsLoggedIn, setLoading);
     }, []);
-
+    
+    
+    
     useEffect(() => {
         const handleScroll = () => {
-            if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100 && !loading) {
-                fetchPosts(page + 1); // Load next page when near bottom
+            console.log("🖱️ Scrolling detected: Checking if near bottom...");
+            if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
+                console.log(`📩 Attempting to fetch page ${page + 1}, loading=${loading}, totalPages=${totalPages}`);
+                if (!loading) {
+                    fetchPosts(page + 1); // Load next page when near bottom
+                } else {
+                    console.log("🚫 Skipping fetch due to ongoing loading...");
+                }
             }
         };
     
         window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
+        return () => {
+            console.log("📴 Removing scroll listener");
+            window.removeEventListener('scroll', handleScroll);
+        };
     }, [page, loading]);
     
+    const fetchPosts = async (pageNumber = 1) => {
+        console.log(`🚀 fetchPosts called with pageNumber=${pageNumber}, loading=${loading}, totalPages=${totalPages}`);
     
-    const fetchPosts = async (pageNumber) => {
-        if (loading || pageNumber > totalPages) {
-            console.log(`Skipping fetch: loading=${loading}, pageNumber=${pageNumber}, totalPages=${totalPages}`);
-            return; // Prevent duplicate requests
+        if (loading || (pageNumber > 1 && pageNumber > totalPages)) {
+            console.log(`⚠️ Skipping fetch: loading=${loading}, pageNumber=${pageNumber}, totalPages=${totalPages}`);
+            return;
         }
     
-        console.log(`Fetching posts for page: ${pageNumber}`);
+        console.log(`🔍 Fetching posts for page: ${pageNumber}`);
         setLoading(true);
     
         try {
             const storedUserId = localStorage.getItem('userId');
-            console.log(`Stored userId: ${storedUserId}`);
+            console.log(`🔑 Stored userId: ${storedUserId}`);
             setUserId(storedUserId);
     
-            // Fetch paginated posts
-            console.log(`Requesting: ${MARKETER_API_END_POINT}/posts?page=${pageNumber}&limit=${POSTS_PER_PAGE}`);
+            // **Fetch paginated posts**
+            console.log(`🌍 Sending request to: ${MARKETER_API_END_POINT}/posts?page=${pageNumber}&limit=${POSTS_PER_PAGE}`);
             const response = await axios.get(`${MARKETER_API_END_POINT}/posts?page=${pageNumber}&limit=${POSTS_PER_PAGE}`);
-    
-            console.log(`Response received for page ${pageNumber}:`, response.data);
+    console.log(response)
+            console.log(`📥 Response received for page ${pageNumber}:`, response.data);
             const newPosts = response.data.posts || [];
     
-            console.log(`Processing ${newPosts.length} new posts...`);
+            if (newPosts.length === 0) {
+                console.log("⛔ No more posts found, stopping further fetches.");
+                return; // Stop fetching if no posts are returned
+            }
+    
+            console.log(`📝 Processing ${newPosts.length} new posts...`);
     
             // Fetch likes and comments for each post
             const updatedPosts = await Promise.all(
                 newPosts.map(async (post) => {
                     try {
-                        console.log(`Fetching details for post ${post._id}`);
+                        console.log(`📌 Fetching details for post ${post._id}`);
                         const postResponse = await axios.get(`${MARKETER_API_END_POINT}/post/${post._id}`);
                         const fetchedPost = postResponse.data.post;
     
-                        console.log(`Post ${post._id} details fetched successfully`);
+                        console.log(`✅ Post ${post._id} details fetched successfully`);
     
                         return {
                             ...post,
@@ -319,31 +338,37 @@ const PostPage = () => {
                             comments: fetchedPost.comments || [],
                         };
                     } catch (error) {
-                        console.error(`Failed to fetch details for post ${post._id}:`, error);
-                        return post; // Return original post if fetching details fails
+                        console.error(`❌ Failed to fetch details for post ${post._id}:`, error);
+                        return post;
                     }
                 })
             );
     
-            console.log(`Appending ${updatedPosts.length} posts to state`);
-            setPosts((prevPosts) => [...prevPosts, ...updatedPosts]); // Append new posts
+            console.log(`📌 Appending ${updatedPosts.length} posts to state`);
+            setPosts((prevPosts) => {
+                console.log(`🛠️ Previous posts count: ${prevPosts.length}, New total: ${prevPosts.length + updatedPosts.length}`);
+                return [...prevPosts, ...updatedPosts];
+            });
     
-            console.log(`Updating user profile photo`);
+            console.log(`🖼️ Updating user profile photo`);
             setUserProfilePhoto(response.data.userProfilePhoto);
     
-            console.log(`Total pages: ${response.data.totalPages}`);
-            setTotalPages(response.data.totalPages);
+            if (pageNumber === 1) {
+                console.log(`🔢 Setting totalPages=${response.data.totalPages}`);
+                setTotalPages(response.data.totalPages);
+            }
     
-            console.log(`Setting current page to ${pageNumber}`);
+            console.log(`📍 Setting current page to ${pageNumber}`);
             setPage(pageNumber);
         } catch (error) {
-            console.error('Failed to fetch posts:', error);
+            console.error('❌ Failed to fetch posts:', error);
         } finally {
-            console.log(`Fetch complete for page ${pageNumber}, setting loading=false`);
+            console.log(`✅ Fetch complete for page ${pageNumber}, setting loading=false`);
             setLoading(false);
         }
     };
     
+
     const addComment = async (postId, commentText) => {
         if (!isLoggedIn) return setShowModal(true);
 
