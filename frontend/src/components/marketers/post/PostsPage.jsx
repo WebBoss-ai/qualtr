@@ -43,6 +43,11 @@ const PostPage = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
     const [loading, setLoading] = useState(true);
+
+    const POSTS_PER_PAGE = 10; // Number of posts per request
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+
     const handleVote = async (postId, option) => {
         if (!isLoggedIn) return setShowModal(true);
         try {
@@ -67,14 +72,14 @@ const PostPage = () => {
     const checkLoginStatus = async (setIsLoggedIn, setLoading) => {
         console.log("Checking login status...");
         setLoading(true); // Indicate loading state
-    
+
         try {
             console.log("Sending request to:", `${MARKETER_API_END_POINT}/auth/status`);
-            
+
             const response = await axios.get(`${MARKETER_API_END_POINT}/auth/status`, { withCredentials: true });
-            
+
             console.log("Response received:", response.data);
-            
+
             setIsLoggedIn(response.data.loggedIn);
         } catch (error) {
             console.error("Error checking login status:", error.response?.data || error.message);
@@ -82,7 +87,7 @@ const PostPage = () => {
             setLoading(false);
             console.log("Login status check completed.");
         }
-    };    
+    };
 
     const PostTimestamp = ({ createdAt }) => {
         const formattedTime = formatDistanceToNow(new Date(createdAt), { addSuffix: true });
@@ -256,26 +261,55 @@ const PostPage = () => {
     ]
 
     useEffect(() => {
-        fetchPosts();
+        fetchPosts(1); // Load first page initially
         checkLoginStatus(setIsLoggedIn, setLoading);
     }, []);
 
-    const fetchPosts = async () => {
-        const storedUserId = localStorage.getItem('userId');
-        setUserId(storedUserId);
-
+    useEffect(() => {
+        const handleScroll = () => {
+            if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100 && !loading) {
+                fetchPosts(page + 1); // Load next page when near bottom
+            }
+        };
+    
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [page, loading]);
+    
+    
+    const fetchPosts = async (pageNumber) => {
+        if (loading || pageNumber > totalPages) {
+            console.log(`Skipping fetch: loading=${loading}, pageNumber=${pageNumber}, totalPages=${totalPages}`);
+            return; // Prevent duplicate requests
+        }
+    
+        console.log(`Fetching posts for page: ${pageNumber}`);
+        setLoading(true);
+    
         try {
-            // Fetch all posts
-            const response = await axios.get(`${MARKETER_API_END_POINT}/posts`);
-            const posts = response.data.posts || [];
-
+            const storedUserId = localStorage.getItem('userId');
+            console.log(`Stored userId: ${storedUserId}`);
+            setUserId(storedUserId);
+    
+            // Fetch paginated posts
+            console.log(`Requesting: ${MARKETER_API_END_POINT}/posts?page=${pageNumber}&limit=${POSTS_PER_PAGE}`);
+            const response = await axios.get(`${MARKETER_API_END_POINT}/posts?page=${pageNumber}&limit=${POSTS_PER_PAGE}`);
+    
+            console.log(`Response received for page ${pageNumber}:`, response.data);
+            const newPosts = response.data.posts || [];
+    
+            console.log(`Processing ${newPosts.length} new posts...`);
+    
             // Fetch likes and comments for each post
             const updatedPosts = await Promise.all(
-                posts.map(async (post) => {
+                newPosts.map(async (post) => {
                     try {
+                        console.log(`Fetching details for post ${post._id}`);
                         const postResponse = await axios.get(`${MARKETER_API_END_POINT}/post/${post._id}`);
                         const fetchedPost = postResponse.data.post;
-
+    
+                        console.log(`Post ${post._id} details fetched successfully`);
+    
                         return {
                             ...post,
                             likes: {
@@ -290,13 +324,26 @@ const PostPage = () => {
                     }
                 })
             );
+    
+            console.log(`Appending ${updatedPosts.length} posts to state`);
+            setPosts((prevPosts) => [...prevPosts, ...updatedPosts]); // Append new posts
+    
+            console.log(`Updating user profile photo`);
             setUserProfilePhoto(response.data.userProfilePhoto);
-            setPosts(updatedPosts);
+    
+            console.log(`Total pages: ${response.data.totalPages}`);
+            setTotalPages(response.data.totalPages);
+    
+            console.log(`Setting current page to ${pageNumber}`);
+            setPage(pageNumber);
         } catch (error) {
             console.error('Failed to fetch posts:', error);
-            setPosts([]);
+        } finally {
+            console.log(`Fetch complete for page ${pageNumber}, setting loading=false`);
+            setLoading(false);
         }
     };
+    
     const addComment = async (postId, commentText) => {
         if (!isLoggedIn) return setShowModal(true);
 

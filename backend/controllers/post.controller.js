@@ -128,7 +128,6 @@ export const deletePost = async (req, res) => {
 // Get all posts
 export const getAllPosts = async (req, res) => {
   try {
-    // Check if the logged-in user belongs to the DigitalMarketer model
     const digitalMarketer = await DigitalMarketer.findOne({ user: req._id });
 
     if (!digitalMarketer) {
@@ -140,55 +139,49 @@ export const getAllPosts = async (req, res) => {
 
     console.log('Logged-in user is a Digital Marketer:', digitalMarketer);
 
-    const posts = await Post.find()
-      .populate('author', 'profile') // Populate the full profile object
-      .sort({ createdAt: -1 })
-      .lean(); // Use lean for better performance since no modifications are needed to the Mongoose document
+    // Pagination Parameters
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
 
-    // Process logged-in user's profile photo
+    // Fetch paginated posts
+    const posts = await Post.find()
+      .populate('author', 'profile')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean();
+
+    const totalPosts = await Post.countDocuments();
+
     let loggedInUserProfilePhoto = null;
     if (digitalMarketer) {
-      loggedInUserProfilePhoto = await getObjectURL(digitalMarketer.profile.profilePhoto); // Generate a presigned URL for the user's profile picture
-    } else {
-      console.log('No profile photo for logged-in user');
+      loggedInUserProfilePhoto = await getObjectURL(digitalMarketer.profile.profilePhoto);
     }
 
+    // Process posts with media and profile photos
     const postsWithMediaAndAuthorData = await Promise.all(
       posts.map(async (post) => {
-        // Process author profile photo URL
         if (post.author?.profile?.profilePhoto) {
-          const profilePhotoURL = await getObjectURL(post.author.profile.profilePhoto);
-          post.author.profile.profilePhoto = profilePhotoURL;
+          post.author.profile.profilePhoto = await getObjectURL(post.author.profile.profilePhoto);
         }
         const sharingLink = `https://qualtr.com/post/${post._id}`;
 
-        // Process media (photos and videos)
         if (post.media) {
           if (post.media.photos?.length > 0) {
             post.media.photos = await Promise.all(
-              post.media.photos
-                .filter((photo) => photo && photo.url)
-                .map(async (photo) => {
-                  const s3Key = photo.url.split('amazonaws.com/')[1];
-                  return {
-                    ...photo,
-                    url: await generatePostImageUrl(s3Key),
-                  };
-                })
+              post.media.photos.map(async (photo) => ({
+                ...photo,
+                url: await generatePostImageUrl(photo.url.split('amazonaws.com/')[1]),
+              }))
             );
           }
-
           if (post.media.videos?.length > 0) {
             post.media.videos = await Promise.all(
-              post.media.videos
-                .filter((video) => video && video.url)
-                .map(async (video) => {
-                  const s3Key = video.url.split('amazonaws.com/')[1];
-                  return {
-                    ...video,
-                    url: await generatePostVideoUrl(s3Key),
-                  };
-                })
+              post.media.videos.map(async (video) => ({
+                ...video,
+                url: await generatePostVideoUrl(video.url.split('amazonaws.com/')[1]),
+              }))
             );
           }
         }
@@ -201,7 +194,9 @@ export const getAllPosts = async (req, res) => {
       message: 'Posts retrieved successfully.',
       success: true,
       posts: postsWithMediaAndAuthorData,
-      userProfilePhoto: loggedInUserProfilePhoto, // Include the logged-in user's profile photo URL
+      totalPages: Math.ceil(totalPosts / limit),
+      currentPage: page,
+      userProfilePhoto: loggedInUserProfilePhoto,
     });
   } catch (error) {
     console.error('Error retrieving posts:', error);
