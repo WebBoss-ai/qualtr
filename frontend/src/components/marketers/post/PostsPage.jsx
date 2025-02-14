@@ -263,6 +263,7 @@ const PostPage = () => {
         if (!loading) {
             fetchPosts(1);
         }
+        checkLoginStatus(setIsLoggedIn, setLoading);
     }, []);
 
     // Scroll listener to load more posts
