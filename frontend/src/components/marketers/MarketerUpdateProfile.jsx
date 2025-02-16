@@ -52,49 +52,57 @@ const EnhancedMarketerProfile = () => {
 
     const fetchToken = async () => {
         try {
-          const response = await axios.get(`${MARKETER_API_END_POINT}/auth/status`, {
-            withCredentials: true, // Allows cookies to be sent
-          });
-      
-          if (response.data.token) {
-            console.log("Token retrieved from backend:", response.data.token);
-      
-            // Decode JWT Token
-            const decodedToken = JSON.parse(atob(response.data.token.split('.')[1]));
-            const userId = decodedToken.userId || null;
-            console.log(`Decoded User ID: ${userId}`);
-      
-            return userId; // Use this ID in your frontend logic
-          }
+            const response = await axios.get(`${MARKETER_API_END_POINT}/auth/status`, {
+                withCredentials: true, // Allows cookies to be sent
+            });
+
+            if (response.data.token) {
+                console.log("Token retrieved from backend:", response.data.token);
+
+                // Decode JWT Token
+                const decodedToken = JSON.parse(atob(response.data.token.split('.')[1]));
+                const userId = decodedToken.userId || null;
+                console.log(`Decoded User ID: ${userId}`);
+
+                return userId; // Use this ID in your frontend logic
+            }
         } catch (error) {
-          console.error("Failed to fetch token:", error);
+            console.error("Failed to fetch token:", error);
         }
-      };
+    };
+
     const [token2, setToken2] = useState(null);
 
     useEffect(() => {
-        fetchToken(setToken2)
+        const fetchAndSetToken = async () => {
+            const userId = await fetchToken();
+            setToken2(userId);
+        };
+
+        fetchAndSetToken(); // Call async function
+
         if (token) {
             console.log("Token detected in useEffect. Fetching profile...");
             fetchProfile();
         } else {
             console.log("No token found. Skipping profile fetch.");
         }
-    }, [token]); 
+    }, [token]); // Add token as a dependency
+
 
     const fetchProfile = async () => {
         console.log("Fetching profile started...");
         setLoading(true);
         setError(null);
         setSuccess(null);
-    
+
         if (!token) {
             console.error("Error: Token is missing.");
             setError("Token is missing. Please log in.");
             setLoading(false);
             return;
         }
-    
+
         let userId = null;
         try {
             console.log("Decoding token...");
@@ -107,22 +115,22 @@ const EnhancedMarketerProfile = () => {
             setLoading(false);
             return;
         }
-    
+
         if (!userId) {
             console.error("Error: User ID not found in token.");
             setError("User ID not found in token.");
             setLoading(false);
             return;
         }
-    
+
         try {
             console.log(`Fetching profile data for user ID: ${userId}`);
             const res = await axios.get(`${MARKETER_API_END_POINT}/profile/${userId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-    
+
             console.log("Profile data received:", res.data);
-    
+
             setProfileData(res.data.profile || {
                 fullname: '',
                 phoneNumber: '',
@@ -135,7 +143,7 @@ const EnhancedMarketerProfile = () => {
                 experiences: [],
                 education: []
             });
-    
+
             console.log("Profile data successfully set.");
             setSuccess("Profile loaded successfully.");
         } catch (error) {
@@ -146,7 +154,7 @@ const EnhancedMarketerProfile = () => {
             console.log("Fetching profile completed. Loading state set to false.");
         }
     };
-    
+
 
     const handleChange = (e) => {
         const { name, value } = e.target
