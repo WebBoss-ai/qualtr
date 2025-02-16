@@ -38,7 +38,7 @@ router.get(
     console.log("Token set in cookie.");
 
     // Send token & user ID in response for frontend storage
-    res.redirect(`/auth-success?token=${token}&userId=${req.user._id}`);
+    res.redirect(`/founder-profile/update?token=${token}&userId=${req.user._id}`);
   }
 );
 
