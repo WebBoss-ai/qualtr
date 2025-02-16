@@ -80,7 +80,8 @@ const EnhancedMarketerProfile = () => {
             try {
                 const userId = await fetchToken();
                 console.log("Fetched User ID:", userId);
-                
+                const token = await fetchToken();
+                console.log("Fetched User ID:", token);
                 if (userId) {
                     console.log("Setting token2 state...");
                     setToken2(userId);
