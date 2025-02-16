@@ -18,7 +18,7 @@ const EnhancedMarketerProfile = () => {
         bio: '',
         skills: '',
         location: '',
-        website:'',
+        website: '',
         profilePhoto: '',
         experiences: [],
         education: []
@@ -40,108 +40,120 @@ const EnhancedMarketerProfile = () => {
 
     let id = null;
     if (token) {
-      try {
-        const decodedToken = JSON.parse(atob(token.split('.')[1]));
-        id = decodedToken.userId || null;
-      } catch (error) {
-        console.error("Invalid token:", error);
-      }
+        try {
+            const decodedToken = JSON.parse(atob(token.split('.')[1]));
+            id = decodedToken.userId || null;
+        } catch (error) {
+            console.error("Invalid token:", error);
+        }
     }
-    
+
     useEffect(() => {
-      if (token) {
-        fetchProfile();
-      }
+        if (token) {
+            fetchProfile();
+        }
     }, [token]);
-    
+
     const fetchProfile = async () => {
-      setLoading(true);
-      setError(null);
-      setSuccess(null);
-    
-      if (!token) {
-        setError("Token is missing. Please log in.");
-        setLoading(false);
-        return;
-      }
-    
-      let userId = null;
-      try {
-        const decodedToken = JSON.parse(atob(token.split('.')[1]));
-        userId = decodedToken.userId;
-      } catch (error) {
-        setError("Invalid token. Please log in again.");
-        setLoading(false);
-        return;
-      }
-    
-      if (!userId) {
-        setError("User ID not found in token.");
-        setLoading(false);
-        return;
-      }
-    
-      try {
-        const res = await axios.get(`${MARKETER_API_END_POINT}/profile/${userId}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-    
-        setProfileData(res.data.profile || {
-          fullname: '',
-          phoneNumber: '',
-          agencyName: '',
-          bio: '',
-          skills: '',
-          location: '',
-          website: '',
-          profilePhoto: '',
-          experiences: [],
-          education: []
-        });
-    
-        setSuccess("Profile loaded successfully.");
-      } catch (error) {
-        setError(error.response?.data?.message || error.message || "Failed to load profile data.");
-      } finally {
-        setLoading(false);
-      }
+        setLoading(true);
+        setError(null);
+        setSuccess(null);
+
+        if (!token) {
+            setError("Token is missing. Please log in.");
+            setLoading(false);
+            return;
+        }
+
+        let userId = null;
+        try {
+            const decodedToken = JSON.parse(atob(token.split('.')[1]));
+            userId = decodedToken.userId;
+        } catch (error) {
+            setError("Invalid token. Please log in again.");
+            setLoading(false);
+            return;
+        }
+
+        if (!userId) {
+            setError("User ID not found in token.");
+            setLoading(false);
+            return;
+        }
+
+        try {
+            const res = await axios.get(`${MARKETER_API_END_POINT}/profile/${userId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            setProfileData(res.data.profile || {
+                fullname: '',
+                phoneNumber: '',
+                agencyName: '',
+                bio: '',
+                skills: '',
+                location: '',
+                website: '',
+                profilePhoto: '',
+                experiences: [],
+                education: []
+            });
+
+            setSuccess("Profile loaded successfully.");
+        } catch (error) {
+            setError(error.response?.data?.message || error.message || "Failed to load profile data.");
+        } finally {
+            setLoading(false);
+        }
     };
-    
+
     const handleChange = (e) => {
         const { name, value } = e.target
         setProfileData(prevData => ({ ...prevData, [name]: value }))
     }
 
     const handleSubmit = async (e) => {
-        e.preventDefault()
-        setLoading(true)
-        setError(null)
-        setSuccess(null)
+        e.preventDefault();
+        console.log("Form submission started.");
+
+        setLoading(true);
+        setError(null);
+        setSuccess(null);
+        console.log("Loading state set to true. Error and success messages cleared.");
 
         try {
-            const formData = new FormData()
+            const formData = new FormData();
+            console.log("Creating FormData object...");
+
             Object.keys(profileData).forEach(key => {
                 if (key === 'profilePhoto' && profileData[key] instanceof File) {
-                    formData.append(key, profileData[key])
+                    console.log(`Appending profile photo: ${profileData[key].name}`);
+                    formData.append(key, profileData[key]);
                 } else if (key !== 'profilePhoto') {
-                    formData.append(key, profileData[key])
+                    console.log(`Appending field: ${key} = ${profileData[key]}`);
+                    formData.append(key, profileData[key]);
                 }
-            })
+            });
 
+            console.log("Sending profile update request to API...");
             await axios.post(`${MARKETER_API_END_POINT}/profile/update`, formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data'
                 }
-            })
+            });
 
-            setSuccess('Profile updated successfully!')
+            console.log("Profile updated successfully!");
+            setSuccess('Profile updated successfully!');
         } catch (error) {
-            setError(error.response?.data?.message || 'Failed to update profile. Please try again.')
+            console.error("Profile update failed:", error.response?.data?.message || error);
+            setError(error.response?.data?.message || 'Failed to update profile. Please try again.');
         } finally {
-            setLoading(false)
+            setLoading(false);
+            console.log("Form submission completed. Loading state set to false.");
         }
-    }
+    };
+
 
     const handleFileChange = (e) => {
         const file = e.target.files[0]
