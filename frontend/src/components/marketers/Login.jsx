@@ -41,6 +41,8 @@ const MarketerLogin = () => {
 const handleGoogleLogin = () => {
   localStorage.removeItem("token");
   localStorage.removeItem("userId");
+  localStorage.setItem('token', res.data.token);
+  localStorage.setItem('userId', res.data._id);
   window.location.href = 'https://qualtr.com/auth/google';
 };
 
