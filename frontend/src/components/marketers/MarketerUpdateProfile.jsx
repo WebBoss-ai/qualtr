@@ -41,18 +41,23 @@ const EnhancedMarketerProfile = () => {
     let id = null;
     if (token) {
         try {
+            console.log("Token found. Attempting to decode...");
             const decodedToken = JSON.parse(atob(token.split('.')[1]));
             id = decodedToken.userId || null;
+            console.log(`Decoded User ID: ${id}`);
         } catch (error) {
-            console.error("Invalid token:", error);
+            console.error("Error: Invalid token.", error);
         }
     }
-
+    
     useEffect(() => {
         if (token) {
+            console.log("Token detected in useEffect. Fetching profile...");
             fetchProfile();
+        } else {
+            console.log("No token found. Skipping profile fetch.");
         }
-    }, [token]);
+    }, [token]); 
 
     const fetchProfile = async () => {
         console.log("Fetching profile started...");
