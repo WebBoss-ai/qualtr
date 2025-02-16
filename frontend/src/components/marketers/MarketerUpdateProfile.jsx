@@ -49,8 +49,31 @@ const EnhancedMarketerProfile = () => {
             console.error("Error: Invalid token.", error);
         }
     }
-    
+
+    const fetchToken = async () => {
+        try {
+          const response = await axios.get(`${MARKETER_API_END_POINT}/auth/status`, {
+            withCredentials: true, // Allows cookies to be sent
+          });
+      
+          if (response.data.token) {
+            console.log("Token retrieved from backend:", response.data.token);
+      
+            // Decode JWT Token
+            const decodedToken = JSON.parse(atob(response.data.token.split('.')[1]));
+            const userId = decodedToken.userId || null;
+            console.log(`Decoded User ID: ${userId}`);
+      
+            return userId; // Use this ID in your frontend logic
+          }
+        } catch (error) {
+          console.error("Failed to fetch token:", error);
+        }
+      };
+    const [token2, setToken2] = useState(null);
+
     useEffect(() => {
+        fetchToken(setToken2)
         if (token) {
             console.log("Token detected in useEffect. Fetching profile...");
             fetchProfile();
