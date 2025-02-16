@@ -72,15 +72,28 @@ const EnhancedMarketerProfile = () => {
     };
 
     const [token2, setToken2] = useState(null);
-
     useEffect(() => {
+        console.log("useEffect triggered. Checking token...");
+        
         const fetchAndSetToken = async () => {
-            const userId = await fetchToken();
-            setToken2(userId);
+            console.log("Calling fetchToken...");
+            try {
+                const userId = await fetchToken();
+                console.log("Fetched User ID:", userId);
+                
+                if (userId) {
+                    console.log("Setting token2 state...");
+                    setToken2(userId);
+                } else {
+                    console.warn("fetchToken returned null or undefined.");
+                }
+            } catch (error) {
+                console.error("Error fetching token:", error);
+            }
         };
-
+    
         fetchAndSetToken(); // Call async function
-
+    
         if (token) {
             console.log("Token detected in useEffect. Fetching profile...");
             fetchProfile();
@@ -88,8 +101,7 @@ const EnhancedMarketerProfile = () => {
             console.log("No token found. Skipping profile fetch.");
         }
     }, [token]); // Add token as a dependency
-
-
+    
     const fetchProfile = async () => {
         console.log("Fetching profile started...");
         setLoading(true);
