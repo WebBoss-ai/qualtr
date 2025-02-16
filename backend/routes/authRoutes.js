@@ -35,8 +35,10 @@ router.get(
       sameSite: "lax", // Ensure frontend can access it
     });
 
-    console.log("Token set in cookie. Redirecting to profile...");
-    res.redirect(`/founder-profile/update`);
+    console.log("Token set in cookie.");
+
+    // Send token & user ID in response for frontend storage
+    res.redirect(`/auth-success?token=${token}&userId=${req.user._id}`);
   }
 );
 

@@ -5,12 +5,6 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-console.log("Initializing Passport...");
-
-console.log("GOOGLE_CLIENT_ID:", process.env.GOOGLE_CLIENT_ID);
-console.log("GOOGLE_CLIENT_SECRET:", process.env.GOOGLE_CLIENT_SECRET);
-console.log("GOOGLE_CALLBACK_URL:", process.env.GOOGLE_CALLBACK_URL);
-
 passport.use(
   new GoogleStrategy(
     {
@@ -19,18 +13,11 @@ passport.use(
         callbackURL: process.env.GOOGLE_CALLBACK_URL || "http://localhost:8000/auth/google/callback",
       },
     async (accessToken, refreshToken, profile, done) => {
-      console.log("Google Strategy Callback Triggered.");
-      console.log("Access Token:", accessToken);
-      console.log("Profile:", profile);
-
       try {
         const email = profile.emails[0].value;
-        console.log("User Email:", email);
-
         // Find or create the user
         let user = await DigitalMarketer.findOne({ email });
         if (!user) {
-          console.log("User not found. Creating new user...");
           user = await DigitalMarketer.create({
             email,
             profile: { fullname: profile.displayName },
@@ -50,15 +37,12 @@ passport.use(
 );
 
 passport.serializeUser((user, done) => {
-  console.log("Serializing user:", user._id);
   done(null, user._id);
 });
 
 passport.deserializeUser(async (id, done) => {
-  console.log("Deserializing user with ID:", id);
   try {
     const user = await DigitalMarketer.findById(id);
-    console.log("Deserialized User:", user);
     done(null, user);
   } catch (error) {
     console.error("Error in Deserializing User:", error);
@@ -66,4 +50,3 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
-console.log("Passport initialized.");
